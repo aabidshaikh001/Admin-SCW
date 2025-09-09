@@ -97,18 +97,85 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
     if (user?.UserType === "Admin") {
       return [
         { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-        { icon: Home, label: "Home", href: "/home-manager" },
-        { icon: Files, label: "About", href: "/about-manager" },
-        { icon: Database, label: "Careers", href: "/careers-manager" },
-        { icon: BarChart3, label: "Blogs", href: "/blog-manager" },
-        { icon: Shield, label: "Team", href: "/team-manager" },
-        { icon: Palette, label: "Themes", href: "/themes" },
-          { icon: User, label: "User Management", href: "/user-management" },
+         
         { icon: Bell, label: "Notifications", href: "/admin-notifications" },
-           { icon: FileQuestion, label: "Help", href: "/admin-help" },
+       
+           { icon: FileCog, label: "Enquiries", href: "/admin-cms/enquiries" },
+            { icon: FileCog, label: "Subscribers", href: "/admin-cms/subscribers" },
+              {
+          icon: Database,
+          label: "Careers",
+          children: [
+        { icon: Database, label: "Careers", href: "/admin-careers/job-description" },
+        { icon: Database, label: "Applications", href: "/admin-careers/applications" },
+          ]
+        },
+{
+          icon: BarChart3,
+          label: "Blogs",
+          children: [
+       { icon: BarChart3, label: "Blogs", href: "/admin-blog/blog-manager" },
+       { icon: BarChart3, label: "Author", href: "/admin-blog/blog-authors" },
+        { icon: BarChart3, label: "Categories", href: "/admin-blog/blog-categories" },
 
-        { icon: BarChart4, label: "Reports", href: "/admin-reports" },
+
+          ]
+        },
+            { icon: User, label: "User Management", href: "/user-management" },
+            {
+          icon: Layers,
+          label: "KRA",
+          children: [
+            { icon: FileCog, label: "Key Pointers", href: "/admin-kra/keypointers" },
+            { icon: FileCog, label: "Features", href: "/admin-kra/features" },
+            { icon: FileCog, label: "Clients", href: "/admin-kra/clients" },
+            { icon: FileCog, label: "Industries", href: "/admin-kra/industries" },
+            { icon: FileCog, label: "Testimonials", href: "/admin-kra/testimonials" },
+            { icon: FileCog, label: "Services", href: "/admin-kra/services" },
+            { icon: FileCog, label: "Projects", href: "/admin-kra/projects" },
+              { icon: FileCog, label: "Team", href: "/admin-kra/team" },
+          ]
+        },
+         {
+          icon: Layers,
+          label: "CMS",
+          children: [
+            { icon: FileCog, label: "Top Header", href: "/admin-cms/topheader" },
+            { icon: FileCog, label: "Menu Bar", href: "/admin-cms/menubar" },
+            { icon: FileCog, label: "Footer", href: "/admin-cms/footer" },
+            { icon: FileCog, label: "Page Header", href: "/admin-cms/page-header" },
+             { icon: FileCog, label: "Sections", href: "/admin-cms/sections" },
+            { icon: FileCog, label: "Slider", href: "/admin-cms/slider" },          
+          ],
+        },
+           
+
+   {
+          icon: Layers,
+          label: "Terms",
+          children: [
+         { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
+            { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
+            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-and-conditions" },
+            { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
+            { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
+            { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },
+
+          ]
+        },
+  //  { icon: Palette, label: "Themes", href: "/themes" },
         { icon: Settings, label: "Settings", href: "/settings" },
+         { icon: BarChart4, label: "Reports", href: "/admin-reports" },
+               { icon: FileQuestion, label: "Help", href: "/admin-help" },
+
+        // { icon: Home, label: "Home", href: "/home-manager" },
+        // { icon: Files, label: "About", href: "/about-manager" },
+        
+       
+        // { icon: Shield, label: "Team", href: "/team-manager" },
+     
+      
+  
       ]
     }
 

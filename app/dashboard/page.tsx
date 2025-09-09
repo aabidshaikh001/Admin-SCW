@@ -73,8 +73,8 @@ export default function DashboardPage() {
       <div className="space-y-6">
         {/* Welcome Section */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-bold text-foreground">Website Management Dashboard</h1>
-          <p className="text-muted-foreground">Monitor and manage all your websites from one central location.</p>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          {/* <p className="text-muted-foreground">Monitor and manage all your websites from one central location.</p> */}
         </motion.div>
 
         {/* Stats Cards */}

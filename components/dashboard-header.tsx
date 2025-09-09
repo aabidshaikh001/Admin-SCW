@@ -1,5 +1,6 @@
 "use client"
 
+import { useRouter } from "next/navigation"
 import { motion } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
@@ -17,6 +18,7 @@ import Link from "next/link"
 
 export function DashboardHeader() {
   const { user, logout } = useAuth()
+  const router = useRouter()
 
   const getInitials = (name: string) =>
     name
@@ -31,11 +33,20 @@ export function DashboardHeader() {
       case "SA":
         return "Super Admin"
       case "Admin":
-        return "Admin"
+        return "Web Admin"
       case "User":
         return "User"
       default:
         return "Unknown"
+    }
+  }
+
+  // Handle Bell click
+  const handleBellClick = () => {
+    if (user?.UserType === "Admin") {
+      router.push("/admin-update")
+    } else if (user?.UserType === "User") {
+      router.push("/notifications")
     }
   }
 
@@ -46,22 +57,26 @@ export function DashboardHeader() {
       transition={{ duration: 0.3, ease: "easeOut" }}
       className="flex items-center justify-between h-16 px-4 border-b border-border bg-gray-800"
     >
-    {/* Left section (Logo/search/etc.) */}
-<div className="flex items-center">
-  <span className="px-3 py-1 text-lg font-medium rounded-full 
-    text-white bg-primary/20 
-    shadow-[0_0_10px_rgba(59,130,246,0.7)] animate-pulse">
-    {getRoleLabel(user?.UserType)}
-  </span>
-</div>
-      {/* Right Section */}
+      {/* Left section */}
+      <div className="flex items-center">
+        <span className="px-3 py-1 text-lg font-medium rounded-full 
+          text-white bg-primary/20 
+          shadow-[0_0_10px_rgba(59,130,246,0.7)] animate-pulse">
+          {getRoleLabel(user?.UserType)}
+        </span>
+      </div>
+
+      {/* Right section */}
       <div className="flex items-center gap-4 ml-auto text-white">
-       
-        {/* 🚫 If Super Admin, don't show Bell & Avatar */}
         {user?.UserType !== "SA" && (
           <>
-            {/* Notifications */}
-            <Button variant="ghost" size="sm" className="relative text-white">
+            {/* Notifications Bell */}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="relative text-white"
+              onClick={handleBellClick}
+            >
               <Bell className="h-5 w-5" />
               <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full"></span>
             </Button>
@@ -86,24 +101,16 @@ export function DashboardHeader() {
                 </Button>
               </DropdownMenuTrigger>
 
-              <DropdownMenuContent
-                className="w-56 z-20"
-                align="end"
-                forceMount
-              >
+              <DropdownMenuContent className="w-56 z-20" align="end" forceMount>
                 <DropdownMenuLabel className="font-normal">
                   <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">
-                      {user?.UserName}
-                    </p>
-                    <p className="text-xs leading-none text-muted-foreground">
-                      {user?.UserEmail}
-                    </p>
+                    <p className="text-sm font-medium leading-none">{user?.UserName}</p>
+                    <p className="text-xs leading-none text-muted-foreground">{user?.UserEmail}</p>
                   </div>
                 </DropdownMenuLabel>
+
                 <DropdownMenuSeparator />
 
-                {/* 🔑 Different profile/settings per role */}
                 {user?.UserType === "Admin" && (
                   <>
                     <Link href="/admin-profile">

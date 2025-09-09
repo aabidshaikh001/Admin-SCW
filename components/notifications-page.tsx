@@ -127,38 +127,37 @@ export default function NotificationsPage() {
 
   return (
     <div className="space-y-6">
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-      >
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Notifications</h1>
-          <p className="text-muted-foreground">Stay updated with the latest announcements and updates</p>
-        </div>
+    <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+>
+  {/* Left side: Title */}
+  <div>
+    <h1 className="text-2xl font-bold text-foreground">System Updates</h1>
+  </div>
 
-        <div className="flex items-center space-x-2 text-sm text-muted-foreground">
-          <Bell className="h-4 w-4" />
-          <span>{filteredNotifications.length} notifications</span>
-        </div>
-      </motion.div>
+  {/* Right side: Notifications count + Search */}
+  <div className="flex items-center gap-4">
+    
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="flex items-center space-x-2"
-      >
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search notifications..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </motion.div>
+    <div className="relative w-64">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+      <Input
+        placeholder="Search updates..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-10"
+      />
+    </div>
+<div className="flex items-center space-x-2 text-sm text-muted-foreground">
+      <Bell className="h-4 w-4" />
+      <span>{filteredNotifications.length} updates</span>
+    </div>
+
+  </div>
+</motion.div>
+
 
       {loading ? (
         <div className="space-y-4">

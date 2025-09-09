@@ -240,6 +240,12 @@ class ApiService {
 
     return response.json()
   }
+async getOrgProfile(orgCode: number): Promise<any> {
+  const res = await fetch(`http://localhost:5000/api/orgs/profile/${orgCode}`)
+  return res.json()
+}
+
+
 
   async updateProfile(userData: Partial<RegisterRequest>): Promise<ApiResponse<any>> {
     const formData = new FormData()

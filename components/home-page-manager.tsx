@@ -10,14 +10,29 @@ import { useAuth } from "@/contexts/auth-context"
 import { apiService, type HomePageSection } from "@/lib/api"
 import { useToast } from "@/hooks/use-toast"
 import { EditHomeSectionModal } from "./edit-home-section-modal"
+import { useRouter } from "next/navigation"
 
 export function HomePageManager() {
-  const { user } = useAuth()
+  const { user, isLoading } = useAuth()
+  const router = useRouter()
   const { toast } = useToast()
   const [sections, setSections] = useState<HomePageSection[]>([])
   const [loading, setLoading] = useState(true)
   const [editingSection, setEditingSection] = useState<HomePageSection | null>(null)
   const [isModalOpen, setIsModalOpen] = useState(false)
+  useEffect(() => {
+    if (!isLoading && user?.UserType !== "Admin") {
+      router.push("/login") // or dashboard
+    }
+  }, [user, isLoading, router])
+
+  if (isLoading) {
+    return <div>Loading...</div>
+  }
+
+  if (!user || user.UserType !== "Admin") {
+    return null // Prevent flicker while redirecting
+  }
 
   useEffect(() => {
     if (user?.OrgCode) {

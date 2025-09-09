@@ -1,3 +1,4 @@
+// contexts/auth-context.tsx
 "use client"
 
 import type React from "react"
@@ -6,32 +7,45 @@ import { apiService } from "@/lib/api"
 import { toast } from "sonner"
 
 interface User {
-  UserId: number
-  EmployeeCode: string
+  UserId?: number
+  EmployeeCode?: string
   OrgCode: number
   UserName: string
   UserEmail: string
-  UserDOB: string
+  UserDOB?: string
   UserPhoto?: string
-  UserType: string
-  LoginId: string
-  Mobile: string
-  AboutUs: string
-  Status: string
-  TransDate: string
-  
-  TransBy: string
+  UserType: string   // "SA" | "Admin" | "User"
+  LoginId?: string
+  Mobile?: string
+  AboutUs?: string
+  Status?: string
+  TransDate?: string
+  TransBy?: string
   TranDateUpdate?: string
   TranByUpdate?: string
   TranDateDel?: string
   TranByDel?: string
 }
+
+interface OrgProfile {
+  OrgID: number
+  OrgCode: number
+  OrgType: string
+  OrgName: string
+  ContactPerson: string
+  Web: string
+  Logo?: string
+  Favicon?: string
+  Email: string
+  Status: string
+}
+
 interface LoginResponse {
   user?: User
   token?: string
-  role?: "SuperAdmin" | "OrgAdmin" | "User"  // 👈 add role here
+  role?: "SuperAdmin" | "OrgAdmin" | "User"
+  orgCode?: number
 }
-
 
 interface AuthContextType {
   user: User | null
@@ -40,7 +54,6 @@ interface AuthContextType {
   logout: () => void
   updateProfile: (userData: Partial<RegisterData>) => Promise<boolean>
   isLoading: boolean
-  
 }
 
 interface RegisterData {
@@ -64,7 +77,6 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
   const [isLoading, setIsLoading] = useState(true)
 
   useEffect(() => {
-    // Check for existing session on mount
     const checkAuth = async () => {
       const token = localStorage.getItem("token")
       if (token) {
@@ -78,57 +90,68 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       }
       setIsLoading(false)
     }
-
     checkAuth()
   }, [])
 
-  // contexts/auth-context.tsx - Update the login function
-// contexts/auth-context.tsx - Improve error handling
-const login = async (loginId: string, password: string): Promise<boolean> => {
-  setIsLoading(true)
-  try {
-    console.log("Attempting login with:", { loginId })
+  // 🔑 LOGIN FUNCTION
+  const login = async (loginId: string, password: string): Promise<boolean> => {
+    setIsLoading(true)
+    try {
+      const response: LoginResponse = await apiService.login({
+        LoginId: loginId,
+        LoginPwd: password,
+      })
 
-    const response: LoginResponse = await apiService.login({
-      LoginId: loginId,
-      LoginPwd: password,
-    })
+      if (response.token) {
+        let loggedInUser: User | null = null
 
-    if (response.user && response.token) {
-      // Ensure UserType is set consistently
-      const userWithType: User = {
-        ...response.user,
-        UserType:
-          response.role === "SuperAdmin"
-            ? "SA"
-            : response.role === "OrgAdmin"
-            ? "Admin"
-            : "User",
+        if (response.role === "OrgAdmin" && response.orgCode) {
+          // 👉 Fetch Org Profile for Admins
+          const orgProfile: OrgProfile = await apiService.getOrgProfile(response.orgCode)
+
+          loggedInUser = {
+            OrgCode: orgProfile.OrgCode,
+            UserName: orgProfile.OrgName,
+            UserEmail: orgProfile.Email,
+            UserType: "Admin",
+            UserPhoto: orgProfile.Logo,
+            Status: orgProfile.Status,
+          }
+        } else if (response.user) {
+          // Normal User / SuperAdmin
+          loggedInUser = {
+            ...response.user,
+            UserType:
+              response.role === "SuperAdmin"
+                ? "SA"
+                : response.role === "OrgAdmin"
+                ? "Admin"
+                : "User",
+          }
+        }
+
+        if (loggedInUser) {
+          setUser(loggedInUser)
+          localStorage.setItem("token", response.token)
+          toast.success("Login successful!")
+          return true
+        }
       }
 
-      setUser(userWithType)
-      localStorage.setItem("token", response.token)
-      toast.success("Login successful!")
-      return true
+      return false
+    } catch (error: any) {
+      console.error("Login failed:", error)
+      toast.error(error.response?.data?.message || "Login failed. Please try again.")
+      return false
+    } finally {
+      setIsLoading(false)
     }
-
-    return false
-  } catch (error: any) {
-    console.error("Login failed:", error)
-    const errorMessage =
-      error.response?.data?.message || error.message || "Login failed. Please try again."
-    toast.error(errorMessage)
-    return false
-  } finally {
-    setIsLoading(false)
   }
-};
 
   const register = async (userData: RegisterData): Promise<boolean> => {
     setIsLoading(true)
     try {
       const response = await apiService.register(userData)
-
       if (response.user && response.token) {
         setUser(response.user)
         localStorage.setItem("token", response.token)
@@ -147,7 +170,6 @@ const login = async (loginId: string, password: string): Promise<boolean> => {
     setIsLoading(true)
     try {
       const response = await apiService.updateProfile(userData)
-
       if (response.user) {
         setUser(response.user)
         return true
