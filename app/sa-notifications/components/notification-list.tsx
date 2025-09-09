@@ -153,37 +153,35 @@ export default function NotificationList() {
   return (
     <div className="space-y-6 p-4 max-w-6xl mx-auto">
       <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-      >
-        <div>
-          <h1 className="text-2xl font-bold text-foreground">Manage Notifications</h1>
-          <p className="text-muted-foreground">Create and manage system notifications</p>
-        </div>
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="flex flex-col sm:flex-row items-center justify-between gap-4"
+>
+  {/* Title */}
+  <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">
+    System Updates
+  </h1>
 
-        <Button className="bg-primary hover:bg-primary/90" onClick={() => router.push("/sa-notifications/add")}>
-          <Plus className="mr-2 h-4 w-4" />
-          Create Notification
-        </Button>
-      </motion.div>
+  {/* Search */}
+  <div className="relative flex-1 max-w-md w-full">
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
+    <Input
+      placeholder="Search notifications..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="pl-10"
+    />
+  </div>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ delay: 0.1 }}
-        className="flex items-center space-x-2"
-      >
-        <div className="relative flex-1 max-w-md">
-          <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
-          <Input
-            placeholder="Search notifications..."
-            value={searchTerm}
-            onChange={(e) => setSearchTerm(e.target.value)}
-            className="pl-10"
-          />
-        </div>
-      </motion.div>
+  {/* New button */}
+  <Button
+    className="bg-primary hover:bg-primary/90 whitespace-nowrap"
+    onClick={() => router.push("/sa-notifications/add")}
+  >
+    <Plus className="mr-2 h-4 w-4" />
+    New
+  </Button>
+</motion.div>
 
       {loading ? (
         <div className="space-y-4">

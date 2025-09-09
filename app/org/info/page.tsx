@@ -96,48 +96,44 @@ export default function OrganizationInfoPage() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Organization Management</h1>
-            <p className="text-muted-foreground">Manage all organizations in the system</p>
-          </div>
-          <Link href="/org/info/add">
-            <Button className="bg-primary hover:bg-primary/90">
-              <Plus className="w-4 h-4 mr-2" />
-              Add Organization
-            </Button>
-          </Link>
-        </motion.div>
+      {/* Header + Search + New Button in one row */}
+<motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full"
+>
+  {/* Title */}
+  <h1 className="text-3xl font-bold text-foreground whitespace-nowrap">
+    Organization Management
+  </h1>
 
-        {/* Search */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.1 }}
-          className="flex items-center space-x-2"
-        >
-          <div className="relative flex-1 max-w-sm">
-            <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-            <Input
-              placeholder="Search organizations..."
-              value={searchTerm}
-              onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-        </motion.div>
+  {/* Search */}
+  <div className="relative flex-1 max-w-md w-full">
+    <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+    <Input
+      placeholder="Search organizations..."
+      value={searchTerm}
+      onChange={(e) => setSearchTerm(e.target.value)}
+      className="pl-10"
+    />
+  </div>
+
+  {/* New Button */}
+  <Link href="/org/info/add" className="whitespace-nowrap">
+    <Button className="bg-primary hover:bg-primary/90">
+      <Plus className="w-4 h-4 mr-2" />
+      New
+    </Button>
+  </Link>
+</motion.div>
 
         {/* Organizations Table */}
         <motion.div initial={{ opacity: 0 }} animate={{ opacity: 1 }} transition={{ delay: 0.2 }}>
           <Card>
-            <CardHeader>
+            {/* <CardHeader>
               <CardTitle>Organizations ({filteredOrgs.length})</CardTitle>
-            </CardHeader>
-            <CardContent>
+            </CardHeader> */}
+           
               {loading ? (
                 <div className="space-y-3">
                   {Array.from({ length: 5 }).map((_, i) => (
@@ -186,14 +182,18 @@ export default function OrganizationInfoPage() {
                           <TableCell>
                             <div className="flex items-center space-x-3">
                               <Avatar className="w-8 h-8">
-                                <AvatarImage src={org.Logo || "/placeholder.svg"} alt={org.OrgName} />
+                          <AvatarImage
+  src={org.Logo ? `http://localhost:5000${org.Logo}` : "/placeholder.svg"}
+  alt={org.OrgName}
+/>
+
                                 <AvatarFallback className="bg-primary/10 text-primary text-xs">
                                   {org.OrgName?.charAt(0) || "O"}
                                 </AvatarFallback>
                               </Avatar>
                               <div>
                                 <div className="font-medium">{org.OrgName}</div>
-                                <div className="text-sm text-muted-foreground">Est. {org.EstYear}</div>
+                                {/* <div className="text-sm text-muted-foreground">Est. {org.EstYear}</div> */}
                               </div>
                             </div>
                           </TableCell>
@@ -210,7 +210,8 @@ export default function OrganizationInfoPage() {
                             <div className="text-sm">
                               <div>{org.City}</div>
                               <div className="text-muted-foreground">
-                                {org.State}, {org.Country}
+                                {org.State}
+                                
                               </div>
                             </div>
                           </TableCell>
@@ -224,14 +225,14 @@ export default function OrganizationInfoPage() {
                                   <Edit className="w-4 h-4" />
                                 </Button>
                               </Link>
-                              <Button
+                              {/* <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDelete(org.OrgID)}
                                 className="text-destructive hover:text-destructive"
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </Button>
+                              </Button> */}
                             </div>
                           </TableCell>
                         </motion.tr>
@@ -240,7 +241,7 @@ export default function OrganizationInfoPage() {
                   </Table>
                 </div>
               )}
-            </CardContent>
+         
           </Card>
         </motion.div>
       </div>

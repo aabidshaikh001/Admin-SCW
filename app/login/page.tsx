@@ -12,12 +12,19 @@ export default function LoginPage() {
   const { user } = useAuth()
   const router = useRouter()
 
+ 
   useEffect(() => {
     if (user) {
-      router.push("/dashboard")
+      // check UserType
+      if (user.UserType === "SA") {
+        router.push("/sa-dashboard")
+      } else if (user.UserType === "Admin") {
+        router.push("/dashboard")
+      } else {
+        router.push("/user-dashboard")
+      }
     }
   }, [user, router])
-
   if (user) {
     return null
   }
@@ -43,14 +50,7 @@ export default function LoginPage() {
           transition={{ delay: 0.5, duration: 0.3 }}
           className="text-center"
         >
-          <p className="text-muted-foreground">
-            Don't have an account?{" "}
-            <Link href="/register">
-              <Button variant="link" className="p-0 h-auto text-primary hover:text-primary/80">
-                Sign up here
-              </Button>
-            </Link>
-          </p>
+         
         </motion.div>
       </div>
     </div>

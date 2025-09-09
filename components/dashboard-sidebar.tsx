@@ -50,12 +50,27 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         { icon: Bell, label: "Notifications", href: "/sa-notifications" },
         {
           icon: Building2,
-          label: "Org",
+          label: "Organization",
           children: [
-            { icon: FileBadge2, label: "Org Info", href: "/org/info" },
-            { icon: FileBadge2, label: "Org License", href: "/org/license" },
+            { icon: FileBadge2, label: "Master", href: "/org/info" },
+            { icon: FileBadge2, label: "License", href: "/org/license" },
+            // { icon: FileBadge2, label: "Financial Year", href: "/org/financial-year" },
+            // { icon: FileBadge2, label: "Banks", href: "/org/banks" },
+            { icon: FileBadge2, label: "Modules", href: "/org/modules" },
+            // { icon: FileBadge2, label: "Prefixes", href: "/org/prefixes" },
+
           ],
         },
+           {
+          icon: User,
+          label: "User Management",
+          children: [
+            { icon: User, label: "Users", href: "/users/manage" },
+            { icon: User, label: "Modules", href: "/users/modules" },
+          ],
+        },
+
+
         {
           icon: Layers,
           label: "CMS",
@@ -64,8 +79,13 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
             { icon: FileCog, label: "Components", href: "/cms/components" },
           ],
         },
-           { icon: User, label: "User Management", href: "/user-management" },
-             { icon: FileQuestion, label: "Help", href: "/sa-help" },
+         
+             { icon: FileQuestion, label: "Help", 
+              children: [
+                { icon: FileQuestion, label: "Documentation", href: "/sa-documentation" },
+                { icon: FileQuestion, label: "Tickets", href: "/sa-tickets" }
+              ]
+              },
 
         { icon: BarChart4, label: "Reports", href: "/reports" },
 
@@ -83,6 +103,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         { icon: BarChart3, label: "Blogs", href: "/blog-manager" },
         { icon: Shield, label: "Team", href: "/team-manager" },
         { icon: Palette, label: "Themes", href: "/themes" },
+          { icon: User, label: "User Management", href: "/user-management" },
         { icon: Bell, label: "Notifications", href: "/admin-notifications" },
            { icon: FileQuestion, label: "Help", href: "/admin-help" },
 
@@ -93,8 +114,8 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
 
     if (user?.UserType === "User") {
       return [
-        { icon: LayoutDashboard, label: "Dashboard", href: "/userdashboard" },
-        { icon: Bell, label: "Notifications", href: "/usernotifications" },
+        { icon: LayoutDashboard, label: "Dashboard", href: "/user-dashboard" },
+        { icon: Bell, label: "Notifications", href: "/user-notifications" },
            { icon: FileQuestion, label: "Help", href: "/user-help" },
 
         { icon: BarChart4, label: "Reports", href: "/user-reports" },
@@ -256,20 +277,39 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         })}
       </nav>
 
-      {/* User Section */}
+            {/* User Section */}
       <div className="p-4 border-t border-sidebar-border space-y-2">
-        <Link href="/profile">
-          <Button
-            variant="ghost"
-            className={cn(
-              "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent",
-              isCollapsed && "justify-center",
-            )}
-          >
-            <User className="h-4 w-4" />
-            {!isCollapsed && <span>Profile</span>}
-          </Button>
-        </Link>
+        {user?.UserType === "Admin" && (
+          <Link href="/admin-profile">
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent",
+                isCollapsed && "justify-center",
+              )}
+            >
+              <User className="h-4 w-4" />
+              {!isCollapsed && <span>Profile</span>}
+            </Button>
+          </Link>
+        )}
+
+        {user?.UserType === "User" && (
+          <Link href="/profile">
+            <Button
+              variant="ghost"
+              className={cn(
+                "w-full justify-start gap-3 text-sidebar-foreground hover:bg-sidebar-accent",
+                isCollapsed && "justify-center",
+              )}
+            >
+              <User className="h-4 w-4" />
+              {!isCollapsed && <span>Profile</span>}
+            </Button>
+          </Link>
+        )}
+
+        {/* SuperAdmin (SA) won't see profile */}
 
         <Button
           variant="ghost"
@@ -283,6 +323,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           {!isCollapsed && <span>Logout</span>}
         </Button>
       </div>
+
     </motion.div>
   )
 }

@@ -1045,6 +1045,7 @@ class ApiService {
       body: orgData,
     })
     if (!response.ok) throw new Error("Failed to create organization")
+      
     return response.json()
   }
 

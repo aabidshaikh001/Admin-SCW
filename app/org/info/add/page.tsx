@@ -24,7 +24,8 @@ export default function AddOrganizationPage() {
   const [loading, setLoading] = useState(false)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
-
+const [faviconFile, setFaviconFile] = useState<File | null>(null)
+const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
   const [formData, setFormData] = useState({
     OrgCode: "",
     OrgType: "",
@@ -64,12 +65,32 @@ export default function AddOrganizationPage() {
     WAMsgVisit: "",
     WAMsgBusiness: "",
     Status: "Active",
+     SocialFB: "",
+  SocialInsta: "",
+  SocialTwitter: "",
+  SocialLinkedIn: "",
+  SocialYoutube: "",
+  SocialPinterest: "",
+  Favicon: "", // new field
   })
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
+const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (file) {
+    setFaviconFile(file)
+    const reader = new FileReader()
+    reader.onload = () => setFaviconPreview(reader.result as string)
+    reader.readAsDataURL(file)
+  }
+}
 
+const removeFavicon = () => {
+  setFaviconFile(null)
+  setFaviconPreview(null)
+}
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -101,6 +122,10 @@ export default function AddOrganizationPage() {
       if (logoFile) {
         submitData.append("Logo", logoFile)
       }
+  // Add favicon file if selected
+      if (faviconFile) {
+        submitData.append("Favicon", faviconFile)
+      }
 
       await orgApi.create(submitData)
 
@@ -130,15 +155,15 @@ export default function AddOrganizationPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center space-x-4"
         >
-          <Link href="/org/info">
+          {/* <Link href="/org/info">
             <Button variant="outline" size="sm">
               <ArrowLeft className="w-4 h-4 mr-2" />
               Back
             </Button>
-          </Link>
+          </Link> */}
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Add Organization</h1>
-            <p className="text-muted-foreground">Create a new organization in the system</p>
+            <h1 className="text-2xl font-bold text-foreground">Organization (New)</h1>
+            {/* <p className="text-muted-foreground">Create a new organization in the system</p> */}
           </div>
         </motion.div>
 
@@ -149,6 +174,8 @@ export default function AddOrganizationPage() {
               <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="contact">Contact</TabsTrigger>
+                <TabsTrigger value="social">Social</TabsTrigger>
+
                 <TabsTrigger value="financial">Financial</TabsTrigger>
                 <TabsTrigger value="admin">Admin</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -163,60 +190,9 @@ export default function AddOrganizationPage() {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    {/* Logo Upload */}
-                    <div className="space-y-2">
-                      <Label>Organization Logo</Label>
-                      <div className="flex items-center space-x-4">
-                        {logoPreview ? (
-                          <div className="relative">
-                            <img
-                              src={logoPreview || "/placeholder.svg"}
-                              alt="Logo preview"
-                              className="w-20 h-20 object-cover rounded-lg border"
-                            />
-                            <Button
-                              type="button"
-                              variant="destructive"
-                              size="sm"
-                              className="absolute -top-2 -right-2 w-6 h-6 p-0"
-                              onClick={removeLogo}
-                            >
-                              <X className="w-3 h-3" />
-                            </Button>
-                          </div>
-                        ) : (
-                          <div className="w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
-                            <Upload className="w-6 h-6 text-muted-foreground" />
-                          </div>
-                        )}
-                        <div>
-                          <Input
-                            type="file"
-                            accept="image/*"
-                            onChange={handleLogoChange}
-                            className="hidden"
-                            id="logo-upload"
-                          />
-                          <Label htmlFor="logo-upload" className="cursor-pointer">
-                            <Button type="button" variant="outline" asChild>
-                              <span>Choose Logo</span>
-                            </Button>
-                          </Label>
-                        </div>
-                      </div>
-                    </div>
 
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="orgCode">Organization Code *</Label>
-                        <Input
-                          id="orgCode"
-                          type="number"
-                          value={formData.OrgCode}
-                          onChange={(e) => handleInputChange("OrgCode", e.target.value)}
-                          required
-                        />
-                      </div>
+                    <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
+                      
                       <div className="space-y-2">
                         <Label htmlFor="orgName">Organization Name *</Label>
                         <Input
@@ -241,14 +217,7 @@ export default function AddOrganizationPage() {
                           </SelectContent>
                         </Select>
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="contactPerson">Contact Person</Label>
-                        <Input
-                          id="contactPerson"
-                          value={formData.ContactPerson}
-                          onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
-                        />
-                      </div>
+                     
                       <div className="space-y-2">
                         <Label htmlFor="estYear">Establishment Year</Label>
                         <Input
@@ -258,19 +227,11 @@ export default function AddOrganizationPage() {
                           onChange={(e) => handleInputChange("EstYear", e.target.value)}
                         />
                       </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="web">Website</Label>
-                        <Input
-                          id="web"
-                          type="url"
-                          value={formData.Web}
-                          onChange={(e) => handleInputChange("Web", e.target.value)}
-                        />
-                      </div>
+                      
                     </div>
 
                     <div className="space-y-2">
-                      <Label htmlFor="schoolMoto">School Motto</Label>
+                      <Label htmlFor="schoolMoto">About</Label>
                       <Textarea
                         id="schoolMoto"
                         value={formData.SchoolMoto}
@@ -278,6 +239,95 @@ export default function AddOrganizationPage() {
                         rows={3}
                       />
                     </div>
+                                        {/* Logo Upload */}
+                    {/* Logo & Favicon Upload in one line */}
+<div className="space-y-2">
+  <Label>Logo & Favicon</Label>
+  <div className="flex items-center space-x-6">
+    {/* Logo Upload */}
+    <div className="flex items-center space-x-2">
+      {logoPreview ? (
+        <div className="relative">
+          <img
+            src={logoPreview || "/placeholder.svg"}
+            alt="Logo preview"
+            className="w-20 h-20 object-cover rounded-lg border"
+          />
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            className="absolute -top-2 -right-2 w-6 h-6 p-0"
+            onClick={removeLogo}
+          >
+            <X className="w-3 h-3" />
+          </Button>
+        </div>
+      ) : (
+        <div className="w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
+          <Upload className="w-6 h-6 text-muted-foreground" />
+        </div>
+      )}
+      <div>
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleLogoChange}
+          className="hidden"
+          id="logo-upload"
+        />
+        <Label htmlFor="logo-upload" className="cursor-pointer">
+          <Button type="button" variant="outline" asChild>
+            <span>Choose Logo</span>
+          </Button>
+        </Label>
+      </div>
+    </div>
+
+    {/* Favicon Upload */}
+    <div className="flex items-center space-x-2">
+      {faviconPreview ? (
+        <div className="relative">
+          <img
+            src={faviconPreview || "/placeholder.svg"}
+            alt="Favicon preview"
+            className="w-10 h-10 object-cover rounded border"
+          />
+          <Button
+            type="button"
+            variant="destructive"
+            size="sm"
+            className="absolute -top-2 -right-2 w-6 h-6 p-0"
+            onClick={removeFavicon}
+          >
+            <X className="w-3 h-3" />
+          </Button>
+        </div>
+      ) : (
+        <div className="w-10 h-10 border-2 border-dashed border-muted-foreground/25 rounded flex items-center justify-center">
+          <Upload className="w-5 h-5 text-muted-foreground" />
+        </div>
+      )}
+      <div>
+        <Input
+          type="file"
+          accept="image/*"
+          onChange={handleFaviconChange}
+          className="hidden"
+          id="favicon-upload"
+        />
+        <Label htmlFor="favicon-upload" className="cursor-pointer">
+          <Button type="button" variant="outline" asChild>
+            <span>Choose Favicon</span>
+          </Button>
+        </Label>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -288,37 +338,10 @@ export default function AddOrganizationPage() {
                     <CardTitle>Contact Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={formData.Phone}
-                          onChange={(e) => handleInputChange("Phone", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="mobile">Mobile</Label>
-                        <Input
-                          id="mobile"
-                          value={formData.Mobile}
-                          onChange={(e) => handleInputChange("Mobile", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.Email}
-                          onChange={(e) => handleInputChange("Email", e.target.value)}
-                        />
-                      </div>
-                    </div>
-
+                   
                     <div className="space-y-4">
                       <div className="space-y-2">
-                        <Label htmlFor="address1">Address Line 1</Label>
+                        <Label htmlFor="address1">Address 1</Label>
                         <Input
                           id="address1"
                           value={formData.Address1}
@@ -326,7 +349,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="address2">Address Line 2</Label>
+                        <Label htmlFor="address2">Address 2</Label>
                         <Input
                           id="address2"
                           value={formData.Address2}
@@ -366,11 +389,123 @@ export default function AddOrganizationPage() {
                             onChange={(e) => handleInputChange("PinNo", e.target.value)}
                           />
                         </div>
+                        
                       </div>
+ <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                       <div className="space-y-2">
+                        <Label htmlFor="contactPerson">Contact Person</Label>
+                        <Input
+                          id="contactPerson"
+                          value={formData.ContactPerson}
+                          onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="phone">Phone</Label>
+                        <Input
+                          id="phone"
+                          value={formData.Phone}
+                          onChange={(e) => handleInputChange("Phone", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="mobile">Mobile</Label>
+                        <Input
+                          id="mobile"
+                          value={formData.Mobile}
+                          onChange={(e) => handleInputChange("Mobile", e.target.value)}
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label htmlFor="email">Email</Label>
+                        <Input
+                          id="email"
+                          type="email"
+                          value={formData.Email}
+                          onChange={(e) => handleInputChange("Email", e.target.value)}
+                        />
+                      </div>
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="web">Website</Label>
+                        <Input
+                          id="web"
+                          type="url"
+                          value={formData.Web}
+                          onChange={(e) => handleInputChange("Web", e.target.value)}
+                        />
+                      </div>
+
+
                     </div>
                   </CardContent>
                 </Card>
               </TabsContent>
+              <TabsContent value="social">
+  <Card>
+    <CardHeader>
+      <CardTitle>Social Media Links & Favicon</CardTitle>
+    </CardHeader>
+    <CardContent className="space-y-4">
+      
+      {/* Social links */}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+        <div className="space-y-2">
+          <Label htmlFor="socialFB">Facebook</Label>
+          <Input
+            id="socialFB"
+            value={formData.SocialFB}
+            onChange={(e) => handleInputChange("SocialFB", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="socialInsta">Instagram</Label>
+          <Input
+            id="socialInsta"
+            value={formData.SocialInsta}
+            onChange={(e) => handleInputChange("SocialInsta", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="socialTwitter">Twitter</Label>
+          <Input
+            id="socialTwitter"
+            value={formData.SocialTwitter}
+            onChange={(e) => handleInputChange("SocialTwitter", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="socialLinkedIn">LinkedIn</Label>
+          <Input
+            id="socialLinkedIn"
+            value={formData.SocialLinkedIn}
+            onChange={(e) => handleInputChange("SocialLinkedIn", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="socialYoutube">YouTube</Label>
+          <Input
+            id="socialYoutube"
+            value={formData.SocialYoutube}
+            onChange={(e) => handleInputChange("SocialYoutube", e.target.value)}
+          />
+        </div>
+        <div className="space-y-2">
+          <Label htmlFor="socialPinterest">Pinterest</Label>
+          <Input
+            id="socialPinterest"
+            value={formData.SocialPinterest}
+            onChange={(e) => handleInputChange("SocialPinterest", e.target.value)}
+          />
+        </div>
+      </div>
+
+      
+
+    </CardContent>
+  </Card>
+</TabsContent>
+
 
               <TabsContent value="financial">
                 <Card>
@@ -388,7 +523,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="gstinNo">GSTIN Number</Label>
+                        <Label htmlFor="gstinNo">GST Number</Label>
                         <Input
                           id="gstinNo"
                           value={formData.GSTINNo}
@@ -396,7 +531,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="acHolderName">Account Holder Name</Label>
+                        <Label htmlFor="acHolderName">Bank Account Name</Label>
                         <Input
                           id="acHolderName"
                           value={formData.ACHolderName}
@@ -404,7 +539,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="bankAccount">Bank Account</Label>
+                        <Label htmlFor="bankAccount">Bank Account No.</Label>
                         <Input
                           id="bankAccount"
                           value={formData.BankAccount}
@@ -412,7 +547,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="bankCode">Bank Code</Label>
+                        <Label htmlFor="bankCode">Bank Name</Label>
                         <Input
                           id="bankCode"
                           value={formData.BankCode}
@@ -420,7 +555,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="bankBranch">Bank Branch</Label>
+                        <Label htmlFor="bankBranch">Branch Name</Label>
                         <Input
                           id="bankBranch"
                           value={formData.BankBranch}
@@ -428,7 +563,7 @@ export default function AddOrganizationPage() {
                         />
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="bankIFSC">Bank IFSC</Label>
+                        <Label htmlFor="bankIFSC">IFSC Code</Label>
                         <Input
                           id="bankIFSC"
                           value={formData.BankIFSC}
@@ -494,54 +629,58 @@ export default function AddOrganizationPage() {
                     <CardTitle>Additional Settings</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="subsType">Subscription Type</Label>
-                        <Select
-                          value={formData.SubsType}
-                          onValueChange={(value) => handleInputChange("SubsType", value)}
-                        >
-                          <SelectTrigger>
-                            <SelectValue placeholder="Select subscription" />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Basic">Basic</SelectItem>
-                            <SelectItem value="Premium">Premium</SelectItem>
-                            <SelectItem value="Enterprise">Enterprise</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="status">Status</Label>
-                        <Select value={formData.Status} onValueChange={(value) => handleInputChange("Status", value)}>
-                          <SelectTrigger>
-                            <SelectValue />
-                          </SelectTrigger>
-                          <SelectContent>
-                            <SelectItem value="Active">Active</SelectItem>
-                            <SelectItem value="Inactive">Inactive</SelectItem>
-                          </SelectContent>
-                        </Select>
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="subsFrom">Subscription From</Label>
-                        <Input
-                          id="subsFrom"
-                          type="date"
-                          value={formData.SubsFrom}
-                          onChange={(e) => handleInputChange("SubsFrom", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="subsTo">Subscription To</Label>
-                        <Input
-                          id="subsTo"
-                          type="date"
-                          value={formData.SubsTo}
-                          onChange={(e) => handleInputChange("SubsTo", e.target.value)}
-                        />
-                      </div>
-                    </div>
+{/* Subscription & Status Row */}
+<div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+  <div className="space-y-2">
+    <Label htmlFor="subsType">Subscription Type</Label>
+    <Select
+      value={formData.SubsType}
+      onValueChange={(value) => handleInputChange("SubsType", value)}
+    >
+      <SelectTrigger>
+        <SelectValue placeholder="Select subscription" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Basic">Basic</SelectItem>
+        <SelectItem value="Premium">Premium</SelectItem>
+        <SelectItem value="Enterprise">Enterprise</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="status">Status</Label>
+    <Select value={formData.Status} onValueChange={(value) => handleInputChange("Status", value)}>
+      <SelectTrigger>
+        <SelectValue />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="Active">Active</SelectItem>
+        <SelectItem value="Inactive">Inactive</SelectItem>
+      </SelectContent>
+    </Select>
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="subsFrom">Subscription From</Label>
+    <Input
+      id="subsFrom"
+      type="date"
+      value={formData.SubsFrom}
+      onChange={(e) => handleInputChange("SubsFrom", e.target.value)}
+    />
+  </div>
+
+  <div className="space-y-2">
+    <Label htmlFor="subsTo">Subscription To</Label>
+    <Input
+      id="subsTo"
+      type="date"
+      value={formData.SubsTo}
+      onChange={(e) => handleInputChange("SubsTo", e.target.value)}
+    />
+  </div>
+</div>
 
                     <div className="space-y-4">
                       <div className="space-y-2">
@@ -576,7 +715,7 @@ export default function AddOrganizationPage() {
                 </Button>
               </Link>
               <Button type="submit" disabled={loading}>
-                {loading ? "Creating..." : "Create Organization"}
+                {loading ? "Saving..." : "Save"}
               </Button>
             </div>
           </form>
