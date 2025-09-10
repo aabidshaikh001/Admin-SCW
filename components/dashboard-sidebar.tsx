@@ -24,7 +24,8 @@ import {
   BarChart4,
   ChevronDown,
   ChevronRight,
- FileQuestion
+ FileQuestion,
+ Mail
 } from "lucide-react"
 import { useAuth } from "@/contexts/auth-context"
 import { useState, useMemo } from "react"
@@ -101,7 +102,16 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         { icon: Bell, label: "Notifications", href: "/admin-notifications" },
        
            { icon: FileCog, label: "Enquiries", href: "/admin-cms/enquiries" },
-            { icon: FileCog, label: "Subscribers", href: "/admin-cms/subscribers" },
+          
+                {
+          icon: Mail,
+          label: "NewsLetters",
+          children: [
+        { icon: FileCog, label: "Subscribers", href: "/admin-nl/subscribers" },
+        { icon: Database, label: "Emailer", href: "/admin-nl/templates" },
+            { icon: Mail, label: "Mail Sent", href: "/admin-nl/email-sent" },
+          ]
+        },
               {
           icon: Database,
           label: "Careers",
@@ -110,6 +120,8 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
         { icon: Database, label: "Applications", href: "/admin-careers/applications" },
           ]
         },
+
+
 {
           icon: BarChart3,
           label: "Blogs",

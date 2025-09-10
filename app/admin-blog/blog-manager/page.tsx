@@ -13,6 +13,7 @@ import { Badge } from "@/components/ui/badge"
 import { Switch } from "@/components/ui/switch"
 import { Label } from "@/components/ui/label"
 import { useToast } from "@/hooks/use-toast"
+import { useAuth } from "@/contexts/auth-context"
 import { DashboardLayout } from "@/components/dashboard-layout"
 
 interface BlogPost {
@@ -38,7 +39,7 @@ interface BlogAuthor {
   Name: string
   Role?: string
   Bio?: string
-  Image?: string
+  Img?: string   // ✅ match backend
   OrgCode?: string
 }
 
@@ -46,11 +47,11 @@ interface BlogCategory {
   Id?: number
   CategoryName: string
   Description?: string
-  Image?: string
+  Img?: string   // ✅ match backend
   OrgCode?: string
 }
-
 export default function BlogsPage() {
+    const { user, isLoading } = useAuth()
   const [blogs, setBlogs] = useState<BlogPost[]>([])
   const [authors, setAuthors] = useState<BlogAuthor[]>([])
   const [categories, setCategories] = useState<BlogCategory[]>([])
@@ -76,9 +77,9 @@ export default function BlogsPage() {
       setLoading(true)
       // Replace with your API calls
       const [blogsResponse, authorsResponse, categoriesResponse] = await Promise.all([
-        fetch("http://localhost:5000/api/blogs"),
-        fetch("http://localhost:5000/api/authors"),
-        fetch("http://localhost:5000/api/categories"),
+        fetch(`http://localhost:5000/api/blog/org/${user?.OrgCode}`),
+        fetch(`http://localhost:5000/api/blog/authors/org/${user?.OrgCode}`),
+        fetch(`http://localhost:5000/api/blog/categories/org/${user?.OrgCode}`),
       ])
 
       const blogsData = await blogsResponse.json()
@@ -176,78 +177,82 @@ export default function BlogsPage() {
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
-        >
-          <div>
-            <h1 className="text-3xl font-bold text-foreground">Blog Management</h1>
-            <p className="text-muted-foreground">Manage your blog posts, authors, and categories</p>
-          </div>
-          <Button onClick={() => router.push("/blogs/create")} className="bg-primary hover:bg-primary/90">
-            <Plus className="w-4 h-4 mr-2" />
-            Create Blog Post
-          </Button>
-        </motion.div>
+       <motion.div
+  initial={{ opacity: 0, y: 20 }}
+  animate={{ opacity: 1, y: 0 }}
+  className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
+>
+  {/* Left: Title */}
+  <div className="flex-1">
+    <h1 className="text-3xl font-bold text-foreground">Blog</h1>
+  </div>
 
-        {/* Filters */}
-        <Card>
-          <CardContent className="p-4">
-            <div className="flex flex-wrap gap-4 items-center">
-              <div className="flex-1 min-w-[200px]">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                  <Input
-                    placeholder="Search blogs..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <Select value={filterCategory} onValueChange={setFilterCategory}>
-                <SelectTrigger className="w-[180px]">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by category" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Categories</SelectItem>
-                  {categories.map((category) => (
-                    <SelectItem key={category.Id} value={category.Id!.toString()}>
-                      {category.CategoryName}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={filterAuthor} onValueChange={setFilterAuthor}>
-                <SelectTrigger className="w-[180px]">
-                  <SelectValue placeholder="Filter by author" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Authors</SelectItem>
-                  {authors.map((author) => (
-                    <SelectItem key={author.Id} value={author.Id!.toString()}>
-                      {author.Name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <div className="flex items-center space-x-2">
-                <Switch id="featured-filter" checked={showFeaturedOnly} onCheckedChange={setShowFeaturedOnly} />
-                <Label htmlFor="featured-filter">Featured Only</Label>
-              </div>
-            </div>
-          </CardContent>
-        </Card>
+  {/* Right: Search + Filters + New Button */}
+  <div className="flex flex-wrap sm:flex-row gap-2 items-center">
+    {/* Search */}
+    <div className="relative w-full sm:w-64">
+      <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+      <Input
+        placeholder="Search blogs..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="pl-10"
+      />
+    </div>
+
+    {/* Category Filter */}
+    <Select value={filterCategory} onValueChange={setFilterCategory}>
+      <SelectTrigger className="w-[150px]">
+        <Filter className="w-4 h-4 mr-2" />
+        <SelectValue placeholder="Category" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Categories</SelectItem>
+        {categories.map((category) => (
+          <SelectItem key={category.Id} value={category.Id!.toString()}>
+            {category.CategoryName}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+
+    {/* Author Filter */}
+    <Select value={filterAuthor} onValueChange={setFilterAuthor}>
+      <SelectTrigger className="w-[150px]">
+        <SelectValue placeholder="Author" />
+      </SelectTrigger>
+      <SelectContent>
+        <SelectItem value="all">All Authors</SelectItem>
+        {authors.map((author) => (
+          <SelectItem key={author.Id} value={author.Id!.toString()}>
+            {author.Name}
+          </SelectItem>
+        ))}
+      </SelectContent>
+    </Select>
+
+    {/* Featured Switch */}
+    <div className="flex items-center space-x-1">
+      <Switch id="featured-filter" checked={showFeaturedOnly} onCheckedChange={setShowFeaturedOnly} />
+      <Label htmlFor="featured-filter">Featured</Label>
+    </div>
+
+    {/* New Blog Button */}
+    <Button
+      onClick={() => router.push("/admin-blog/blog-manager/create")}
+      className="bg-primary hover:bg-primary/90"
+    >
+      <Plus className="w-4 h-4 mr-2" />
+      New
+    </Button>
+  </div>
+</motion.div>
+
 
         {/* Blog Posts Table */}
         <Card>
-          <CardHeader>
-            <CardTitle>Blog Posts ({filteredBlogs.length})</CardTitle>
-            <CardDescription>Manage and organize your blog content</CardDescription>
-          </CardHeader>
-          <CardContent>
+          
+        
             {loading ? (
               <div className="flex items-center justify-center h-64">
                 <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
@@ -272,7 +277,7 @@ export default function BlogsPage() {
                       <TableHead>Category</TableHead>
                       <TableHead>Status</TableHead>
                       <TableHead>Created</TableHead>
-                      <TableHead>Content Preview</TableHead>
+                    
                       <TableHead className="text-right">Actions</TableHead>
                     </TableRow>
                   </TableHeader>
@@ -308,12 +313,10 @@ export default function BlogsPage() {
                             </span>
                           </div>
                         </TableCell>
-                        <TableCell>
-                          <p className="text-sm text-muted-foreground line-clamp-2 max-w-xs">{blog.content}</p>
-                        </TableCell>
+                      
                         <TableCell className="text-right">
                           <div className="flex justify-end space-x-2">
-                            <Button variant="outline" size="sm" onClick={() => router.push(`/blogs/edit/${blog.id}`)}>
+                            <Button variant="outline" size="sm" onClick={() => router.push(`/admin-blog/blog-manager/edit/${blog.id}`)}>
                               <Edit className="w-4 h-4" />
                             </Button>
                             <Button
@@ -332,7 +335,7 @@ export default function BlogsPage() {
                 </Table>
               </div>
             )}
-          </CardContent>
+          
         </Card>
       </div>
     </DashboardLayout>
