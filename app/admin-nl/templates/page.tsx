@@ -50,7 +50,7 @@ export default function TemplatesPage() {
     try {
       setLoading(true)
      const orgCode = `${user?.OrgCode}` // Replace with actual org code from auth/context // Replace with actual org code from auth/context
-      const response = await fetch(`http://localhost:5000/api/newsletter/templates/${orgCode}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/templates/${orgCode}`)
       const data = await response.json()
       setTemplates(data)
     } catch (error) {
@@ -89,7 +89,7 @@ export default function TemplatesPage() {
     try {
       setDeleting(id)
       // Implement delete API call
-      const response = await fetch(`http://localhost:5000/api/newsletter/template/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/template/${id}`, {
         method: "DELETE",
       })
 
@@ -120,7 +120,7 @@ export default function TemplatesPage() {
       setSending(templateId)
      const orgCode = `${user?.OrgCode}` // Replace with actual org code from auth/context // Replace with actual org code from auth/context
 
-      const response = await fetch("http://localhost:5000/api/newsletter/send", {
+      const response = await fetch("https://api.smartcorpweb.com/api/newsletter/send", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

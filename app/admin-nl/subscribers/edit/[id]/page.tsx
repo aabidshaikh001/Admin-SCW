@@ -44,7 +44,7 @@ export default function EditSubscriberPage({ params }: { params: { id: string } 
     try {
       setLoading(true)
       // Implement get single subscriber API call
-      const response = await fetch(`http://localhost:5000/api/newsletter/subscriber/${params.id}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/subscriber/${params.id}`)
       const data = await response.json()
 
       if (response.ok) {
@@ -83,7 +83,7 @@ export default function EditSubscriberPage({ params }: { params: { id: string } 
     try {
       setSaving(true)
 
-      const response = await fetch(`http://localhost:5000/api/newsletter/subscriber/${params.id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/subscriber/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",

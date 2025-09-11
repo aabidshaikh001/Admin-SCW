@@ -1,13 +1,13 @@
-const API_BASE_URL = "http://localhost:5000/api/users"
-const HOME_API_BASE_URL = "http://localhost:5000/api/home"
-const ABOUT_API_BASE_URL = "http://localhost:5000/api/about"
-const CAREERS_API_BASE_URL = "http://localhost:5000/api/career"
-const BLOG_API_BASE_URL = "http://localhost:5000/api/blog"
-const TEAM_API_BASE_URL = "http://localhost:5000/api/pageTeam"
-const TEAM_MEMBER_API_BASE_URL = "http://localhost:5000/api/teammembers"
-const NOTIFICATION_API_BASE_URL = "http://localhost:5000/api/notifications"
-const ORG_API_BASE_URL = "http://localhost:5000/api/orgs"
-const ORG_LICENSE_API_BASE_URL = "http://localhost:5000/api/licenses"
+const API_BASE_URL = "https://api.smartcorpweb.com/api/users"
+const HOME_API_BASE_URL = "https://api.smartcorpweb.com/api/home"
+const ABOUT_API_BASE_URL = "https://api.smartcorpweb.com/api/about"
+const CAREERS_API_BASE_URL = "https://api.smartcorpweb.com/api/career"
+const BLOG_API_BASE_URL = "https://api.smartcorpweb.com/api/blog"
+const TEAM_API_BASE_URL = "https://api.smartcorpweb.com/api/pageTeam"
+const TEAM_MEMBER_API_BASE_URL = "https://api.smartcorpweb.com/api/teammembers"
+const NOTIFICATION_API_BASE_URL = "https://api.smartcorpweb.com/api/notifications"
+const ORG_API_BASE_URL = "https://api.smartcorpweb.com/api/orgs"
+const ORG_LICENSE_API_BASE_URL = "https://api.smartcorpweb.com/api/licenses"
 
 interface LoginRequest {
   LoginId: string
@@ -241,7 +241,7 @@ class ApiService {
     return response.json()
   }
 async getOrgProfile(orgCode: number): Promise<any> {
-  const res = await fetch(`http://localhost:5000/api/orgs/profile/${orgCode}`)
+  const res = await fetch(`https://api.smartcorpweb.com/api/orgs/profile/${orgCode}`)
   return res.json()
 }
 

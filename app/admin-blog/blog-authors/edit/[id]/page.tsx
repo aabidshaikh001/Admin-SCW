@@ -57,7 +57,7 @@ export default function EditAuthorPage() {
   const fetchMember = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:5000/api/blog/authors/${id}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/authors/${id}`)
       const result = await response.json()
 
       if (result.success && result.data) {
@@ -96,7 +96,7 @@ export default function EditAuthorPage() {
         IsDeleted: false,
       }
 
-      const url = isNew ? "http://localhost:5000/api/blog/authors" : `http://localhost:5000/api/blog/authors/${id}`
+      const url = isNew ? "https://api.smartcorpweb.com/api/blog/authors" : `https://api.smartcorpweb.com/api/blog/authors/${id}`
 
       const method = isNew ? "POST" : "PUT"
 
@@ -136,7 +136,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   uploadData.append("image", file);
 
   try {
-    const response = await fetch("http://localhost:5000/api/blog/authors/upload", {
+    const response = await fetch("https://api.smartcorpweb.com/api/blog/authors/upload", {
       method: "POST",
       body: uploadData,   // ✅ use renamed
     });
@@ -248,7 +248,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   {/* ✅ Preview */}
   {formData.Img && (
     <img
-      src={`http://localhost:5000${formData.Img}`}
+      src={`https://api.smartcorpweb.com${formData.Img}`}
       alt="Preview"
       className="mt-2 w-24 h-24 rounded object-cover border"
     />

@@ -1,8 +1,6 @@
 "use client"
 
-import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
 import { ArrowLeft, Save, FileText } from "lucide-react"
@@ -16,11 +14,39 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
-
 import { useAuth } from "@/contexts/auth-context"
 import dynamic from "next/dynamic"
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 import "react-quill/dist/quill.snow.css"
+interface OrgData {
+  OrgID: number
+  OrgCode: number
+  OrgName: string
+  Web?: string
+  Logo?: string
+  Favicon?: string
+  Address1: string
+  Address2?: string | null
+  City: string
+  State: string
+  PinNo: number
+  Email: string
+  Phone?: string
+  Mobile?: string
+  SocialFB?: string
+  SocialInsta?: string
+  SocialTwitter?: string
+  SocialLinkedIn?: string
+  SocialYoutube?: string
+}
+const socialIcons: Record<string, string> = {
+  fb: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/facebook.svg",
+  insta: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/instagram.svg",
+  twitter: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/twitter.svg",
+  linkedin: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/linkedin.svg",
+  youtube: "https://cdn.jsdelivr.net/gh/simple-icons/simple-icons/icons/youtube.svg",
+}
+
 
 export default function CreateTemplatePage() {
   const { user } = useAuth()
@@ -30,9 +56,33 @@ export default function CreateTemplatePage() {
     Body: "",
     IsActive: true,
   })
+const [orgData, setOrgData] = useState<OrgData | null>(null)
+
   const [saving, setSaving] = useState(false)
   const { toast } = useToast()
   const router = useRouter()
+
+  // Fetch organization data
+  useEffect(() => {
+    const fetchOrgData = async () => {
+      try {
+        const orgCode = `${user?.OrgCode}`
+        const response = await fetch(`https://api.smartcorpweb.com/api/orgs/profile/${orgCode}`)
+        const data = await response.json()
+        if (response.ok) {
+          setOrgData(data)
+        } else {
+          console.error("Failed to fetch organization data")
+        }
+      } catch (error) {
+        console.error("Error fetching organization data:", error)
+      }
+    }
+
+    if (user?.OrgCode) {
+      fetchOrgData()
+    }
+  }, [user])
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
@@ -48,9 +98,9 @@ export default function CreateTemplatePage() {
 
     try {
       setSaving(true)
-    const orgCode = `${user?.OrgCode}` // Replace with actual org code from auth/context
+      const orgCode = `${user?.OrgCode}`
 
-      const response = await fetch("http://localhost:5000/api/newsletter/template", {
+      const response = await fetch("https://api.smartcorpweb.com/api/newsletter/template", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
@@ -83,22 +133,170 @@ export default function CreateTemplatePage() {
     }
   }
 
+  // Function to generate the complete email HTML with header and footer
+  const generateCompleteEmail = () => {
+    if (!orgData) return formData.Body
+    
+    const currentDate = new Date().toLocaleDateString('en-US', { 
+      year: 'numeric', 
+      month: 'short', 
+      day: 'numeric' 
+    })
+    
+    const logoUrl = orgData.Logo 
+      ? `https://api.smartcorpweb.com${orgData.Logo}` 
+      : "https://kmaassociates.in/images/logo.png"
+    
+    return `
+      <!doctype html>
+      <html>
+        <body style="Margin:0;padding:0;background-color:#f4f4f4;font-family:Arial, sans-serif;color:#333333;">
+          <!-- Outer wrapper -->
+          <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f4f4f4;padding:20px 0;">
+            <tr>
+              <td align="center">
+                <!-- Main container -->
+                <table role="presentation" class="container" cellspacing="0" cellpadding="0" border="0" width="600" style="width:600px;max-width:600px;background-color:#ffffff;border-radius:8px;overflow:hidden;">
+                  <!-- Preheader -->
+                  <tr>
+                    <td style="display:none!important;visibility:hidden;mso-hide:all;font-size:1px;color:#ffffff;line-height:1px;max-height:0;max-width:0;opacity:0;overflow:hidden;">
+                      ${formData.Subject}
+                    </td>
+                  </tr>
+
+                  <!-- Header row -->
+                  <tr>
+                    <td style="padding:18px 20px;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <!-- Left: Logo -->
+                          <td class="logo" valign="middle" style="width:160px;">
+                            <a href="${orgData.Web || '#'}" style="text-decoration:none;display:inline-block;">
+                              <img src="${logoUrl}" alt="${orgData.OrgName} Logo"  style="display:block;border:0;outline:none;text-decoration:none;height:50px;">
+                            </a>
+                          </td>
+
+                          <!-- Center: Title + Tagline -->
+                          <td class="title-block" valign="middle" align="right" style="padding:4px 16px;">
+                            <div style="font-size:22px;font-weight:700;line-height:1.1;color:#111111;" class="title">
+                              Newsletter
+                            </div>
+                            <div style="font-size:13px;color:#666666;margin-top:6px;" class="tagline">
+                              ${currentDate}
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+               
+                  
+                  <!-- Email Content -->
+                  <tr>
+                    
+                    <td style="padding:20px;">
+                       <hr style="border:none;border-top:1px solid #eeeeee;margin:0 0 20px 0;"> </br>
+                      ${formData.Body}
+                    </td>
+                  </tr>
+                </table>
+                
+                <!-- Footer -->
+                <table role="presentation" cellspacing="0" cellpadding="0" border="0" width="100%" style="background-color:#f4f4f4;padding:20px 0;">
+                  <tr>
+                    <td style="padding:0 20px 20px;">
+                      <hr style="border:none;border-top:1px solid #eeeeee;margin:0 0 20px 0;">
+                      <table role="presentation" width="100%" cellspacing="0" cellpadding="0" border="0">
+                        <tr>
+                          <td align="center" style="font-size:12px;line-height:18px;color:#888888;">
+                            
+                            <!-- Social icons -->
+                            <table role="presentation" cellspacing="0" cellpadding="0" border="0" style="margin-bottom:12px;">
+                              <tr>
+                          ${orgData.SocialFB ? `
+  <td style="padding:0 6px;">
+    <a href="${orgData.SocialFB}" style="display:inline-block;" target="_blank">
+      <img src="${socialIcons.fb}" alt="Facebook" width="24" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+    </a>
+  </td>
+` : ''}
+${orgData.SocialInsta ? `
+  <td style="padding:0 6px;">
+    <a href="${orgData.SocialInsta}" style="display:inline-block;" target="_blank">
+      <img src="${socialIcons.insta}" alt="Instagram" width="24" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+    </a>
+  </td>
+` : ''}
+${orgData.SocialTwitter ? `
+  <td style="padding:0 6px;">
+    <a href="${orgData.SocialTwitter}" style="display:inline-block;" target="_blank">
+      <img src="${socialIcons.twitter}" alt="Twitter" width="24" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+    </a>
+  </td>
+` : ''}
+${orgData.SocialLinkedIn ? `
+  <td style="padding:0 6px;">
+    <a href="${orgData.SocialLinkedIn}" style="display:inline-block;" target="_blank">
+      <img src="${socialIcons.linkedin}" alt="LinkedIn" width="24" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+    </a>
+  </td>
+` : ''}
+${orgData.SocialYoutube ? `
+  <td style="padding:0 6px;">
+    <a href="${orgData.SocialYoutube}" style="display:inline-block;" target="_blank">
+      <img src="${socialIcons.youtube}" alt="YouTube" width="24" style="display:block;border:0;outline:none;text-decoration:none;height:auto;">
+    </a>
+  </td>
+` : ''}
+     </tr>
+                            </table>
+
+                            <!-- Company Info -->
+                            <div style="margin-bottom:10px;">
+                              <strong>${orgData?.OrgName}</strong><br>
+                              ${orgData?.Address1}${orgData?.Address2 ? `, ${orgData?.Address2}` : ''}<br>
+                              ${orgData?.City}, ${orgData?.State} ${orgData?.PinNo}<br>
+                              <a href="mailto:${orgData?.Email}" style="color:#888888;text-decoration:none;">${orgData?.Email}</a> | 
+                              <a href="tel:${orgData?.Mobile || orgData?.Phone}" style="color:#888888;text-decoration:none;">${orgData?.Mobile || orgData?.Phone}</a>
+                            </div>
+
+                            <!-- Unsubscribe -->
+                            <div style="margin-top:10px;font-size:11px;color:#aaaaaa;">
+                              You are receiving this email because you subscribed to our newsletter.<br>
+                              <a href="{{UNSUBSCRIBE_LINK}}" style="color:#aaaaaa;text-decoration:underline;">Unsubscribe</a> | 
+                          
+                            </div>
+
+                            <!-- Copyright -->
+                            <div style="margin-top:12px;font-size:11px;color:#aaaaaa;">
+                              &copy; ${new Date().getFullYear()} ${orgData.OrgName}. All rights reserved.
+                            </div>
+                          </td>
+                        </tr>
+                      </table>
+                    </td>
+                  </tr>
+                </table>
+              </td>
+            </tr>
+          </table>
+        </body>
+      </html>
+    `
+  }
+
   return (
     <DashboardLayout>
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-       
           <div>
             <h1 className="text-3xl font-bold text-foreground">Emailer (Add)</h1>
-            {/* <p className="text-muted-foreground">Design a new newsletter template</p> */}
           </div>
         </motion.div>
 
         {/* Form */}
         <Card>
-         
-            
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -125,36 +323,55 @@ export default function CreateTemplatePage() {
                 </div>
               </div>
 
-           <div className="space-y-2">
-  <Label htmlFor="body">Email Body *</Label>
-  <Tabs defaultValue="edit" className="w-full">
-    <TabsList>
-      <TabsTrigger value="edit">Edit</TabsTrigger>
-      <TabsTrigger value="preview">Preview</TabsTrigger>
-    </TabsList>
+              <div className="space-y-2">
+                <Label htmlFor="body">Email Body *</Label>
+                <Tabs defaultValue="edit" className="w-full">
+                  <TabsList>
+                    <TabsTrigger value="edit">Edit</TabsTrigger>
+                    <TabsTrigger value="full-preview">Preview</TabsTrigger>
+                    {/* <TabsTrigger value="full-preview">Full Email Preview</TabsTrigger> */}
+                  </TabsList>
 
-    {/* HTML Editor */}
-    <TabsContent value="edit">
-   <ReactQuill
-  theme="snow"
-  value={formData.Body}
-  onChange={(value) => setFormData({ ...formData, Body: value })}
-  className="bg-white rounded-md"
-  style={{ minHeight: "300px" }} // container min height
-/>
+                  {/* HTML Editor */}
+                  <TabsContent value="edit">
+                    <ReactQuill
+                      theme="snow"
+                      value={formData.Body}
+                      onChange={(value) => setFormData({ ...formData, Body: value })}
+                      className="bg-white rounded-md"
+                      style={{ minHeight: "300px" }}
+                    />
+                  </TabsContent>
 
+                  {/* Content Preview */}
+                  <TabsContent value="preview">
+                    <div
+                      className="border rounded-md p-4 min-h-[300px] bg-white"
+                      dangerouslySetInnerHTML={{ __html: formData.Body || "<p>No content to preview</p>" }}
+                    />
+                  </TabsContent>
 
-    </TabsContent>
-
-    {/* Preview */}
-    <TabsContent value="preview">
-      <div
-        className="border rounded-md p-4 min-h-[300px] bg-white"
-        dangerouslySetInnerHTML={{ __html: formData.Body || "<p>No content to preview</p>" }}
-      />
-    </TabsContent>
-  </Tabs>
-</div>
+                  {/* Full Email Preview */}
+                  <TabsContent value="full-preview">
+                    <div className="border rounded-md p-4 min-h-[300px] bg-white">
+                      {orgData ? (
+                        <iframe
+                          srcDoc={generateCompleteEmail()}
+                          style={{ 
+                            width: '100%', 
+                            height: '600px', 
+                            border: 'none',
+                            backgroundColor: '#f4f4f4'
+                          }}
+                          title="Email Preview"
+                        />
+                      ) : (
+                        <p>Loading organization data for preview...</p>
+                      )}
+                    </div>
+                  </TabsContent>
+                </Tabs>
+              </div>
 
               <div className="flex items-center space-x-2">
                 <Switch

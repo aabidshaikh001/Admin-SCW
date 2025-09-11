@@ -73,7 +73,7 @@ export default function EmailSentPage() {
     try {
       setLoading(true)
       const orgCode = `${user?.OrgCode}` 
-      const response = await fetch(`http://localhost:5000/api/newsletter/sent/${orgCode}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/sent/${orgCode}`)
       const data = await response.json()
       setEmailsSent(data)
     } catch (error) {

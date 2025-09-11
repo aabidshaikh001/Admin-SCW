@@ -58,7 +58,7 @@ export function AuthorManager() {
       setLoading(true)
       if (user?.OrgCode) {
         // Use the correct API endpoint for team members
-        const response = await fetch(`http://localhost:5000/api/blog/authors/org/${user.OrgCode}`)
+        const response = await fetch(`https://api.smartcorpweb.com/api/blog/authors/org/${user.OrgCode}`)
         const result = await response.json()
         
         if (result.success && result.data) {
@@ -93,7 +93,7 @@ export function AuthorManager() {
 
       if (editingMember) {
         // Update existing member
-        const response = await fetch(`http://localhost:5000/api/blog/authors/${editingMember.Id}`, {
+        const response = await fetch(`https://api.smartcorpweb.com/api/blog/authors/${editingMember.Id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -109,7 +109,7 @@ export function AuthorManager() {
         })
       } else {
         // Create new member
-        const response = await fetch("http://localhost:5000/api/blog/authors", {
+        const response = await fetch("https://api.smartcorpweb.com/api/blog/authors", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -157,7 +157,7 @@ export function AuthorManager() {
     if (!confirm("Are you sure you want to delete this team member?")) return
 
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/authors/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/authors/${id}`, {
         method: "DELETE",
       })
 

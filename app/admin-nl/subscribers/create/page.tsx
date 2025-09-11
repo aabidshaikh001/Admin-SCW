@@ -43,7 +43,7 @@ export default function CreateSubscriberPage() {
       setSaving(true)
     const orgCode = `${user?.OrgCode}` // Replace with actual org code from auth/context
 
-      const response = await fetch("http://localhost:5000/api/newsletter/subscriber", {
+      const response = await fetch("https://api.smartcorpweb.com/api/newsletter/subscriber", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",

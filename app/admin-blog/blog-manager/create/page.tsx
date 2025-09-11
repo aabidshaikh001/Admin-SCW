@@ -76,8 +76,8 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
     try {
       setLoading(true)
       const [authorsResponse, categoriesResponse] = await Promise.all([
-           fetch(`http://localhost:5000/api/blog/authors/org/${user?.OrgCode}`),
-        fetch(`http://localhost:5000/api/blog/categories/org/${user?.OrgCode}`),
+           fetch(`https://api.smartcorpweb.com/api/blog/authors/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/categories/org/${user?.OrgCode}`),
       ])
 
       const authorsData = await authorsResponse.json()
@@ -108,7 +108,7 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
 
   try {
     setSaving(true)
-    const response = await fetch("http://localhost:5000/api/blog", {
+    const response = await fetch("https://api.smartcorpweb.com/api/blog", {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
@@ -273,7 +273,7 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
           formData.append("image", file);
 
           try {
-            const res = await fetch("http://localhost:5000/api/blog/authors/upload", {
+            const res = await fetch("https://api.smartcorpweb.com/api/blog/authors/upload", {
               method: "POST",
               body: formData,
             });
@@ -294,7 +294,7 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
     {newBlog.thumbnail && (
       <div className="mt-2 flex items-center gap-2">
         <img
-          src={`http://localhost:5000${newBlog.thumbnail}`}
+          src={`https://api.smartcorpweb.com${newBlog.thumbnail}`}
           alt="Thumbnail Preview"
           className="w-32 h-32 rounded object-cover border"
         />
@@ -334,7 +334,7 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
           formData.append("image", file);
 
           try {
-            const res = await fetch("http://localhost:5000/api/blog/authors/upload", {
+            const res = await fetch("https://api.smartcorpweb.com/api/blog/authors/upload", {
               method: "POST",
               body: formData,
             });
@@ -355,7 +355,7 @@ const [newBlog, setNewBlog] = useState<BlogPost>({
     {newBlog.image && (
       <div className="mt-2 flex items-center gap-2">
         <img
-          src={`http://localhost:5000${newBlog.image}`}
+          src={`https://api.smartcorpweb.com${newBlog.image}`}
           alt="Featured Preview"
           className="w-32 h-32 rounded object-cover border"
         />

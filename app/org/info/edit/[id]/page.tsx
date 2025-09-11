@@ -1,7 +1,6 @@
 "use client"
 
 import type React from "react"
-
 import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter, useParams } from "next/navigation"
@@ -15,8 +14,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { orgApi } from "@/lib/api"
-import {DashboardLayout} from "@/components/dashboard-layout"
+import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
+import { masterApi } from "@/lib/master-api" // Import the master API service
+
+// Define types for location data
+interface Country {
+  CountryCode: number
+  CountryName: string
+}
+
+interface State {
+  StateId?: number
+  StateCode: string
+  StateName: string
+}
+
+interface City {
+  CityId?: number
+  CityName: string
+}
 
 interface Organization {
   OrgID: number
@@ -57,6 +74,13 @@ interface Organization {
   WAMsgVisit: string
   WAMsgBusiness: string
   Status: string
+  SocialFB: string
+  SocialInsta: string
+  SocialTwitter: string
+  SocialLinkedIn: string
+  SocialYoutube: string
+  SocialPinterest: string
+  Favicon: string
 }
 
 export default function EditOrganizationPage() {
@@ -69,23 +93,15 @@ export default function EditOrganizationPage() {
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
   const [organization, setOrganization] = useState<Organization | null>(null)
   const [faviconFile, setFaviconFile] = useState<File | null>(null)
-const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
-
-const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0]
-  if (file) {
-    setFaviconFile(file)
-    const reader = new FileReader()
-    reader.onload = () => setFaviconPreview(reader.result as string)
-    reader.readAsDataURL(file)
-  }
-}
-
-const removeFavicon = () => {
-  setFaviconFile(null)
-  setFaviconPreview(null)
-}
-
+  const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
+  
+  // State for location data
+  const [countries, setCountries] = useState<Country[]>([])
+  const [states, setStates] = useState<State[]>([])
+  const [cities, setCities] = useState<City[]>([])
+  const [loadingCountries, setLoadingCountries] = useState(true)
+  const [loadingStates, setLoadingStates] = useState(false)
+  const [loadingCities, setLoadingCities] = useState(false)
 
   const [formData, setFormData] = useState({
     OrgCode: "",
@@ -126,14 +142,99 @@ const removeFavicon = () => {
     WAMsgVisit: "",
     WAMsgBusiness: "",
     Status: "Active",
-     SocialFB: "",
-  SocialInsta: "",
-  SocialTwitter: "",
-  SocialLinkedIn: "",
-  SocialYoutube: "",
-  SocialPinterest: "",
-  Favicon: "", // new field
+    SocialFB: "",
+    SocialInsta: "",
+    SocialTwitter: "",
+    SocialLinkedIn: "",
+    SocialYoutube: "",
+    SocialPinterest: "",
+    Favicon: "",
   })
+
+  // Fetch countries on component mount
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setLoadingCountries(true)
+        const countriesData = await masterApi.getCountries()
+        setCountries(countriesData)
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load countries",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingCountries(false)
+      }
+    }
+    
+    fetchCountries()
+  }, [toast])
+
+  // Fetch states when country changes
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (!formData.Country) {
+        setStates([])
+        setCities([])
+        return
+      }
+      
+      try {
+        setLoadingStates(true)
+        const countryId = parseInt(formData.Country)
+        const statesData = await masterApi.getStatesByCountry(countryId)
+        setStates(statesData)
+        setCities([]) // Reset cities when country changes
+        // Don't reset state selection if it's already set from the organization data
+        if (!organization) {
+          setFormData(prev => ({ ...prev, State: "", City: "" }))
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load states",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingStates(false)
+      }
+    }
+    
+    fetchStates()
+  }, [formData.Country, toast, organization])
+
+  // Fetch cities when state changes
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!formData.State) {
+        setCities([])
+        return
+      }
+      
+      try {
+        setLoadingCities(true)
+        const stateId = parseInt(formData.State)
+        const citiesData = await masterApi.getCitiesByState(stateId)
+        setCities(citiesData)
+        // Don't reset city selection if it's already set from the organization data
+        if (!organization) {
+          setFormData(prev => ({ ...prev, City: "" }))
+        }
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load cities",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingCities(false)
+      }
+    }
+    
+    fetchCities()
+  }, [formData.State, toast, organization])
 
   useEffect(() => {
     if (params.id) {
@@ -188,24 +289,21 @@ const removeFavicon = () => {
         WAMsgBusiness: data.WAMsgBusiness || "",
         Status: data.Status || "Active",
         SocialFB: data.SocialFB || "",
-  SocialInsta: data.SocialInsta || "",
-  SocialTwitter: data.SocialTwitter || "",
-  SocialLinkedIn: data.SocialLinkedIn || "",
-  SocialYoutube: data.SocialYoutube || "",
-  SocialPinterest: data.SocialPinterest || "",
-  Favicon: data.Favicon || "",
-
+        SocialInsta: data.SocialInsta || "",
+        SocialTwitter: data.SocialTwitter || "",
+        SocialLinkedIn: data.SocialLinkedIn || "",
+        SocialYoutube: data.SocialYoutube || "",
+        SocialPinterest: data.SocialPinterest || "",
+        Favicon: data.Favicon || "",
       })
 
       // Set logo preview if exists
       if (data.Logo) {
-        setLogoPreview(`http://localhost:5000${data.Logo}`)
+        setLogoPreview(`https://api.smartcorpweb.com${data.Logo}`)
       }
       if (data.Favicon) {
-        setFaviconPreview(`http://localhost:5000${data.Favicon}`)
+        setFaviconPreview(`https://api.smartcorpweb.com${data.Favicon}`)
       }
-
-
 
     } catch (error) {
       toast({
@@ -220,6 +318,21 @@ const removeFavicon = () => {
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFaviconFile(file)
+      const reader = new FileReader()
+      reader.onload = () => setFaviconPreview(reader.result as string)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeFavicon = () => {
+    setFaviconFile(null)
+    setFaviconPreview(null)
   }
 
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -256,7 +369,7 @@ const removeFavicon = () => {
         submitData.append("Logo", logoFile)
       }
 
-      // Add favicon file if selected\
+      // Add favicon file if selected
       if (faviconFile) {
         submitData.append("Favicon", faviconFile)
       }
@@ -309,10 +422,8 @@ const removeFavicon = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center space-x-4"
         >
-         
           <div>
             <h1 className="text-2xl font-bold text-foreground">Organization (Update)</h1>
-            {/* <p className="text-muted-foreground">Update organization information</p> */}
           </div>
         </motion.div>
 
@@ -481,115 +592,144 @@ const removeFavicon = () => {
                 </Card>
               </TabsContent>
 
-              <TabsContent value="contact">
-                <Card>
-                  <CardHeader>
-                    <CardTitle>Contact Information</CardTitle>
-                  </CardHeader>
-                  <CardContent className="space-y-4">
-                   
-                    <div className="space-y-4">
-                      <div className="space-y-2">
-                        <Label htmlFor="address1">Address 1</Label>
-                        <Input
-                          id="address1"
-                          value={formData.Address1}
-                          onChange={(e) => handleInputChange("Address1", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="address2">Address 2</Label>
-                        <Input
-                          id="address2"
-                          value={formData.Address2}
-                          onChange={(e) => handleInputChange("Address2", e.target.value)}
-                        />
-                      </div>
-                      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
-                        <div className="space-y-2">
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            value={formData.City}
-                            onChange={(e) => handleInputChange("City", e.target.value)}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="state">State</Label>
-                          <Input
-                            id="state"
-                            value={formData.State}
-                            onChange={(e) => handleInputChange("State", e.target.value)}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="country">Country</Label>
-                          <Input
-                            id="country"
-                            value={formData.Country}
-                            onChange={(e) => handleInputChange("Country", e.target.value)}
-                          />
-                        </div>
-                        <div className="space-y-2">
-                          <Label htmlFor="pinNo">PIN Code</Label>
-                          <Input
-                            id="pinNo"
-                            value={formData.PinNo}
-                            onChange={(e) => handleInputChange("PinNo", e.target.value)}
-                          />
-                        </div>
-                        
-                      </div>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       <div className="space-y-2">
-                        <Label htmlFor="contactPerson">Contact Person</Label>
-                        <Input
-                          id="contactPerson"
-                          value={formData.ContactPerson}
-                          onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={formData.Phone}
-                          onChange={(e) => handleInputChange("Phone", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="mobile">Mobile</Label>
-                        <Input
-                          id="mobile"
-                          value={formData.Mobile}
-                          onChange={(e) => handleInputChange("Mobile", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.Email}
-                          onChange={(e) => handleInputChange("Email", e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
-                        <Label htmlFor="web">Website</Label>
-                        <Input
-                          id="web"
-                          type="url"
-                          value={formData.Web}
-                          onChange={(e) => handleInputChange("Web", e.target.value)}
-                        />
-                      </div>
-
-
-                    </div>
-                  </CardContent>
-                </Card>
-              </TabsContent>
+               <TabsContent value="contact">
+                              <Card>
+                                <CardHeader>
+                                  <CardTitle>Contact Information</CardTitle>
+                                </CardHeader>
+                                <CardContent className="space-y-4">
+                                  <div className="space-y-4">
+                                    <div className="space-y-2">
+                                      <Label htmlFor="address1">Address 1</Label>
+                                      <Input
+                                        id="address1"
+                                        value={formData.Address1}
+                                        onChange={(e) => handleInputChange("Address1", e.target.value)}
+                                      />
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="address2">Address 2</Label>
+                                      <Input
+                                        id="address2"
+                                        value={formData.Address2}
+                                        onChange={(e) => handleInputChange("Address2", e.target.value)}
+                                      />
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="country">Country</Label>
+                                        <Select 
+                                          value={formData.Country} 
+                                          onValueChange={(value) => handleInputChange("Country", value)}
+                                          disabled={loadingCountries}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder={loadingCountries ? "Loading..." : "Select country"} />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {countries.map((country) => (
+                                              <SelectItem key={country.CountryCode} value={country.CountryCode.toString()}>
+                                                {country.CountryName}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="state">State</Label>
+                                        <Select 
+                                          value={formData.State} 
+                                          onValueChange={(value) => handleInputChange("State", value)}
+                                          disabled={!formData.Country || loadingStates}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder={loadingStates ? "Loading..." : "Select state"} />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {states.map((state) => (
+                                              <SelectItem key={state.StateCode} value={state.StateCode}>
+                                                {state.StateName}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="city">City</Label>
+                                        <Select 
+                                          value={formData.City} 
+                                          onValueChange={(value) => handleInputChange("City", value)}
+                                          disabled={!formData.State || loadingCities}
+                                        >
+                                          <SelectTrigger>
+                                            <SelectValue placeholder={loadingCities ? "Loading..." : "Select city"} />
+                                          </SelectTrigger>
+                                          <SelectContent>
+                                            {cities.map((city) => (
+                                              <SelectItem key={city.CityId || city.CityName} value={city.CityId?.toString() || city.CityName}>
+                                                {city.CityName}
+                                              </SelectItem>
+                                            ))}
+                                          </SelectContent>
+                                        </Select>
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="pinNo">PIN Code</Label>
+                                        <Input
+                                          id="pinNo"
+                                          value={formData.PinNo}
+                                          onChange={(e) => handleInputChange("PinNo", e.target.value)}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                      <div className="space-y-2">
+                                        <Label htmlFor="contactPerson">Contact Person</Label>
+                                        <Input
+                                          id="contactPerson"
+                                          value={formData.ContactPerson}
+                                          onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="phone">Phone</Label>
+                                        <Input
+                                          id="phone"
+                                          value={formData.Phone}
+                                          onChange={(e) => handleInputChange("Phone", e.target.value)}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="mobile">Mobile</Label>
+                                        <Input
+                                          id="mobile"
+                                          value={formData.Mobile}
+                                          onChange={(e) => handleInputChange("Mobile", e.target.value)}
+                                        />
+                                      </div>
+                                      <div className="space-y-2">
+                                        <Label htmlFor="email">Email</Label>
+                                        <Input
+                                          id="email"
+                                          type="email"
+                                          value={formData.Email}
+                                          onChange={(e) => handleInputChange("Email", e.target.value)}
+                                        />
+                                      </div>
+                                    </div>
+                                    <div className="space-y-2">
+                                      <Label htmlFor="web">Website</Label>
+                                      <Input
+                                        id="web"
+                                        type="url"
+                                        value={formData.Web}
+                                        onChange={(e) => handleInputChange("Web", e.target.value)}
+                                      />
+                                    </div>
+                                  </div>
+                                </CardContent>
+                              </Card>
+                            </TabsContent>
               <TabsContent value="social">
   <Card>
     <CardHeader>

@@ -47,7 +47,7 @@ export default function SubscribersPage() {
     try {
       setLoading(true)
       const orgCode = `${user?.OrgCode}`
-      const response = await fetch(`http://localhost:5000/api/newsletter/subscribers/${orgCode}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/subscribers/${orgCode}`)
       const data = await response.json()
       setSubscribers(data)
     } catch (error) {
@@ -83,7 +83,7 @@ export default function SubscribersPage() {
 
     try {
       setDeleting(id)
-      const response = await fetch(`http://localhost:5000/api/newsletter/subscriber/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/newsletter/subscriber/${id}`, {
         method: "DELETE",
       })
 

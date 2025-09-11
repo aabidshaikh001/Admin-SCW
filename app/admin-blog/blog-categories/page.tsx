@@ -48,7 +48,7 @@ export default function CategoriesPage() {
     try {
       setLoading(true)
       // Replace with your actual API call
-      const response = await fetch(`http://localhost:5000/api/blog/categories/org/${user?.OrgCode}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/categories/org/${user?.OrgCode}`)
       const result = await response.json()
 
       if (result.success && result.data) {
@@ -91,7 +91,7 @@ export default function CategoriesPage() {
     if (!confirm("Are you sure you want to delete this category?")) return
 
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/category/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/category/${id}`, {
         method: "DELETE",
       })
 
@@ -202,7 +202,7 @@ export default function CategoriesPage() {
                           <div className="flex items-center gap-3">
                             {category.Img ? (
                             <img
-  src={`http://localhost:5000${category.Img}`}
+  src={`https://api.smartcorpweb.com${category.Img}`}
   alt={category.CategoryName}
   className="w-10 h-10 rounded-full object-cover"
 />

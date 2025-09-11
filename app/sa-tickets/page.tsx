@@ -67,7 +67,7 @@ export default function SATicketsPage() {
     try {
       setLoading(true)
       // Replace with your API call
-      const response = await fetch("http://localhost:5000/api/queries")
+      const response = await fetch("https://api.smartcorpweb.com/api/queries")
       const data = await response.json()
       if (data.success) {
         setQueries(data.data)
@@ -247,7 +247,7 @@ export default function SATicketsPage() {
                         <TableCell>
                           {query.QueryFile ? (
                             <a
-                              href={`http://localhost:5000${query.QueryFile}`}
+                              href={`https://api.smartcorpweb.com${query.QueryFile}`}
                               target="_blank"
                               rel="noopener noreferrer"
                               className="flex items-center text-primary hover:underline text-sm"

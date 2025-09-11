@@ -49,7 +49,7 @@ export function CategoryManager() {
     try {
       setLoading(true)
       if (user?.OrgCode) {
-        const response = await fetch(`http://localhost:5000/api/blog/categories/org/${user.OrgCode}`)
+        const response = await fetch(`https://api.smartcorpweb.com/api/blog/categories/org/${user.OrgCode}`)
         const result = await response.json()
         
         if (result.success && result.data) {
@@ -83,7 +83,7 @@ export function CategoryManager() {
 
       if (editingCategory) {
         // Update existing category
-        const response = await fetch(`http://localhost:5000/api/blog/category/${editingCategory.Id}`, {
+        const response = await fetch(`https://api.smartcorpweb.com/api/blog/category/${editingCategory.Id}`, {
           method: "PUT",
           headers: {
             "Content-Type": "application/json",
@@ -99,7 +99,7 @@ export function CategoryManager() {
         })
       } else {
         // Create new category
-        const response = await fetch("http://localhost:5000/api/blog/category", {
+        const response = await fetch("https://api.smartcorpweb.com/api/blog/category", {
           method: "POST",
           headers: {
             "Content-Type": "application/json",
@@ -143,7 +143,7 @@ export function CategoryManager() {
     if (!confirm("Are you sure you want to delete this category?")) return
 
     try {
-      const response = await fetch(`http://localhost:5000/api/blog/category/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/category/${id}`, {
         method: "DELETE",
       })
 

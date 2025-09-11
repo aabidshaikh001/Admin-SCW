@@ -1,11 +1,10 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
 import { useRouter } from "next/navigation"
-import { ArrowLeft, Building2, Upload, X } from "lucide-react"
+import { ArrowLeft, Building2, Upload, X, Plus } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
@@ -15,8 +14,26 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { useToast } from "@/hooks/use-toast"
 import { orgApi } from "@/lib/api"
-import {DashboardLayout} from "@/components/dashboard-layout"
+import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
+import { masterApi } from "@/lib/master-api" // Import the master API service
+
+// Define types for location data
+interface Country {
+  CountryCode: number
+  CountryName: string
+}
+
+interface State {
+  StateId?: number
+  StateCode: string
+  StateName: string
+}
+
+interface City {
+  CityId?: number
+  CityName: string
+}
 
 export default function AddOrganizationPage() {
   const router = useRouter()
@@ -24,8 +41,17 @@ export default function AddOrganizationPage() {
   const [loading, setLoading] = useState(false)
   const [logoFile, setLogoFile] = useState<File | null>(null)
   const [logoPreview, setLogoPreview] = useState<string | null>(null)
-const [faviconFile, setFaviconFile] = useState<File | null>(null)
-const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
+  const [faviconFile, setFaviconFile] = useState<File | null>(null)
+  const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
+  
+  // State for location data
+  const [countries, setCountries] = useState<Country[]>([])
+  const [states, setStates] = useState<State[]>([])
+  const [cities, setCities] = useState<City[]>([])
+  const [loadingCountries, setLoadingCountries] = useState(true)
+  const [loadingStates, setLoadingStates] = useState(false)
+  const [loadingCities, setLoadingCities] = useState(false)
+  
   const [formData, setFormData] = useState({
     OrgCode: "",
     OrgType: "",
@@ -65,32 +91,113 @@ const [faviconPreview, setFaviconPreview] = useState<string | null>(null)
     WAMsgVisit: "",
     WAMsgBusiness: "",
     Status: "Active",
-     SocialFB: "",
-  SocialInsta: "",
-  SocialTwitter: "",
-  SocialLinkedIn: "",
-  SocialYoutube: "",
-  SocialPinterest: "",
-  Favicon: "", // new field
+    SocialFB: "",
+    SocialInsta: "",
+    SocialTwitter: "",
+    SocialLinkedIn: "",
+    SocialYoutube: "",
+    SocialPinterest: "",
+    Favicon: "",
   })
+
+  // Fetch countries on component mount
+  useEffect(() => {
+    const fetchCountries = async () => {
+      try {
+        setLoadingCountries(true)
+        const countriesData = await masterApi.getCountries()
+        setCountries(countriesData)
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load countries",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingCountries(false)
+      }
+    }
+    
+    fetchCountries()
+  }, [toast])
+
+  // Fetch states when country changes
+  useEffect(() => {
+    const fetchStates = async () => {
+      if (!formData.Country) {
+        setStates([])
+        setCities([])
+        return
+      }
+      
+      try {
+        setLoadingStates(true)
+        const countryId = parseInt(formData.Country)
+        const statesData = await masterApi.getStatesByCountry(countryId)
+        setStates(statesData)
+        setCities([]) // Reset cities when country changes
+        setFormData(prev => ({ ...prev, State: "", City: "" })) // Reset state and city selection
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load states",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingStates(false)
+      }
+    }
+    
+    fetchStates()
+  }, [formData.Country, toast])
+
+  // Fetch cities when state changes
+  useEffect(() => {
+    const fetchCities = async () => {
+      if (!formData.State) {
+        setCities([])
+        return
+      }
+      
+      try {
+        setLoadingCities(true)
+        const stateId = parseInt(formData.State)
+        const citiesData = await masterApi.getCitiesByState(stateId)
+        setCities(citiesData)
+        setFormData(prev => ({ ...prev, City: "" })) // Reset city selection
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to load cities",
+          variant: "destructive",
+        })
+      } finally {
+        setLoadingCities(false)
+      }
+    }
+    
+    fetchCities()
+  }, [formData.State, toast])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }))
   }
-const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-  const file = e.target.files?.[0]
-  if (file) {
-    setFaviconFile(file)
-    const reader = new FileReader()
-    reader.onload = () => setFaviconPreview(reader.result as string)
-    reader.readAsDataURL(file)
-  }
-}
 
-const removeFavicon = () => {
-  setFaviconFile(null)
-  setFaviconPreview(null)
-}
+  const handleFaviconChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setFaviconFile(file)
+      const reader = new FileReader()
+      reader.onload = () => setFaviconPreview(reader.result as string)
+      reader.readAsDataURL(file)
+    }
+  }
+
+  const removeFavicon = () => {
+    setFaviconFile(null)
+    setFaviconPreview(null)
+  }
+
   const handleLogoChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
@@ -122,7 +229,7 @@ const removeFavicon = () => {
       if (logoFile) {
         submitData.append("Logo", logoFile)
       }
-  // Add favicon file if selected
+      // Add favicon file if selected
       if (faviconFile) {
         submitData.append("Favicon", faviconFile)
       }
@@ -155,15 +262,8 @@ const removeFavicon = () => {
           animate={{ opacity: 1, y: 0 }}
           className="flex items-center space-x-4"
         >
-          {/* <Link href="/org/info">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link> */}
           <div>
             <h1 className="text-2xl font-bold text-foreground">Organization (New)</h1>
-            {/* <p className="text-muted-foreground">Create a new organization in the system</p> */}
           </div>
         </motion.div>
 
@@ -175,7 +275,6 @@ const removeFavicon = () => {
                 <TabsTrigger value="basic">Basic Info</TabsTrigger>
                 <TabsTrigger value="contact">Contact</TabsTrigger>
                 <TabsTrigger value="social">Social</TabsTrigger>
-
                 <TabsTrigger value="financial">Financial</TabsTrigger>
                 <TabsTrigger value="admin">Admin</TabsTrigger>
                 <TabsTrigger value="settings">Settings</TabsTrigger>
@@ -190,9 +289,7 @@ const removeFavicon = () => {
                     </CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-
                     <div className="grid grid-cols-2 md:grid-cols-3 gap-3">
-                      
                       <div className="space-y-2">
                         <Label htmlFor="orgName">Organization Name *</Label>
                         <Input
@@ -217,7 +314,6 @@ const removeFavicon = () => {
                           </SelectContent>
                         </Select>
                       </div>
-                     
                       <div className="space-y-2">
                         <Label htmlFor="estYear">Establishment Year</Label>
                         <Input
@@ -227,7 +323,6 @@ const removeFavicon = () => {
                           onChange={(e) => handleInputChange("EstYear", e.target.value)}
                         />
                       </div>
-                      
                     </div>
 
                     <div className="space-y-2">
@@ -239,95 +334,92 @@ const removeFavicon = () => {
                         rows={3}
                       />
                     </div>
-                                        {/* Logo Upload */}
-                    {/* Logo & Favicon Upload in one line */}
-<div className="space-y-2">
-  <Label>Logo & Favicon</Label>
-  <div className="flex items-center space-x-6">
-    {/* Logo Upload */}
-    <div className="flex items-center space-x-2">
-      {logoPreview ? (
-        <div className="relative">
-          <img
-            src={logoPreview || "/placeholder.svg"}
-            alt="Logo preview"
-            className="w-20 h-20 object-cover rounded-lg border"
-          />
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            className="absolute -top-2 -right-2 w-6 h-6 p-0"
-            onClick={removeLogo}
-          >
-            <X className="w-3 h-3" />
-          </Button>
-        </div>
-      ) : (
-        <div className="w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
-          <Upload className="w-6 h-6 text-muted-foreground" />
-        </div>
-      )}
-      <div>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleLogoChange}
-          className="hidden"
-          id="logo-upload"
-        />
-        <Label htmlFor="logo-upload" className="cursor-pointer">
-          <Button type="button" variant="outline" asChild>
-            <span>Choose Logo</span>
-          </Button>
-        </Label>
-      </div>
-    </div>
+                    
+                    {/* Logo & Favicon Upload */}
+                    <div className="space-y-2">
+                      <Label>Logo & Favicon</Label>
+                      <div className="flex items-center space-x-6">
+                        {/* Logo Upload */}
+                        <div className="flex items-center space-x-2">
+                          {logoPreview ? (
+                            <div className="relative">
+                              <img
+                                src={logoPreview || "/placeholder.svg"}
+                                alt="Logo preview"
+                                className="w-20 h-20 object-cover rounded-lg border"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                className="absolute -top-2 -right-2 w-6 h-6 p-0"
+                                onClick={removeLogo}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="w-20 h-20 border-2 border-dashed border-muted-foreground/25 rounded-lg flex items-center justify-center">
+                              <Upload className="w-6 h-6 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleLogoChange}
+                              className="hidden"
+                              id="logo-upload"
+                            />
+                            <Label htmlFor="logo-upload" className="cursor-pointer">
+                              <Button type="button" variant="outline" asChild>
+                                <span>Choose Logo</span>
+                              </Button>
+                            </Label>
+                          </div>
+                        </div>
 
-    {/* Favicon Upload */}
-    <div className="flex items-center space-x-2">
-      {faviconPreview ? (
-        <div className="relative">
-          <img
-            src={faviconPreview || "/placeholder.svg"}
-            alt="Favicon preview"
-            className="w-10 h-10 object-cover rounded border"
-          />
-          <Button
-            type="button"
-            variant="destructive"
-            size="sm"
-            className="absolute -top-2 -right-2 w-6 h-6 p-0"
-            onClick={removeFavicon}
-          >
-            <X className="w-3 h-3" />
-          </Button>
-        </div>
-      ) : (
-        <div className="w-10 h-10 border-2 border-dashed border-muted-foreground/25 rounded flex items-center justify-center">
-          <Upload className="w-5 h-5 text-muted-foreground" />
-        </div>
-      )}
-      <div>
-        <Input
-          type="file"
-          accept="image/*"
-          onChange={handleFaviconChange}
-          className="hidden"
-          id="favicon-upload"
-        />
-        <Label htmlFor="favicon-upload" className="cursor-pointer">
-          <Button type="button" variant="outline" asChild>
-            <span>Choose Favicon</span>
-          </Button>
-        </Label>
-      </div>
-    </div>
-  </div>
-</div>
-
-
-
+                        {/* Favicon Upload */}
+                        <div className="flex items-center space-x-2">
+                          {faviconPreview ? (
+                            <div className="relative">
+                              <img
+                                src={faviconPreview || "/placeholder.svg"}
+                                alt="Favicon preview"
+                                className="w-10 h-10 object-cover rounded border"
+                              />
+                              <Button
+                                type="button"
+                                variant="destructive"
+                                size="sm"
+                                className="absolute -top-2 -right-2 w-6 h-6 p-0"
+                                onClick={removeFavicon}
+                              >
+                                <X className="w-3 h-3" />
+                              </Button>
+                            </div>
+                          ) : (
+                            <div className="w-10 h-10 border-2 border-dashed border-muted-foreground/25 rounded flex items-center justify-center">
+                              <Upload className="w-5 h-5 text-muted-foreground" />
+                            </div>
+                          )}
+                          <div>
+                            <Input
+                              type="file"
+                              accept="image/*"
+                              onChange={handleFaviconChange}
+                              className="hidden"
+                              id="favicon-upload"
+                            />
+                            <Label htmlFor="favicon-upload" className="cursor-pointer">
+                              <Button type="button" variant="outline" asChild>
+                                <span>Choose Favicon</span>
+                              </Button>
+                            </Label>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
                   </CardContent>
                 </Card>
               </TabsContent>
@@ -338,7 +430,6 @@ const removeFavicon = () => {
                     <CardTitle>Contact Information</CardTitle>
                   </CardHeader>
                   <CardContent className="space-y-4">
-                   
                     <div className="space-y-4">
                       <div className="space-y-2">
                         <Label htmlFor="address1">Address 1</Label>
@@ -358,28 +449,61 @@ const removeFavicon = () => {
                       </div>
                       <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
                         <div className="space-y-2">
-                          <Label htmlFor="city">City</Label>
-                          <Input
-                            id="city"
-                            value={formData.City}
-                            onChange={(e) => handleInputChange("City", e.target.value)}
-                          />
+                          <Label htmlFor="country">Country</Label>
+                          <Select 
+                            value={formData.Country} 
+                            onValueChange={(value) => handleInputChange("Country", value)}
+                            disabled={loadingCountries}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={loadingCountries ? "Loading..." : "Select country"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {countries.map((country) => (
+                                <SelectItem key={country.CountryCode} value={country.CountryCode.toString()}>
+                                  {country.CountryName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="state">State</Label>
-                          <Input
-                            id="state"
-                            value={formData.State}
-                            onChange={(e) => handleInputChange("State", e.target.value)}
-                          />
+                          <Select 
+                            value={formData.State} 
+                            onValueChange={(value) => handleInputChange("State", value)}
+                            disabled={!formData.Country || loadingStates}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={loadingStates ? "Loading..." : "Select state"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {states.map((state) => (
+                                <SelectItem key={state.StateCode} value={state.StateCode}>
+                                  {state.StateName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
-                          <Label htmlFor="country">Country</Label>
-                          <Input
-                            id="country"
-                            value={formData.Country}
-                            onChange={(e) => handleInputChange("Country", e.target.value)}
-                          />
+                          <Label htmlFor="city">City</Label>
+                          <Select 
+                            value={formData.City} 
+                            onValueChange={(value) => handleInputChange("City", value)}
+                            disabled={!formData.State || loadingCities}
+                          >
+                            <SelectTrigger>
+                              <SelectValue placeholder={loadingCities ? "Loading..." : "Select city"} />
+                            </SelectTrigger>
+                            <SelectContent>
+                              {cities.map((city) => (
+                                <SelectItem key={city.CityId || city.CityName} value={city.CityId?.toString() || city.CityName}>
+                                  {city.CityName}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
                         </div>
                         <div className="space-y-2">
                           <Label htmlFor="pinNo">PIN Code</Label>
@@ -389,44 +513,43 @@ const removeFavicon = () => {
                             onChange={(e) => handleInputChange("PinNo", e.target.value)}
                           />
                         </div>
-                        
                       </div>
- <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                       <div className="space-y-2">
-                        <Label htmlFor="contactPerson">Contact Person</Label>
-                        <Input
-                          id="contactPerson"
-                          value={formData.ContactPerson}
-                          onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
-                        />
+                      <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                        <div className="space-y-2">
+                          <Label htmlFor="contactPerson">Contact Person</Label>
+                          <Input
+                            id="contactPerson"
+                            value={formData.ContactPerson}
+                            onChange={(e) => handleInputChange("ContactPerson", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="phone">Phone</Label>
+                          <Input
+                            id="phone"
+                            value={formData.Phone}
+                            onChange={(e) => handleInputChange("Phone", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="mobile">Mobile</Label>
+                          <Input
+                            id="mobile"
+                            value={formData.Mobile}
+                            onChange={(e) => handleInputChange("Mobile", e.target.value)}
+                          />
+                        </div>
+                        <div className="space-y-2">
+                          <Label htmlFor="email">Email</Label>
+                          <Input
+                            id="email"
+                            type="email"
+                            value={formData.Email}
+                            onChange={(e) => handleInputChange("Email", e.target.value)}
+                          />
+                        </div>
                       </div>
                       <div className="space-y-2">
-                        <Label htmlFor="phone">Phone</Label>
-                        <Input
-                          id="phone"
-                          value={formData.Phone}
-                          onChange={(e) => handleInputChange("Phone", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="mobile">Mobile</Label>
-                        <Input
-                          id="mobile"
-                          value={formData.Mobile}
-                          onChange={(e) => handleInputChange("Mobile", e.target.value)}
-                        />
-                      </div>
-                      <div className="space-y-2">
-                        <Label htmlFor="email">Email</Label>
-                        <Input
-                          id="email"
-                          type="email"
-                          value={formData.Email}
-                          onChange={(e) => handleInputChange("Email", e.target.value)}
-                        />
-                      </div>
-                    </div>
-                    <div className="space-y-2">
                         <Label htmlFor="web">Website</Label>
                         <Input
                           id="web"
@@ -435,8 +558,6 @@ const removeFavicon = () => {
                           onChange={(e) => handleInputChange("Web", e.target.value)}
                         />
                       </div>
-
-
                     </div>
                   </CardContent>
                 </Card>

@@ -77,9 +77,9 @@ export default function BlogsPage() {
       setLoading(true)
       // Replace with your API calls
       const [blogsResponse, authorsResponse, categoriesResponse] = await Promise.all([
-        fetch(`http://localhost:5000/api/blog/org/${user?.OrgCode}`),
-        fetch(`http://localhost:5000/api/blog/authors/org/${user?.OrgCode}`),
-        fetch(`http://localhost:5000/api/blog/categories/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/authors/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/categories/org/${user?.OrgCode}`),
       ])
 
       const blogsData = await blogsResponse.json()
@@ -136,7 +136,7 @@ export default function BlogsPage() {
     if (!confirm("Are you sure you want to delete this blog post?")) return
 
     try {
-      const response = await fetch(`http://localhost:5000/api/blogs/${id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/blogs/${id}`, {
         method: "DELETE",
       })
 

@@ -49,7 +49,7 @@ export default function EditCategoryPage() {
   const fetchCategory = async () => {
     try {
       setLoading(true)
-      const response = await fetch(`http://localhost:5000/api/blog/category/${id}`)
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/category/${id}`)
       const result = await response.json()
 
       if (result.success && result.data) {
@@ -84,7 +84,7 @@ export default function EditCategoryPage() {
         IsDeleted: false,
       }
 
-      const url = isNew ? "http://localhost:5000/api/blog/category" : `http://localhost:5000/api/blog/category/${id}`
+      const url = isNew ? "https://api.smartcorpweb.com/api/blog/category" : `https://api.smartcorpweb.com/api/blog/category/${id}`
 
       const method = isNew ? "POST" : "PUT"
 
@@ -124,7 +124,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   uploadData.append("image", file);
 
   try {
-    const response = await fetch("http://localhost:5000/api/blog/categories/upload", {
+    const response = await fetch("https://api.smartcorpweb.com/api/blog/categories/upload", {
       method: "POST",
       body: uploadData,   // ✅ use renamed
     });
@@ -226,7 +226,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
   {formData.Img && (
     <div className="mt-2 flex items-center gap-2">
       <img
-        src={`http://localhost:5000${formData.Img}`}
+        src={`https://api.smartcorpweb.com${formData.Img}`}
         alt="Category Preview"
         className="w-24 h-24 rounded object-cover border"
       />

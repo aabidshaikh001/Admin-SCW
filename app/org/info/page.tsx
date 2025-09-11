@@ -183,7 +183,7 @@ export default function OrganizationInfoPage() {
                             <div className="flex items-center space-x-3">
                               <Avatar className="w-8 h-8">
                           <AvatarImage
-  src={org.Logo ? `http://localhost:5000${org.Logo}` : "/placeholder.svg"}
+  src={org.Logo ? `https://api.smartcorpweb.com${org.Logo}` : "/placeholder.svg"}
   alt={org.OrgName}
 />
 

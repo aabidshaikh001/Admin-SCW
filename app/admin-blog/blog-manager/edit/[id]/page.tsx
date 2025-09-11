@@ -67,9 +67,9 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
     try {
       setLoading(true)
       const [blogResponse, authorsResponse, categoriesResponse] = await Promise.all([
-        fetch(`http://localhost:5000/api/blog/${params.id}`),
-       fetch(`http://localhost:5000/api/blog/authors/org/${user?.OrgCode}`),
-        fetch(`http://localhost:5000/api/blog/categories/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/${params.id}`),
+       fetch(`https://api.smartcorpweb.com/api/blog/authors/org/${user?.OrgCode}`),
+        fetch(`https://api.smartcorpweb.com/api/blog/categories/org/${user?.OrgCode}`),
       ])
 
       const blogData = await blogResponse.json()
@@ -102,7 +102,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
 
     try {
       setSaving(true)
-      const response = await fetch(`http://localhost:5000/api/blog/${params.id}`, {
+      const response = await fetch(`https://api.smartcorpweb.com/api/blog/${params.id}`, {
         method: "PUT",
         headers: {
           "Content-Type": "application/json",
@@ -276,7 +276,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
           formData.append("image", file);
 
           try {
-            const res = await fetch("http://localhost:5000/api/blog/categories/upload", {
+            const res = await fetch("https://api.smartcorpweb.com/api/blog/categories/upload", {
               method: "POST",
               body: formData,
             });
@@ -297,7 +297,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
     {blog.thumbnail && (
       <div className="mt-2 flex items-center gap-2">
         <img
-          src={`http://localhost:5000${blog.thumbnail}`}
+          src={`https://api.smartcorpweb.com${blog.thumbnail}`}
           alt="Thumbnail Preview"
           className="w-32 h-32 rounded object-cover border"
         />
@@ -337,7 +337,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
           formData.append("image", file);
 
           try {
-            const res = await fetch("http://localhost:5000/api/blog/categories/upload", {
+            const res = await fetch("https://api.smartcorpweb.com/api/blog/categories/upload", {
               method: "POST",
               body: formData,
             });
@@ -358,7 +358,7 @@ export default function EditBlogPage({ params }: { params: { id: string } }) {
     {blog.image && (
       <div className="mt-2 flex items-center gap-2">
         <img
-          src={`http://localhost:5000${blog.image}`}
+          src={`https://api.smartcorpweb.com${blog.image}`}
           alt="Featured Preview"
           className="w-32 h-32 rounded object-cover border"
         />
