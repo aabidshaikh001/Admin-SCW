@@ -1,0 +1,236 @@
+"use client"
+
+import type React from "react"
+
+import { useState, useEffect } from "react"
+import { motion } from "framer-motion"
+import { useRouter } from "next/navigation"
+import { ArrowLeft, Save, Shield } from "lucide-react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Textarea } from "@/components/ui/textarea"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
+import { useToast } from "@/hooks/use-toast"
+import { DashboardLayout } from "@/components/dashboard-layout"
+import Link from "next/link"
+import { useAuth } from "@/contexts/auth-context"
+interface PrivacyPolicy {
+  id: number
+  OrgCode: number
+  question: string
+  answer: string
+  isActive: boolean
+  createdAt: string
+  updatedAt: string
+}
+
+export default function EditPrivacyPolicyPage({ params }: { params: { id: string } }) {
+     const { user } = useAuth()
+  const [formData, setFormData] = useState({
+    question: "",
+    answer: "",
+    isActive: true,
+  })
+  const [loading, setLoading] = useState(false)
+  const [fetchLoading, setFetchLoading] = useState(true)
+  const { toast } = useToast()
+  const router = useRouter()
+
+  useEffect(() => {
+    fetchPrivacyPolicy()
+  }, [params.id])
+
+  const fetchPrivacyPolicy = async () => {
+    try {
+      setFetchLoading(true)
+         const orgCode = user?.OrgCode || 1 // Replace with actual org code from auth
+
+      const response = await fetch(`https://api.smartcorpweb.com/api/privacy/${orgCode}/${params.id}`)
+
+      if (response.ok) {
+        const data: PrivacyPolicy = await response.json()
+        setFormData({
+          question: data.question,
+          answer: data.answer,
+          isActive: data.isActive,
+        })
+      } else {
+        throw new Error("Privacy policy item not found")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to fetch privacy policy item",
+        variant: "destructive",
+      })
+      router.push("/admin-terms/privacy-policy")
+    } finally {
+      setFetchLoading(false)
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+
+    if (!formData.question.trim() || !formData.answer.trim()) {
+      toast({
+        title: "Error",
+        description: "Please fill in all required fields",
+        variant: "destructive",
+      })
+      return
+    }
+
+    try {
+      setLoading(true)
+           const orgCode = user?.OrgCode || 1 // Replace with actual org code from auth
+
+      const response = await fetch(`https://api.smartcorpweb.com/api/privacy/${orgCode}/${params.id}`, {
+        method: "PUT",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(formData),
+      })
+
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Privacy policy item updated successfully",
+        })
+        router.push("/admin-terms/privacy-policy")
+      } else {
+        throw new Error("Failed to update privacy policy item")
+      }
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to update privacy policy item",
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  if (fetchLoading) {
+    return (
+      <DashboardLayout>
+        <div className="space-y-6">
+          <div className="flex items-center gap-4">
+            <div className="h-10 bg-muted rounded w-20 animate-pulse"></div>
+            <div className="space-y-2">
+              <div className="h-8 bg-muted rounded w-64 animate-pulse"></div>
+              <div className="h-4 bg-muted rounded w-48 animate-pulse"></div>
+            </div>
+          </div>
+          <Card>
+            <CardHeader>
+              <div className="h-6 bg-muted rounded w-48 animate-pulse"></div>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded w-32 animate-pulse"></div>
+                <div className="h-10 bg-muted rounded animate-pulse"></div>
+              </div>
+              <div className="space-y-2">
+                <div className="h-4 bg-muted rounded w-32 animate-pulse"></div>
+                <div className="h-32 bg-muted rounded animate-pulse"></div>
+              </div>
+            </CardContent>
+          </Card>
+        </div>
+      </DashboardLayout>
+    )
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        {/* Header */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
+          <Link href="/admin-terms/privacy-policy">
+            <Button variant="ghost" size="sm">
+              <ArrowLeft className="w-4 h-4 mr-2" />
+              Back
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+              <Shield className="w-8 h-8" />
+              Edit Privacy Policy Item
+            </h1>
+            <p className="text-muted-foreground">Update privacy policy section or question</p>
+          </div>
+        </motion.div>
+
+        {/* Form */}
+        <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Privacy Policy Details</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <form onSubmit={handleSubmit} className="space-y-6">
+                <div className="space-y-2">
+                  <Label htmlFor="question">Question/Section Title *</Label>
+                  <Input
+                    id="question"
+                    value={formData.question}
+                    onChange={(e) => setFormData({ ...formData, question: e.target.value })}
+                    placeholder="Enter the privacy policy section title or question"
+                    required
+                  />
+                </div>
+
+                <div className="space-y-2">
+                  <Label htmlFor="answer">Answer/Content *</Label>
+                  <Textarea
+                    id="answer"
+                    value={formData.answer}
+                    onChange={(e) => setFormData({ ...formData, answer: e.target.value })}
+                    placeholder="Enter the detailed privacy policy content or answer"
+                    rows={8}
+                    required
+                  />
+                </div>
+
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isActive"
+                    checked={formData.isActive}
+                    onCheckedChange={(checked) => setFormData({ ...formData, isActive: checked })}
+                  />
+                  <Label htmlFor="isActive">Active</Label>
+                </div>
+
+                <div className="flex justify-end space-x-2">
+                  <Link href="/admin-terms/privacy-policy">
+                    <Button variant="outline" type="button">
+                      Cancel
+                    </Button>
+                  </Link>
+                  <Button type="submit" disabled={loading}>
+                    {loading ? (
+                      <>
+                        <Save className="w-4 h-4 mr-2 animate-spin" />
+                        Updating...
+                      </>
+                    ) : (
+                      <>
+                        <Save className="w-4 h-4 mr-2" />
+                        Update Privacy Policy Item
+                      </>
+                    )}
+                  </Button>
+                </div>
+              </form>
+            </CardContent>
+          </Card>
+        </motion.div>
+      </div>
+    </DashboardLayout>
+  )
+}

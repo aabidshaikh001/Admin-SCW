@@ -32,6 +32,8 @@ interface Organization {
   Status: string
   EstYear: number
   AdminEmail: string
+  StateName: string
+  CityName: string
 }
 
 export default function OrganizationInfoPage() {
@@ -208,9 +210,9 @@ export default function OrganizationInfoPage() {
                           <TableCell>{org.Phone || org.Mobile}</TableCell>
                           <TableCell>
                             <div className="text-sm">
-                              <div>{org.City}</div>
+                              <div>{org.CityName}</div>
                               <div className="text-muted-foreground">
-                                {org.State}
+                                {org.StateName}
                                 
                               </div>
                             </div>

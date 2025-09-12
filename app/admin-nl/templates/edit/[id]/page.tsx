@@ -17,9 +17,31 @@ import { useToast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
 import dynamic from "next/dynamic"
+
+import { useAuth } from "@/contexts/auth-context"
+
 const ReactQuill = dynamic(() => import("react-quill"), { ssr: false })
 import "react-quill/dist/quill.snow.css"
-import { useAuth } from "@/contexts/auth-context"
+const modules = {
+  toolbar: [
+    [{ font: [] }, { size: [] }],
+    ["bold", "italic", "underline", "strike"],
+    [{ color: [] }, { background: [] }],
+    [{ script: "sub" }, { script: "super" }],
+    [{ header: [1, 2, 3, 4, 5, 6, false] }],
+    [{ align: [] }],
+    ["blockquote", "code-block"],
+    [{ list: "ordered" }, { list: "bullet" }, { indent: "-1" }, { indent: "+1" }],
+    ["link", "image", "video"],
+    ["formula"],
+    // ["table"],  <-- remove this line
+    ["clean"],
+  ],
+  clipboard: { matchVisual: false },
+  history: { delay: 2000, maxStack: 500, userOnly: true },
+};
+
+
 interface OrgData {
   OrgID: number
   OrgCode: number
@@ -406,12 +428,13 @@ ${orgData.SocialYoutube ? `
                   {/* HTML Editor */}
                   <TabsContent value="edit">
                     <ReactQuill
-                      theme="snow"
-                      value={formData.Body}
-                      onChange={(value) => setFormData({ ...formData, Body: value })}
-                      className="bg-white rounded-md"
-                      style={{ minHeight: "300px" }}
-                    />
+  theme="snow"
+  value={formData.Body}
+  onChange={(value) => setFormData({ ...formData, Body: value })}
+  className="bg-white rounded-md"
+  style={{ minHeight: "300px" }}
+  modules={modules}
+/>
                   </TabsContent>
 
                   {/* Content Preview */}

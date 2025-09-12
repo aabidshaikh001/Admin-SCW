@@ -116,8 +116,8 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           icon: Database,
           label: "Careers",
           children: [
-        { icon: Database, label: "Careers", href: "/admin-careers/job-description" },
-        { icon: Database, label: "Applications", href: "/admin-careers/applications" },
+        { icon: Database, label: "Jobs", href: "/admin-careers/jobs" },
+        { icon: Database, label: "Applications", href: "/admin-careers/job-applications" },
           ]
         },
 
@@ -168,7 +168,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
           children: [
          { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
             { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
-            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-and-conditions" },
+            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-of-service" },
             { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
             { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
             { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },

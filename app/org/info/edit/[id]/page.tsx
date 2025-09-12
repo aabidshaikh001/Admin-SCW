@@ -358,11 +358,15 @@ export default function EditOrganizationPage() {
       const submitData = new FormData()
 
       // Add all form fields (only non-empty values)
-      Object.entries(formData).forEach(([key, value]) => {
-        if (value && !(key === "AdminPwd" && !value) && !(key === "WebAdminPwd" && !value)) {
-          submitData.append(key, value)
-        }
-      })
+    Object.entries(formData).forEach(([key, value]) => {
+  // Skip passwords only if they are blank
+  if ((key === "AdminPwd" || key === "WebAdminPwd") && !value) {
+    return
+  }
+
+  // Always send other fields, even if empty string
+  submitData.append(key, value ?? "")
+})
 
       // Add logo file if selected
       if (logoFile) {

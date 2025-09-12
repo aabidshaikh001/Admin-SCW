@@ -13,9 +13,10 @@ import "./globals.css"
 import { ToastProvider, ToastViewport } from "@/components/ui/toast"
 
 export const metadata: Metadata = {
-  title: "Website Management System",
-  description: "Professional Website Management Dashboard with Authentication",
-  generator: "v0.app",
+  title: "SmartCorpWeb Admin",
+  description: "Admin Dashboard for SmartCorpWeb",
+  
+
 }
 
 export default function RootLayout({
