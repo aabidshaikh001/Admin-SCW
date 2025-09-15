@@ -1,0 +1,250 @@
+"use client"
+
+import type React from "react"
+import { useState } from "react"
+import { Button } from "@/components/ui/button"
+import { Input } from "@/components/ui/input"
+import { Label } from "@/components/ui/label"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Switch } from "@/components/ui/switch"
+import { ArrowLeft, Save } from "lucide-react"
+import { DashboardLayout } from "@/components/dashboard-layout"
+import Link from "next/link"
+import { useRouter } from "next/navigation"
+import { useAuth } from "@/contexts/auth-context"
+import { toast } from "@/hooks/use-toast"
+
+export default function CreateKeyPointerPage() {
+  const { user } = useAuth()
+  const router = useRouter()
+  const [loading, setLoading] = useState(false)
+  const [formData, setFormData] = useState({
+    Text: "",
+    TextColor: "#000000",
+    Counter: 0,
+    CounterColor: "#000000",
+    Image: "", // fallback URL
+    IsActive: true,
+  })
+  const [imageFile, setImageFile] = useState<File | null>(null)
+  const [previewUrl, setPreviewUrl] = useState<string>("")
+
+  const handleChange = (field: string, value: any) => {
+    setFormData((prev) => ({ ...prev, [field]: value }))
+  }
+
+  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    setImageFile(file)
+    if (file) {
+      setPreviewUrl(URL.createObjectURL(file)) // instant preview
+    } else {
+      setPreviewUrl("")
+    }
+  }
+
+  const handleSubmit = async (e: React.FormEvent) => {
+    e.preventDefault()
+    setLoading(true)
+
+    try {
+      const orgCode = user?.OrgCode
+      if (!orgCode) throw new Error("OrgCode not found")
+
+      const fd = new FormData()
+      fd.append("OrgCode", orgCode.toString())
+      fd.append("Text", formData.Text)
+      fd.append("TextColor", formData.TextColor)
+      fd.append("Counter", formData.Counter.toString())
+      fd.append("CounterColor", formData.CounterColor)
+      fd.append("IsActive", formData.IsActive.toString())
+      if (imageFile) fd.append("Img", imageFile)
+
+      const response = await fetch("https://api.smartcorpweb.com/api/keypointer", {
+        method: "POST",
+        body: fd,
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      })
+
+      if (response.ok) {
+        const data = await response.json()
+        toast({
+          title: "Success",
+          description: "Key pointer created successfully",
+        })
+        // preview image path from server
+        console.log("Image path:", data.Image ? `https://api.smartcorpweb.com${data.Image}` : "No image")
+        setFormData({ ...formData, Image: "" })
+        setImageFile(null)
+        setPreviewUrl("")
+        router.push("/admin-kra/keypointers")
+      } else {
+        const err = await response.json()
+        throw new Error(err.message || "Failed to create key pointer")
+      }
+    } catch (error) {
+      console.error("Error creating key pointer:", error)
+      toast({
+        title: "Error",
+        description: (error as Error).message,
+        variant: "destructive",
+      })
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  return (
+    <DashboardLayout>
+      <div className="space-y-6">
+        <div className="flex items-center gap-4">
+          <Link href="/admin-kra/keypointers">
+            <Button variant="outline" size="sm">
+              <ArrowLeft className="h-4 w-4 mr-2" />
+              Back
+            </Button>
+          </Link>
+          <div>
+            <h1 className="text-3xl font-bold">Create Key Pointer</h1>
+            <p className="text-muted-foreground">Add a new key result area pointer</p>
+          </div>
+        </div>
+
+        <form onSubmit={handleSubmit}>
+          <Card>
+            <CardHeader>
+              <CardTitle>Key Pointer Details</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-6">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                {/* Text */}
+                <div className="space-y-2">
+                  <Label htmlFor="text">Text *</Label>
+                  <Input
+                    id="text"
+                    value={formData.Text}
+                    onChange={(e) => handleChange("Text", e.target.value)}
+                    placeholder="Enter key pointer text"
+                    required
+                    maxLength={50}
+                  />
+                </div>
+
+                {/* Text Color */}
+                <div className="space-y-2">
+                  <Label htmlFor="textColor">Text Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="textColor"
+                      type="color"
+                      value={formData.TextColor}
+                      onChange={(e) => handleChange("TextColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.TextColor}
+                      onChange={(e) => handleChange("TextColor", e.target.value)}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                {/* Counter */}
+                <div className="space-y-2">
+                  <Label htmlFor="counter">Counter *</Label>
+                  <Input
+                    id="counter"
+                    type="number"
+                    value={formData.Counter}
+                    onChange={(e) => handleChange("Counter", Number(e.target.value) || 0)}
+                    placeholder="Enter counter value"
+                    required
+                    min="0"
+                  />
+                </div>
+
+                {/* Counter Color */}
+                <div className="space-y-2">
+                  <Label htmlFor="counterColor">Counter Color</Label>
+                  <div className="flex gap-2">
+                    <Input
+                      id="counterColor"
+                      type="color"
+                      value={formData.CounterColor}
+                      onChange={(e) => handleChange("CounterColor", e.target.value)}
+                      className="w-16 h-10 p-1"
+                    />
+                    <Input
+                      value={formData.CounterColor}
+                      onChange={(e) => handleChange("CounterColor", e.target.value)}
+                      placeholder="#000000"
+                      className="flex-1"
+                    />
+                  </div>
+                </div>
+
+                {/* Image Upload */}
+                <div className="space-y-2 md:col-span-2">
+                  <Label htmlFor="image">Upload Image</Label>
+                  <Input id="image" type="file" accept="image/*" onChange={handleFileChange} />
+                  {previewUrl && (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-16 h-16 rounded object-cover mt-2"
+                    />
+                  )}
+                </div>
+
+                {/* Active */}
+                <div className="flex items-center space-x-2">
+                  <Switch
+                    id="isActive"
+                    checked={formData.IsActive}
+                    onCheckedChange={(checked) => handleChange("IsActive", checked)}
+                  />
+                  <Label htmlFor="isActive">Active</Label>
+                </div>
+              </div>
+
+              {/* Preview */}
+              <div className="border rounded-lg p-4 bg-gray-50">
+                <Label className="text-sm font-medium mb-2 block">Preview</Label>
+                <div className="flex items-center gap-4">
+                  <div className="font-medium" style={{ color: formData.TextColor }}>
+                    {formData.Text || "Sample Text"}
+                  </div>
+                  <div className="font-bold text-2xl" style={{ color: formData.CounterColor }}>
+                    {formData.Counter}
+                  </div>
+                  {previewUrl && (
+                    <img
+                      src={previewUrl}
+                      alt="Preview"
+                      className="w-8 h-8 rounded object-cover"
+                    />
+                  )}
+                </div>
+              </div>
+
+              <div className="flex gap-4 pt-4">
+                <Button type="submit" disabled={loading}>
+                  <Save className="h-4 w-4 mr-2" />
+                  {loading ? "Creating..." : "Create Key Pointer"}
+                </Button>
+                <Link href="/admin-kra/keypointers">
+                  <Button type="button" variant="outline">
+                    Cancel
+                  </Button>
+                </Link>
+              </div>
+            </CardContent>
+          </Card>
+        </form>
+      </div>
+    </DashboardLayout>
+  )
+}

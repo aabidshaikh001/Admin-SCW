@@ -1,8 +1,7 @@
 "use client"
 
 import type React from "react"
-
-import { useState, useEffect } from "react"
+import { useState, useEffect, useRef } from "react"
 import { motion, AnimatePresence } from "framer-motion"
 import { Button } from "@/components/ui/button"
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
@@ -14,7 +13,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/auth-context"
 import { teamMemberApi, type TeamMember } from "@/lib/api"
-import { Plus, Edit, Trash2, User, Linkedin, Twitter, Facebook, Search } from "lucide-react"
+import { Plus, Edit, Trash2, User, Linkedin, Twitter, Facebook, Search, Upload, X } from "lucide-react"
 
 export function TeamMemberManager() {
   const [teamMembers, setTeamMembers] = useState<TeamMember[]>([])
@@ -22,6 +21,8 @@ export function TeamMemberManager() {
   const [searchTerm, setSearchTerm] = useState("")
   const [isCreateModalOpen, setIsCreateModalOpen] = useState(false)
   const [editingMember, setEditingMember] = useState<TeamMember | null>(null)
+  const [uploadingImage, setUploadingImage] = useState(false)
+  const fileInputRef = useRef<HTMLInputElement>(null)
   const { toast } = useToast()
   const { user } = useAuth()
 
@@ -58,48 +59,151 @@ export function TeamMemberManager() {
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
+const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const file = e.target.files?.[0]
+  if (!file) return
 
-    if (!formData.Name || !formData.Role) {
-      toast({
-        title: "Error",
-        description: "Name and Role are required",
-        variant: "destructive",
-      })
-      return
-    }
-
-    try {
-      const memberData = {
-        ...formData,
-        OrgCode: user?.OrgCode || 0,
-      }
-
-      if (editingMember) {
-        await teamMemberApi.update(editingMember.Id!.toString(), memberData)
-        toast({
-          title: "Success",
-          description: "Team member updated successfully",
-        })
-      } else {
-        await teamMemberApi.create(memberData as TeamMember)
-        toast({
-          title: "Success",
-          description: "Team member created successfully",
-        })
-      }
-
-      resetForm()
-      fetchTeamMembers()
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: `Failed to ${editingMember ? "update" : "create"} team member`,
-        variant: "destructive",
-      })
-    }
+  if (!file.type.startsWith("image/")) {
+    toast({
+      title: "Error",
+      description: "Please select an image file",
+      variant: "destructive",
+    })
+    return
   }
+
+  if (file.size > 5 * 1024 * 1024) {
+    toast({
+      title: "Error",
+      description: "Image size must be less than 5MB",
+      variant: "destructive",
+    })
+    return
+  }
+
+  try {
+    setUploadingImage(true)
+    const formData = new FormData()
+    formData.append("image", file)
+
+    const response = await fetch("https://api.smartcorpweb.com/api/teammembers/upload", {
+      method: "POST",
+      body: formData,
+    })
+
+    if (!response.ok) {
+      throw new Error("Failed to upload image")
+    }
+
+    const result: { imageUrl: string } = await response.json()
+
+    setFormData((prev) => ({ ...prev, Image: result.imageUrl }))
+
+    toast({
+      title: "Success",
+      description: "Image uploaded successfully",
+    })
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Failed to upload image",
+      variant: "destructive",
+    })
+  } finally {
+    setUploadingImage(false)
+  }
+}
+
+  const handleSubmit = async (e: React.FormEvent) => {
+  e.preventDefault();
+
+  if (!formData.Name || !formData.Role) {
+    toast({
+      title: "Error",
+      description: "Name and Role are required",
+      variant: "destructive",
+    });
+    return;
+  }
+
+  try {
+    const formDataToSend = new FormData();
+    
+    // Append all form data
+    Object.entries(formData).forEach(([key, value]) => {
+      if (value !== undefined && value !== null) {
+        formDataToSend.append(key, value.toString());
+      }
+    });
+    
+    // Append the image file if it exists
+    if (fileInputRef.current?.files?.[0]) {
+      formDataToSend.append('image', fileInputRef.current.files[0]);
+    }
+    
+    // Append existing image for updates
+    if (editingMember?.Image) {
+      formDataToSend.append('existingImage', editingMember.Image);
+    }
+
+    if (editingMember) {
+      await teamMemberApi.update(editingMember.Id!.toString(), formDataToSend);
+      toast({
+        title: "Success",
+        description: "Team member updated successfully",
+      });
+    } else {
+      await teamMemberApi.create(formDataToSend);
+      toast({
+        title: "Success",
+        description: "Team member created successfully",
+      });
+    }
+
+    resetForm();
+    fetchTeamMembers();
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: `Failed to ${editingMember ? "update" : "create"} team member`,
+      variant: "destructive",
+    });
+  }
+};
+  const handleToggleActive = async (member: TeamMember) => {
+  try {
+    const response = await fetch(
+      `https://api.smartcorpweb.com/api/teammembers/${member.Id}/toggle-active`,
+      {
+        method: "PATCH",
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    )
+
+    if (!response.ok) {
+      throw new Error("Failed to toggle active status")
+    }
+
+    const result: { isActive: boolean } = await response.json()
+
+    toast({
+      title: "Success",
+      description: `Team member ${
+        result.isActive ? "activated" : "deactivated"
+      } successfully`,
+    })
+
+    fetchTeamMembers()
+  } catch (error) {
+    toast({
+      title: "Error",
+      description: "Failed to update team member status",
+      variant: "destructive",
+    })
+  }
+}
 
   const handleEdit = (member: TeamMember) => {
     setEditingMember(member)
@@ -148,6 +252,10 @@ export function TeamMemberManager() {
     })
     setEditingMember(null)
     setIsCreateModalOpen(false)
+  }
+
+  const removeImage = () => {
+    setFormData(prev => ({ ...prev, Image: "" }))
   }
 
   const filteredMembers = teamMembers.filter(
@@ -218,13 +326,45 @@ export function TeamMemberManager() {
               </div>
 
               <div className="space-y-2">
-                <Label htmlFor="image">Image URL</Label>
-                <Input
-                  id="image"
-                  value={formData.Image}
-                  onChange={(e) => setFormData({ ...formData, Image: e.target.value })}
-                  placeholder="Enter image URL"
-                />
+                <Label>Team Photo</Label>
+                <div className="flex items-center gap-4">
+                 <input
+  type="file"
+  ref={fileInputRef}
+  accept="image/*"
+  className="hidden"
+  // Remove the onChange handler since we'll handle it during form submission
+/>
+                  <Button
+                    type="button"
+                    variant="outline"
+                    onClick={() => fileInputRef.current?.click()}
+                    disabled={uploadingImage}
+                  >
+                    <Upload className="h-4 w-4 mr-2" />
+                    {uploadingImage ? "Uploading..." : "Upload Image"}
+                  </Button>
+                  {formData.Image && (
+                    <div className="flex items-center gap-2">
+                      <img
+                        src={`https://api.smartcorpweb.com${formData.Image}`}
+                        alt="Preview"
+                        className="w-12 h-12 rounded object-cover"
+                      />
+                      <Button
+                        type="button"
+                        variant="ghost"
+                        size="sm"
+                        onClick={removeImage}
+                      >
+                        <X className="h-4 w-4" />
+                      </Button>
+                    </div>
+                  )}
+                </div>
+                <p className="text-sm text-muted-foreground">
+                  Upload a square image (max 5MB)
+                </p>
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
@@ -261,7 +401,9 @@ export function TeamMemberManager() {
                 <Button type="button" variant="outline" onClick={resetForm}>
                   Cancel
                 </Button>
-                <Button type="submit">{editingMember ? "Update" : "Create"} Team Member</Button>
+                <Button type="submit" disabled={uploadingImage}>
+                  {editingMember ? "Update" : "Create"} Team Member
+                </Button>
               </div>
             </form>
           </DialogContent>
@@ -293,11 +435,12 @@ export function TeamMemberManager() {
                   <div className="flex items-start justify-between">
                     <div className="flex items-center gap-3">
                       {member.Image ? (
-                        <img
-                          src={member.Image || "/placeholder.svg"}
-                          alt={member.Name}
-                          className="w-12 h-12 rounded-full object-cover"
-                        />
+                      <img
+  src={member.Image ? `https://api.smartcorpweb.com${member.Image}` : "/placeholder.svg"}
+  alt={member.Name}
+  className="w-12 h-12 rounded-full object-cover"
+/>
+
                       ) : (
                         <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center">
                           <User className="h-6 w-6 text-primary" />
@@ -308,9 +451,14 @@ export function TeamMemberManager() {
                         <p className="text-sm text-muted-foreground">{member.Role}</p>
                       </div>
                     </div>
-                    <Badge variant={member.IsActive ? "default" : "secondary"}>
+                    <Button
+                      variant={member.IsActive ? "default" : "secondary"}
+                      size="sm"
+                      onClick={() => handleToggleActive(member)}
+                      className="cursor-pointer"
+                    >
                       {member.IsActive ? "Active" : "Inactive"}
-                    </Badge>
+                    </Button>
                   </div>
                 </CardHeader>
                 <CardContent className="space-y-4">

@@ -622,20 +622,20 @@ async getOrgProfile(orgCode: number): Promise<any> {
     return response.json()
   }
 
-  async createTeamMember(memberData: TeamMember): Promise<ApiResponse<any>> {
-    const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}`, {
-      method: "POST",
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(memberData),
-    })
+  async createTeamMember(memberData: FormData): Promise<ApiResponse<any>> {
+  const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}`, {
+    method: "POST",
+    headers: this.getFormDataHeaders(), // don't set Content-Type here
+    body: memberData,
+  })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to create team member")
-    }
-
-    return response.json()
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message || "Failed to create team member")
   }
+
+  return response.json()
+}
 
   async getAllTeamMembers(): Promise<TeamMember[]> {
     const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}`, {
@@ -679,20 +679,20 @@ async getOrgProfile(orgCode: number): Promise<any> {
     return response.json()
   }
 
-  async updateTeamMember(id: string, memberData: Partial<TeamMember>): Promise<ApiResponse<any>> {
-    const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}/${id}`, {
-      method: "PUT",
-      headers: this.getAuthHeaders(),
-      body: JSON.stringify(memberData),
-    })
+  async updateTeamMember(id: string, memberData: FormData): Promise<ApiResponse<any>> {
+  const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}/${id}`, {
+    method: "PUT",
+    headers: this.getFormDataHeaders(),
+    body: memberData,
+  })
 
-    if (!response.ok) {
-      const error = await response.json()
-      throw new Error(error.message || "Failed to update team member")
-    }
-
-    return response.json()
+  if (!response.ok) {
+    const error = await response.json()
+    throw new Error(error.message || "Failed to update team member")
   }
+
+  return response.json()
+}
 
   async deleteTeamMember(id: string): Promise<ApiResponse<any>> {
     const response = await fetch(`${TEAM_MEMBER_API_BASE_URL}/${id}`, {
@@ -1164,10 +1164,11 @@ export const blogApi = {
 }
 
 export const teamMemberApi = {
-  create: (memberData: TeamMember) => apiService.createTeamMember(memberData),
+  create: (memberData: FormData) => apiService.createTeamMember(memberData),
+  update: (id: string, memberData: FormData) => apiService.updateTeamMember(id, memberData),
   getAll: () => apiService.getAllTeamMembers(),
   getById: (id: string) => apiService.getTeamMemberById(id),
-  update: (id: string, memberData: Partial<TeamMember>) => apiService.updateTeamMember(id, memberData),
+
   delete: (id: string) => apiService.deleteTeamMember(id),
   getByOrg: (orgCode: string) => apiService.getTeamMembersByOrg(orgCode),
 }

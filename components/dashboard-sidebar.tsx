@@ -99,7 +99,7 @@ export function DashboardSidebar({ className }: DashboardSidebarProps) {
       return [
         { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
          
-        { icon: Bell, label: "Notifications", href: "/admin-notifications" },
+        { icon: Bell, label: "Notifications", href: "/admin-updates" },
        
            { icon: FileCog, label: "Enquiries", href: "/admin-cms/enquiries" },
           
