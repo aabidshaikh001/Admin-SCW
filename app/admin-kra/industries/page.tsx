@@ -8,6 +8,14 @@ import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 import { Plus, Search, Edit, Trash2, Eye, EyeOff, Palette } from "lucide-react"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+import { ImageIcon } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
@@ -126,12 +134,79 @@ export default function FeaturesPage() {
           <h1 className="text-3xl font-bold text-foreground">Industries Management</h1>
           <p className="text-muted-foreground">Manage your KRA Industries and their display settings</p>
         </div>
-        <Link href="/admin-kra/industries/create">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Industires
-          </Button>
-        </Link>
+       <div className="flex items-center gap-2">
+  {/* ✅ View All Industries Dialog */}
+  <Dialog>
+    <DialogTrigger asChild>
+      <Button variant="outline">
+        <ImageIcon className="w-4 h-4 mr-2" />
+        View All
+      </Button>
+    </DialogTrigger>
+    <DialogContent className="max-w-4xl">
+      <DialogHeader>
+        <DialogTitle>All Industries Preview</DialogTitle>
+      </DialogHeader>
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4">
+        {features.map((feature) => (
+          <div
+            key={feature.id}
+            className="flex flex-col items-center p-2 border rounded-lg shadow-sm text-center"
+          >
+            {/* Icon */}
+            {feature.Img ? (
+              <img
+                src={`https://api.smartcorpweb.com${feature.Img}`}
+                alt={feature.title}
+                className="w-16 h-16 object-contain"
+              />
+            ) : (
+              <div className="w-16 h-16 flex items-center justify-center bg-muted rounded">
+                <ImageIcon className="w-8 h-8 text-muted-foreground" />
+              </div>
+            )}
+
+            {/* Title */}
+            <p className="mt-2 text-sm font-medium" style={{ color: feature.titleColor }}>
+              {feature.title}
+            </p>
+
+            {/* Subtitle */}
+            <span className="text-xs" style={{ color: feature.subTitleColor }}>
+              {feature.subTitle}
+            </span>
+
+            {/* Description */}
+            <p className="mt-1 text-xs" style={{ color: feature.descriptionColor }}>
+              {feature.description}
+            </p>
+
+            {/* Button */}
+            {feature.isButton && feature.buttonText && (
+              <Link href={feature.buttonURL || "#"} target="_blank">
+                <Button
+                  size="sm"
+                  className="mt-2"
+                  style={{ backgroundColor: feature.buttonColor || "#007bff" }}
+                >
+                  {feature.buttonText}
+                </Button>
+              </Link>
+            )}
+          </div>
+        ))}
+      </div>
+    </DialogContent>
+  </Dialog>
+
+  {/* Add Industries Button */}
+  <Link href="/admin-kra/industries/create">
+    <Button>
+      <Plus className="w-4 h-4 mr-2" />
+      Add Industries
+    </Button>
+  </Link>
+</div>
       </div>
 
       <Card>

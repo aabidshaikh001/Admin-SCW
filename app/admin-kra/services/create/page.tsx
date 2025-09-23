@@ -302,51 +302,62 @@ export default function CreateFeaturePage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
-                Live Preview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-6 bg-background">
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Services"
-                    className="w-full h-32 object-cover rounded mb-4"
-                  />
-                )}
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ color: formData.titleColor }}
-                >
-                  {formData.title || "Services Title"}
-                </h3>
-                <h4
-                  className="text-lg mb-3"
-                  style={{ color: formData.subTitleColor }}
-                >
-                  {formData.subTitle || "Services Subtitle"}
-                </h4>
-                <p
-                  className="text-sm mb-4"
-                  style={{ color: formData.descriptionColor }}
-                >
-                  {formData.description || "Services description will appear here..."}
-                </p>
-                {formData.isButton && formData.buttonText && (
-                  <button
-                    className="px-4 py-2 rounded text-white text-sm font-medium"
-                    style={{ backgroundColor: formData.buttonColor }}
-                  >
-                    {formData.buttonText}
-                  </button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+         <Card>
+  <CardHeader>
+    <CardTitle className="flex items-center gap-2">
+      <Eye className="w-5 h-5" />
+      Live Preview
+    </CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="border rounded-lg p-6 bg-background text-center">
+      {/* Icon Preview (small, top aligned) */}
+      {previewUrl && (
+        <img
+          src={previewUrl}
+          alt="Services Icon"
+          className="w-12 h-12 mx-auto mb-3 object-contain"
+        />
+      )}
+
+      {/* Title */}
+      <h3
+        className="text-lg font-bold mb-2"
+        style={{ color: formData.titleColor }}
+      >
+        {formData.title || "Services Title"}
+      </h3>
+
+      {/* Subtitle (optional, smaller text) */}
+      {formData.subTitle && (
+        <h4
+          className="text-sm font-semibold mb-2"
+          style={{ color: formData.subTitleColor }}
+        >
+          {formData.subTitle}
+        </h4>
+      )}
+
+      {/* Description */}
+      <p
+        className="text-sm mb-4"
+        style={{ color: formData.descriptionColor }}
+      >
+        {formData.description || "Services description will appear here..."}
+      </p>
+
+      {/* Button */}
+      {formData.isButton && formData.buttonText && (
+        <button
+          className="px-4 py-2 rounded text-white text-sm font-medium"
+          style={{ backgroundColor: formData.buttonColor }}
+        >
+          {formData.buttonText}
+        </button>
+      )}
+    </div>
+  </CardContent>
+</Card>
         </div>
       </div>
     </DashboardLayout>

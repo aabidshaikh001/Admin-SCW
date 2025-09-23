@@ -123,10 +123,16 @@
     @apply bg-background text-foreground;
   }
 }
+
+
 .ql-container {
   min-height: 300px; /* outer container */
 }
 
 .ql-editor {
   min-height: 250px; /* editing area */
+}
+
+html {
+  overflow-y: hidden;
 }

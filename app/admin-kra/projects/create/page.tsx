@@ -302,51 +302,63 @@ export default function CreateFeaturePage() {
             </CardContent>
           </Card>
 
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Eye className="w-5 h-5" />
-                Live Preview
-              </CardTitle>
-            </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-6 bg-background">
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Projects"
-                    className="w-full h-32 object-cover rounded mb-4"
-                  />
-                )}
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ color: formData.titleColor }}
-                >
-                  {formData.title || "Projects Title"}
-                </h3>
-                <h4
-                  className="text-lg mb-3"
-                  style={{ color: formData.subTitleColor }}
-                >
-                  {formData.subTitle || "Projects Subtitle"}
-                </h4>
-                <p
-                  className="text-sm mb-4"
-                  style={{ color: formData.descriptionColor }}
-                >
-                  {formData.description || "Projects description will appear here..."}
-                </p>
-                {formData.isButton && formData.buttonText && (
-                  <button
-                    className="px-4 py-2 rounded text-white text-sm font-medium"
-                    style={{ backgroundColor: formData.buttonColor }}
-                  >
-                    {formData.buttonText}
-                  </button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+       <Card className="transition-transform hover:scale-[1.02] hover:shadow-lg duration-300">
+  <CardHeader className="border-b pb-2">
+    <CardTitle className="flex items-center gap-2 text-lg font-semibold">
+      <Eye className="w-5 h-5 text-primary" />
+      Live Preview
+    </CardTitle>
+  </CardHeader>
+  <CardContent>
+    <div className="border rounded-xl overflow-hidden bg-background shadow-md hover:shadow-xl transition-shadow duration-300 text-center">
+      {/* Project Image */}
+      {previewUrl ? (
+        <img
+          src={previewUrl}
+          alt="Project Preview"
+          className="w-full h-52 object-cover transition-transform duration-500 hover:scale-105"
+        />
+      ) : (
+        <div className="w-full h-52 flex items-center justify-center bg-muted">
+          <span className="text-muted-foreground">No image selected</span>
+        </div>
+      )}
+
+      {/* Title, Subtitle, Description, Button */}
+      <div className="p-5 flex flex-col items-center">
+        <h3
+          className="text-xl font-bold mb-1"
+          style={{ color: formData.titleColor }}
+        >
+          {formData.title || "Project Title"}
+        </h3>
+        <p
+          className="text-sm mb-2"
+          style={{ color: formData.subTitleColor }}
+        >
+          {formData.subTitle || "Project Subtitle"}
+        </p>
+        <p
+          className="text-sm mb-4 leading-relaxed"
+          style={{ color: formData.descriptionColor }}
+        >
+          {formData.description || "Project description will appear here..."}
+        </p>
+
+        {formData.isButton && formData.buttonText && (
+          <Link href={formData.buttonURL || "#"} target="_blank">
+            <Button
+              className="px-5 py-2 text-sm font-medium transition-all duration-300 hover:scale-105 hover:brightness-110 rounded-lg"
+              style={{ backgroundColor: formData.buttonColor }}
+            >
+              {formData.buttonText || "View Project"}
+            </Button>
+          </Link>
+        )}
+      </div>
+    </div>
+  </CardContent>
+</Card>
         </div>
       </div>
     </DashboardLayout>

@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { useAuth } from "@/contexts/auth-context"
 import { Eye, EyeOff, Mail, Lock } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import {toast} from "react-toastify"
 
 type LoginFormData = {
   LoginId: string

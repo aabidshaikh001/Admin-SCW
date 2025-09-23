@@ -2,12 +2,97 @@
 
 import { motion } from "framer-motion"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { DashboardStats } from "@/components/dashboard-stats"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {  FileText, TrendingUp, DollarSign } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Globe, Shield, Database, Users, BarChart3, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/auth-context"
+type StatsResponse = {
+  success: boolean
+  data: {
+    subscribers: number
+    users: number
+    jobs: number
+    enquiries: number
+  }
+}
+export function DashboardStats() {
+    const { user } = useAuth()
+   const [stats, setStats] = useState<StatsResponse["data"] | null>(null)
+  const OrgCode = user?.OrgCode || 2000 // later you can take this from auth/session
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch(`https://api.smartcorpweb.com/api/stats/admin/${OrgCode}`)
+        const json: StatsResponse = await res.json()
+        if (json.success) setStats(json.data)
+      } catch (error) {
+        console.error("Error fetching stats:", error)
+      }
+    }
+    fetchStats()
+  }, [OrgCode])
+    const cards = stats
+    ? [
+        {
+          title: "Total Subscribers",
+          value: stats.subscribers,
+          icon: Users,
+          color: "text-blue-600",
+        },
+        {
+          title: "Enquiries",
+          value: stats.enquiries,
+          icon: FileText,
+          color: "text-green-600",
+        },
+        {
+          title: "Users",
+          value: stats.users,
+          icon: TrendingUp,
+          color: "text-purple-600",
+        },
+        {
+          title: "Applicants",
+          value: stats.jobs,
+          icon: DollarSign,
+          color: "text-orange-600",
+        },
+      ]
+    : []
+
+  return (
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {cards.map((card, index) => (
+        <motion.div
+          key={card.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.3 }}
+        >
+          <Card className="bg-card border-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-card-foreground">
+                {card.title}
+              </CardTitle>
+              <card.icon className={`h-4 w-4 ${card.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-card-foreground">
+                {card.value}
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
 
 const recentActivities = [
   {
@@ -79,6 +164,40 @@ export default function DashboardPage() {
 
         {/* Stats Cards */}
         <DashboardStats />
+
+         {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
+              <CardDescription>Frequently used website management actions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Plus className="h-6 w-6" />
+                  <span className="text-sm">New Website</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Users className="h-6 w-6" />
+                  <span className="text-sm">Manage Users</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <BarChart3 className="h-6 w-6" />
+                  <span className="text-sm">View Analytics</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Shield className="h-6 w-6" />
+                  <span className="text-sm">Security Scan</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -169,39 +288,7 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
-              <CardDescription>Frequently used website management actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Plus className="h-6 w-6" />
-                  <span className="text-sm">New Website</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Users className="h-6 w-6" />
-                  <span className="text-sm">Manage Users</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <BarChart3 className="h-6 w-6" />
-                  <span className="text-sm">View Analytics</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Shield className="h-6 w-6" />
-                  <span className="text-sm">Security Scan</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+       
       </div>
     </DashboardLayout>
   )

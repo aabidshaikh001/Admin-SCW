@@ -4,9 +4,10 @@
 import type React from "react"
 import { createContext, useContext, useState, useEffect } from "react"
 import { apiService } from "@/lib/api"
-import { toast } from "sonner"
+import {toast} from "react-toastify"
 
 interface User {
+  id?: string | number  // original id from backend, can be string or number
   UserId?: number
   EmployeeCode?: string
   OrgCode: number
@@ -110,6 +111,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           const orgProfile: OrgProfile = await apiService.getOrgProfile(response.orgCode)
 
           loggedInUser = {
+            UserId: orgProfile.OrgID,
             OrgCode: orgProfile.OrgCode,
             UserName: orgProfile.OrgName,
             UserEmail: orgProfile.Email,
@@ -121,6 +123,7 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
           // Normal User / SuperAdmin
           loggedInUser = {
             ...response.user,
+            UserId: Number(response.user.id), // convert to number
             UserType:
               response.role === "SuperAdmin"
                 ? "SA"

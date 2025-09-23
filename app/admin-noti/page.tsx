@@ -191,7 +191,7 @@ const getUserName = (userId: number) => {
           className="flex flex-col sm:flex-row items-center justify-between gap-4"
         >
           <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">
-            System Updates
+            Notifications
           </h1>
 
           <div className="relative flex-1 max-w-md w-full">
@@ -206,7 +206,7 @@ const getUserName = (userId: number) => {
 
           <Button
             className="bg-primary hover:bg-primary/90 whitespace-nowrap"
-            onClick={() => router.push("/admin-updates/add")}
+            onClick={() => router.push("/admin-noti/add")}
           >
             <Plus className="mr-2 h-4 w-4" />
             New
@@ -316,7 +316,7 @@ const getUserName = (userId: number) => {
                         <Button
                           variant="outline"
                           size="sm"
-                          onClick={() => router.push(`/admin-updates/edit/${notification.NotiId}`)}
+                          onClick={() => router.push(`/admin-noti/edit/${notification.NotiId}`)}
                         >
                           <Edit className="h-4 w-4" />
                         </Button>
@@ -332,7 +332,7 @@ const getUserName = (userId: number) => {
                     {searchTerm ? "No notifications match your search." : "Get started by creating your first notification."}
                   </p>
                   {!searchTerm && (
-                    <Button onClick={() => router.push("/admin-updates/add")}>
+                    <Button onClick={() => router.push("/admin-noti/add")}>
                       <Plus className="mr-2 h-4 w-4" />
                       Create Notification
                     </Button>

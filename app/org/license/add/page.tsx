@@ -1,18 +1,17 @@
 "use client"
 
 import type React from "react"
-
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { motion } from "framer-motion"
-import { ArrowLeft, Save } from "lucide-react"
+import { Save } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
+import { Card, CardContent } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
+import {toast} from "react-toastify"
 import { orgLicenseApi } from "@/lib/api"
-import {DashboardLayout} from "@/components/dashboard-layout"
+import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
 import { useRouter } from "next/navigation"
 
@@ -24,9 +23,25 @@ export default function AddLicensePage() {
     MaxVisitors: "",
     Status: "Active",
   })
+  const [orgs, setOrgs] = useState<any[]>([])
   const [loading, setLoading] = useState(false)
-  const { toast } = useToast()
+
   const router = useRouter()
+
+  // Fetch org list
+  useEffect(() => {
+    const fetchOrgs = async () => {
+      try {
+        const res = await fetch("https://api.smartcorpweb.com/api/orgs")
+        const data = await res.json()
+        setOrgs(data)
+      } catch (error) {
+        console.error("Failed to load orgs", error)
+
+      }
+    }
+    fetchOrgs()
+  }, [])
 
   const handleInputChange = (field: string, value: string) => {
     setFormData((prev) => ({
@@ -39,11 +54,7 @@ export default function AddLicensePage() {
     e.preventDefault()
 
     if (!formData.LicenseName || !formData.OrgCode || !formData.MaxUsers || !formData.MaxVisitors) {
-      toast({
-        title: "Error",
-        description: "Please fill in all required fields",
-        variant: "destructive",
-      })
+      toast.error("Please fill in all required fields")
       return
     }
 
@@ -57,18 +68,13 @@ export default function AddLicensePage() {
       }
 
       await orgLicenseApi.create(licenseData)
-      toast({
-        title: "Success",
-        description: "License created successfully",
-      })
+      toast.success("License created successfully")
       router.push("/org/license")
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to create license",
-        variant: "destructive",
-      })
-    } finally {
+      toast.error(error?.message || "Failed to create license")
+      
+      }
+    finally {
       setLoading(false)
     }
   }
@@ -78,43 +84,58 @@ export default function AddLicensePage() {
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          
           <div>
             <h1 className="text-3xl font-bold text-foreground">License (Add)</h1>
-            {/* <p className="text-muted-foreground">Create a new organization license</p> */}
           </div>
         </motion.div>
 
         {/* Form */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card className="max-w-2xl">
-            
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  
+                  {/* License Name (Static Dropdown) */}
                   <div className="space-y-2">
                     <Label htmlFor="licenseName">License Name *</Label>
-                    <Input
-                      id="licenseName"
+                    <Select
                       value={formData.LicenseName}
-                      onChange={(e) => handleInputChange("LicenseName", e.target.value)}
-                      placeholder="Enter license name"
-                      required
-                    />
+                      onValueChange={(value) => handleInputChange("LicenseName", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select license name" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        <SelectItem value="Basic">Basic</SelectItem>
+                        <SelectItem value="Standard">Standard</SelectItem>
+                        <SelectItem value="Premium">Premium</SelectItem>
+                        <SelectItem value="Enterprise">Enterprise</SelectItem>
+                      </SelectContent>
+                    </Select>
                   </div>
 
+                  {/* Org Dropdown */}
                   <div className="space-y-2">
-                    <Label htmlFor="orgCode">Organization Code *</Label>
-                    <Input
-                      id="orgCode"
-                      type="number"
+                    <Label htmlFor="orgCode">Organization *</Label>
+                    <Select
                       value={formData.OrgCode}
-                      onChange={(e) => handleInputChange("OrgCode", e.target.value)}
-                      placeholder="Enter organization code"
-                      required
-                    />
+                      onValueChange={(value) => handleInputChange("OrgCode", value)}
+                    >
+                      <SelectTrigger>
+                        <SelectValue placeholder="Select organization" />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {orgs.map((org) => (
+                          <SelectItem key={org.OrgCode} value={org.OrgCode.toString()}>
+                            {org.OrgName} ({org.OrgCode})
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
                   </div>
 
+                  {/* Max Users */}
                   <div className="space-y-2">
                     <Label htmlFor="maxUsers">Max Users *</Label>
                     <Input
@@ -127,6 +148,7 @@ export default function AddLicensePage() {
                     />
                   </div>
 
+                  {/* Max Visitors */}
                   <div className="space-y-2">
                     <Label htmlFor="maxVisitors">Max Visitors *</Label>
                     <Input
@@ -139,21 +161,25 @@ export default function AddLicensePage() {
                     />
                   </div>
 
+                  {/* Status */}
                   <div className="space-y-2 md:col-span-2">
                     <Label htmlFor="status">Status</Label>
-                    <Select value={formData.Status} onValueChange={(value) => handleInputChange("Status", value)}>
+                    <Select
+                      value={formData.Status}
+                      onValueChange={(value) => handleInputChange("Status", value)}
+                    >
                       <SelectTrigger>
                         <SelectValue placeholder="Select status" />
                       </SelectTrigger>
                       <SelectContent>
                         <SelectItem value="Active">Active</SelectItem>
                         <SelectItem value="Inactive">Inactive</SelectItem>
-                        
                       </SelectContent>
                     </Select>
                   </div>
                 </div>
 
+                {/* Actions */}
                 <div className="flex gap-4 pt-4">
                   <Button type="submit" disabled={loading} className="bg-primary hover:bg-primary/90">
                     {loading ? (

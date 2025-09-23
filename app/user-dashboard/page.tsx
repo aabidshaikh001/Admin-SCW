@@ -79,6 +79,39 @@ export default function DashboardPage() {
 
         {/* Stats Cards */}
         <DashboardStats />
+          {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
+              <CardDescription>Frequently used website management actions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Plus className="h-6 w-6" />
+                  <span className="text-sm">New Website</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Users className="h-6 w-6" />
+                  <span className="text-sm">Manage Users</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <BarChart3 className="h-6 w-6" />
+                  <span className="text-sm">View Analytics</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Shield className="h-6 w-6" />
+                  <span className="text-sm">Security Scan</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
 
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
@@ -169,39 +202,7 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
-              <CardDescription>Frequently used website management actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Plus className="h-6 w-6" />
-                  <span className="text-sm">New Website</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Users className="h-6 w-6" />
-                  <span className="text-sm">Manage Users</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <BarChart3 className="h-6 w-6" />
-                  <span className="text-sm">View Analytics</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Shield className="h-6 w-6" />
-                  <span className="text-sm">Security Scan</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
+      
       </div>
     </DashboardLayout>
   )

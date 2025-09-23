@@ -13,17 +13,19 @@ import Link from "next/link"
 import { useRouter } from "next/navigation"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
 
 export default function CreateKeyPointerPage() {
   const { user } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [formData, setFormData] = useState({
+    SectionName: "", // ✅ Added
     Text: "",
     TextColor: "#000000",
     Counter: 0,
     CounterColor: "#000000",
-    Image: "", // fallback URL
+    Image: "",
     IsActive: true,
   })
   const [imageFile, setImageFile] = useState<File | null>(null)
@@ -37,7 +39,7 @@ export default function CreateKeyPointerPage() {
     const file = e.target.files?.[0] || null
     setImageFile(file)
     if (file) {
-      setPreviewUrl(URL.createObjectURL(file)) // instant preview
+      setPreviewUrl(URL.createObjectURL(file))
     } else {
       setPreviewUrl("")
     }
@@ -50,9 +52,11 @@ export default function CreateKeyPointerPage() {
     try {
       const orgCode = user?.OrgCode
       if (!orgCode) throw new Error("OrgCode not found")
+      if (!formData.SectionName) throw new Error("Section Name is required")
 
       const fd = new FormData()
       fd.append("OrgCode", orgCode.toString())
+      fd.append("SectionName", formData.SectionName) // ✅ Added
       fd.append("Text", formData.Text)
       fd.append("TextColor", formData.TextColor)
       fd.append("Counter", formData.Counter.toString())
@@ -74,11 +78,7 @@ export default function CreateKeyPointerPage() {
           title: "Success",
           description: "Key pointer created successfully",
         })
-        // preview image path from server
         console.log("Image path:", data.Image ? `https://api.smartcorpweb.com${data.Image}` : "No image")
-        setFormData({ ...formData, Image: "" })
-        setImageFile(null)
-        setPreviewUrl("")
         router.push("/admin-kra/keypointers")
       } else {
         const err = await response.json()
@@ -119,6 +119,21 @@ export default function CreateKeyPointerPage() {
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/* ✅ Section Name */}
+               {/* Section Name */}
+<div className="space-y-2">
+  <Label htmlFor="sectionName">Section Name *</Label>
+  <Input
+    id="sectionName"
+    value={formData.SectionName}
+    onChange={(e) => handleChange("SectionName", e.target.value)}
+    placeholder="Enter section name"
+    required
+    maxLength={50}
+  />
+</div>
+
                 {/* Text */}
                 <div className="space-y-2">
                   <Label htmlFor="text">Text *</Label>
@@ -207,26 +222,6 @@ export default function CreateKeyPointerPage() {
                     onCheckedChange={(checked) => handleChange("IsActive", checked)}
                   />
                   <Label htmlFor="isActive">Active</Label>
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <Label className="text-sm font-medium mb-2 block">Preview</Label>
-                <div className="flex items-center gap-4">
-                  <div className="font-medium" style={{ color: formData.TextColor }}>
-                    {formData.Text || "Sample Text"}
-                  </div>
-                  <div className="font-bold text-2xl" style={{ color: formData.CounterColor }}>
-                    {formData.Counter}
-                  </div>
-                  {previewUrl && (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="w-8 h-8 rounded object-cover"
-                    />
-                  )}
                 </div>
               </div>
 

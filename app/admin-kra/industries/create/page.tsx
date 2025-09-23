@@ -310,41 +310,42 @@ export default function CreateFeaturePage() {
               </CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="border rounded-lg p-6 bg-background">
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Industries"
-                    className="w-full h-32 object-cover rounded mb-4"
-                  />
-                )}
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ color: formData.titleColor }}
-                >
-                  {formData.title || "Industries Title"}
-                </h3>
-                <h4
-                  className="text-lg mb-3"
-                  style={{ color: formData.subTitleColor }}
-                >
-                  {formData.subTitle || "Industries Subtitle"}
-                </h4>
-                <p
-                  className="text-sm mb-4"
-                  style={{ color: formData.descriptionColor }}
-                >
-                  {formData.description || "Industries description will appear here..."}
-                </p>
-                {formData.isButton && formData.buttonText && (
-                  <button
-                    className="px-4 py-2 rounded text-white text-sm font-medium"
-                    style={{ backgroundColor: formData.buttonColor }}
-                  >
-                    {formData.buttonText}
-                  </button>
-                )}
-              </div>
+              <div className="border rounded-lg p-6 bg-background text-center">
+  {/* Icon */}
+  {previewUrl && (
+    <img
+      src={previewUrl}
+      alt="Icon"
+      className="w-16 h-16 mx-auto mb-4 object-contain"
+    />
+  )}
+
+  {/* Title */}
+  <h3 className="text-xl font-bold mb-2" style={{ color: formData.titleColor }}>
+    {formData.title || "Industries Title"}
+  </h3>
+
+  {/* Subtitle */}
+  <h4 className="text-lg mb-3" style={{ color: formData.subTitleColor }}>
+    {formData.subTitle || "Industries Subtitle"}
+  </h4>
+
+  {/* Description */}
+  <p className="text-sm mb-4" style={{ color: formData.descriptionColor }}>
+    {formData.description || "Industries description will appear here..."}
+  </p>
+
+  {/* Button */}
+  {formData.isButton && formData.buttonText && (
+    <button
+      className="px-4 py-2 rounded text-white text-sm font-medium"
+      style={{ backgroundColor: formData.buttonColor }}
+    >
+      {formData.buttonText}
+    </button>
+  )}
+</div>
+
             </CardContent>
           </Card>
         </div>

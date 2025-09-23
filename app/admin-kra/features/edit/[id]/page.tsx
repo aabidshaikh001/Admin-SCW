@@ -15,9 +15,7 @@ import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
 
-interface Feature {
-  id: number
-  OrgCode: number
+interface FeatureFormData {
   title: string
   titleColor: string
   subTitle: string
@@ -28,10 +26,12 @@ interface Feature {
   buttonText?: string
   buttonColor?: string
   buttonURL?: string
+  bgImageType?: string
+  bgColor?: string
+  bgImage?: string
+  iconImage?: string
   Img?: string
   isActive: boolean
-  createdAt: string
-  updatedAt: string
 }
 
 export default function EditFeaturePage({ params }: { params: { id: string } }) {
@@ -39,7 +39,7 @@ export default function EditFeaturePage({ params }: { params: { id: string } }) 
   const { user } = useAuth()
   const orgCode = user?.OrgCode
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FeatureFormData>({
     title: "",
     titleColor: "#000000",
     subTitle: "",
@@ -50,121 +50,93 @@ export default function EditFeaturePage({ params }: { params: { id: string } }) 
     buttonText: "",
     buttonColor: "#007bff",
     buttonURL: "",
+    bgImageType: "icon", // Default to icon
+    bgColor: "#ffffff",  // Default background color
+    bgImage: "",
+    iconImage: "",
     Img: "",
     isActive: true,
   })
-  const [file, setFile] = useState<File | null>(null)
-  const [preview, setPreview] = useState<string>("")
 
+  const [bgImageFile, setBgImageFile] = useState<File | null>(null)
+  const [iconImageFile, setIconImageFile] = useState<File | null>(null)
+  const [bgPreviewUrl, setBgPreviewUrl] = useState<string>("")
+  const [iconPreviewUrl, setIconPreviewUrl] = useState<string>("")
   const [loading, setLoading] = useState(false)
-  const [initialLoading, setInitialLoading] = useState(true)
+
 
   useEffect(() => {
-    if (orgCode && params.id) {
-      fetchFeature()
-    }
+    if (orgCode && params.id) fetchFeature()
   }, [orgCode, params.id])
 
   const fetchFeature = async () => {
     try {
       const response = await fetch(`https://api.smartcorpweb.com/api/feature/${params.id}?OrgCode=${orgCode}`)
-      if (response.ok) {
-        const feature: Feature = await response.json()
-       setFormData({
-  title: feature.title,
-  titleColor: feature.titleColor,
-  subTitle: feature.subTitle,
-  subTitleColor: feature.subTitleColor,
-  description: feature.description,
-  descriptionColor: feature.descriptionColor,
-  isButton: feature.isButton,
-  buttonText: feature.buttonText || "",
-  buttonColor: feature.buttonColor || "#007bff",
-  buttonURL: feature.buttonURL || "",
-  Img: feature.Img || "",
-  isActive: feature.isActive,
-})
-// FIX: prepend server URL for preview
-if (feature.Img) {
-  setPreview(`https://api.smartcorpweb.com${feature.Img}`)
-}
-      } else {
-        throw new Error("Failed to fetch feature")
-      }
-    } catch (error) {
-      console.error("Error fetching feature:", error)
-      toast({
-        title: "Error",
-        description: "Failed to fetch feature details",
-        variant: "destructive",
+      if (!response.ok) throw new Error("Failed to fetch feature")
+      const feature: FeatureFormData = await response.json()
+      setFormData({
+        ...feature,
+        buttonText: feature.buttonText || "",
+        buttonColor: feature.buttonColor || "#007bff",
+        buttonURL: feature.buttonURL || "",
+        bgImageType: feature.bgImageType || "icon",
+        bgColor: feature.bgColor || "#ffffff",
+        bgImage: feature.bgImage || "",
+        iconImage: feature.iconImage || "",
+        Img: feature.Img || "",
       })
+      if (feature.bgImage) setBgPreviewUrl(`https://api.smartcorpweb.com${feature.bgImage}`)
+      if (feature.iconImage) setIconPreviewUrl(`https://api.smartcorpweb.com${feature.iconImage}`)
+    } catch (error) {
+      console.error(error)
+      toast({ title: "Error", description: "Failed to fetch feature details", variant: "destructive" })
       router.push("/admin-kra/features")
     } finally {
-      setInitialLoading(false)
+     
     }
   }
 
- const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
-  const selectedFile = e.target.files?.[0] || null
-  setFile(selectedFile)
-  if (selectedFile) {
-    setPreview(URL.createObjectURL(selectedFile))
-  } else if (formData.Img) {
-    // keep showing old image if no new file selected
-    setPreview(`https://api.smartcorpweb.com${formData.Img}`)
+  const handleBgFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    setBgImageFile(file)
+    if (file) setBgPreviewUrl(URL.createObjectURL(file))
+    else if (formData.bgImage) setBgPreviewUrl(`https://api.smartcorpweb.com${formData.bgImage}`)
   }
-}
+
+  const handleIconFileChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0] || null
+    setIconImageFile(file)
+    if (file) setIconPreviewUrl(URL.createObjectURL(file))
+    else if (formData.iconImage) setIconPreviewUrl(`https://api.smartcorpweb.com${formData.iconImage}`)
+  }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault()
     if (!orgCode) return
-
     try {
       setLoading(true)
       const form = new FormData()
       Object.entries(formData).forEach(([key, value]) => {
-        form.append(key, value as string)
+        if (!["bgImage", "iconImage", "Img"].includes(key)) form.append(key, value as string)
       })
-      if (file) {
-        form.append("Img", file)
-      }
-
-      const response = await fetch(
-        `https://api.smartcorpweb.com/api/feature/${params.id}?OrgCode=${orgCode}`,
-        {
-          method: "PUT",
-          body: form,
-        }
-      )
-
-      if (response.ok) {
-        toast({
-          title: "Success",
-          description: "Feature updated successfully",
-        })
-        router.push("/admin-kra/features")
-      } else {
-        throw new Error("Failed to update feature")
-      }
+      if (bgImageFile) form.append("bgImage", bgImageFile)
+      if (iconImageFile) form.append("iconImage", iconImageFile)
+      const response = await fetch(`https://api.smartcorpweb.com/api/feature/${params.id}?OrgCode=${orgCode}`, {
+        method: "PUT",
+        body: form,
+      })
+      if (!response.ok) throw new Error("Failed to update feature")
+      toast({ title: "Success", description: "Feature updated successfully" })
+      router.push("/admin-kra/features")
     } catch (error) {
-      console.error("Error updating feature:", error)
-      toast({
-        title: "Error",
-        description: "Failed to update feature",
-        variant: "destructive",
-      })
+      console.error(error)
+      toast({ title: "Error", description: "Failed to update feature", variant: "destructive" })
     } finally {
       setLoading(false)
     }
   }
 
-  if (initialLoading) {
-    return (
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
-    )
-  }
+
 
   return (
     <DashboardLayout>
@@ -178,7 +150,7 @@ if (feature.Img) {
           </Link>
           <div>
             <h1 className="text-3xl font-bold text-foreground">Edit Feature</h1>
-            <p className="text-muted-foreground">Update the KRA feature details and styling</p>
+            <p className="text-muted-foreground">Edit the KRA feature details and styling</p>
           </div>
         </div>
 
@@ -280,18 +252,55 @@ if (feature.Img) {
                   </div>
                 </div>
 
-                {/* image upload */}
-                <div>
-                  <Label htmlFor="image">Upload Image</Label>
-                  <Input id="image" type="file" accept="image/*" onChange={handleFileChange} />
-                  {preview && (
-                    <img
-                      src={preview}
-                      alt="Preview"
-                      className="w-full h-32 object-cover rounded mt-2"
-                    />
-                  )}
+                {/* Background type and color */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="bgImageType">Background Type</Label>
+                    <select
+                      id="bgImageType"
+                      value={formData.bgImageType}
+                      onChange={(e) => setFormData({ ...formData, bgImageType: e.target.value })}
+                      className="w-full border rounded p-2"
+                    >
+                      <option value="icon">Icon</option>
+                      <option value="image">Image</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="bgColor">Background Color</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="bgColor"
+                        type="color"
+                        value={formData.bgColor}
+                        onChange={(e) => setFormData({ ...formData, bgColor: e.target.value })}
+                        className="w-16 h-10 p-1"
+                      />
+                      <Input
+                        value={formData.bgColor}
+                        onChange={(e) => setFormData({ ...formData, bgColor: e.target.value })}
+                        placeholder="#ffffff"
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                {/* Conditional image uploads based on bgImageType */}
+                {formData.bgImageType === "image" && (
+                  <div>
+                    <Label htmlFor="bgImage">Background Image</Label>
+                    <Input id="bgImage" type="file" accept="image/*" onChange={handleBgFileChange} />
+                    {bgPreviewUrl && <img src={bgPreviewUrl} alt="BG Preview" className="w-full h-32 object-cover rounded mt-2" />}
+                  </div>
+                )}
+
+                {formData.bgImageType === "icon" && (
+                  <div>
+                    <Label htmlFor="iconImage">Icon Image</Label>
+                    <Input id="iconImage" type="file" accept="image/*" onChange={handleIconFileChange} />
+                    {iconPreviewUrl && <img src={iconPreviewUrl} alt="Icon Preview" className="w-16 h-16 object-cover rounded mt-2" />}
+                  </div>
+                )}
 
                 {/* button options */}
                 <div className="space-y-4">
@@ -369,7 +378,7 @@ if (feature.Img) {
               </form>
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -377,44 +386,75 @@ if (feature.Img) {
                 Live Preview
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-6 bg-background">
-                {preview && (
-                  <img
-                    src={preview}
-                    alt="Feature"
-                    className="w-full h-32 object-cover rounded mb-4"
-                  />
-                )}
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ color: formData.titleColor }}
-                >
-                  {formData.title || "Feature Title"}
-                </h3>
-                <h4
-                  className="text-lg mb-3"
-                  style={{ color: formData.subTitleColor }}
-                >
-                  {formData.subTitle || "Feature Subtitle"}
-                </h4>
-                <p
-                  className="text-sm mb-4"
-                  style={{ color: formData.descriptionColor }}
-                >
-                  {formData.description || "Feature description will appear here..."}
-                </p>
-                {formData.isButton && formData.buttonText && (
-                  <button
-                    className="px-4 py-2 rounded text-white text-sm font-medium"
-                    style={{ backgroundColor: formData.buttonColor }}
-                  >
-                    {formData.buttonText}
-                  </button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        <CardContent>
+  <div className="border rounded-lg overflow-hidden min-h-[300px] flex flex-col">
+    {formData.bgImageType === "image" && bgPreviewUrl && (
+      <>
+        {/* Top: Background Image */}
+        <div
+          className="w-full h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${bgPreviewUrl})` }}
+        />
+
+        {/* Bottom: Content */}
+        <div className="w-full p-6 flex flex-col items-center" style={{ backgroundColor: formData.bgColor }}>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: formData.titleColor }}>
+            {formData.title || "Feature Title"}
+          </h3>
+          <h4 className="text-lg mb-4" style={{ color: formData.subTitleColor }}>
+            {formData.subTitle || "Feature Subtitle"}
+          </h4>
+          <p className="text-sm text-center leading-relaxed" style={{ color: formData.descriptionColor }}>
+            {formData.description || "Feature description will appear here..."}
+          </p>
+          {formData.isButton && formData.buttonText && (
+            <button
+              className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+              style={{ backgroundColor: formData.buttonColor }}
+            >
+              {formData.buttonText}
+            </button>
+          )}
+        </div>
+      </>
+    )}
+
+    {formData.bgImageType === "icon" && iconPreviewUrl && (
+      <div
+        className="w-full p-6 flex flex-col items-center"
+        style={{ backgroundColor: formData.bgColor }}
+      >
+        {/* Icon at the top */}
+        <img
+          src={iconPreviewUrl}
+          alt="Icon"
+          className="w-16 h-16 object-contain mb-4"
+        />
+
+        {/* Content */}
+        <h3 className="text-2xl font-bold mb-2" style={{ color: formData.titleColor }}>
+          {formData.title || "Feature Title"}
+        </h3>
+        <h4 className="text-lg mb-4" style={{ color: formData.subTitleColor }}>
+          {formData.subTitle || "Feature Subtitle"}
+        </h4>
+        <p className="text-sm text-center leading-relaxed" style={{ color: formData.descriptionColor }}>
+          {formData.description || "Feature description will appear here..."}
+        </p>
+        {formData.isButton && formData.buttonText && (
+          <button
+            className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+            style={{ backgroundColor: formData.buttonColor }}
+          >
+            {formData.buttonText}
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+</CardContent>
+
+         </Card>
         </div>
       </div>
     </DashboardLayout>

@@ -7,7 +7,8 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { Plus, Search, Edit, Trash2, Eye, EyeOff, Palette } from "lucide-react"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+import { Plus, Search, Edit, Trash2, Eye, EyeOff, Palette, Grid } from "lucide-react"
 import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
@@ -26,7 +27,8 @@ interface Feature {
   buttonText?: string
   buttonColor?: string
   buttonURL?: string
-  Img?: string
+  bgImage?: string
+  iconImage?: string
   isActive: boolean
   createdAt: string
   updatedAt: string
@@ -37,6 +39,7 @@ export default function FeaturesPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [previewOpen, setPreviewOpen] = useState(false)
   const { user } = useAuth()
 
   const orgCode = user?.OrgCode // This should come from auth provider
@@ -110,190 +113,275 @@ export default function FeaturesPage() {
 
   if (loading) {
     return (
-          <DashboardLayout>
-      <div className="flex items-center justify-center min-h-[400px]">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
-      </div>
+      <DashboardLayout>
+        <div className="flex items-center justify-center min-h-[400px]">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary"></div>
+        </div>
       </DashboardLayout>
     )
   }
 
   return (
     <DashboardLayout>
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Features Management</h1>
-          <p className="text-muted-foreground">Manage your KRA features and their display settings</p>
-        </div>
-        <Link href="/admin-kra/features/create">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Feature
-          </Button>
-        </Link>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex gap-4 items-center">
-            <div className="flex-1 max-w-sm">
-              <div className="relative">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-                <Input
-                  placeholder="Search features..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[180px]">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
+      <div className="space-y-6">
+        <div className="flex items-center justify-between">
+          <div>
+            <h1 className="text-3xl font-bold text-foreground">Features Management</h1>
+            <p className="text-muted-foreground">Manage your KRA features and their display settings</p>
           </div>
-        </CardContent>
-      </Card>
+          <div className="flex gap-2">
+           {/* Preview All Button */}
+<Dialog open={previewOpen} onOpenChange={setPreviewOpen}>
+  <DialogTrigger asChild>
+    <Button variant="outline">
+      <Grid className="w-4 h-4 mr-2" />
+      Preview All
+    </Button>
+  </DialogTrigger>
+  <DialogContent className="max-w-4xl max-h-[80vh] overflow-y-auto">
+    <DialogHeader>
+      <DialogTitle>All Features Preview</DialogTitle>
+    </DialogHeader>
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mt-4">
+      {filteredFeatures.length > 0 ? (
+        filteredFeatures.map((feature) => (
+          <Card key={feature.id} className="overflow-hidden min-h-[300px] flex flex-col">
+            {feature.bgImage ? (
+              <>
+                <div
+                  className="w-full h-48 bg-cover bg-center"
+                  style={{ backgroundImage: `url(https://api.smartcorpweb.com${feature.bgImage})` }}
+                />
+                <div className="p-6 flex flex-col items-center">
+                  <h3 className="text-2xl font-bold mb-2" style={{ color: feature.titleColor }}>
+                    {feature.title}
+                  </h3>
+                  <h4 className="text-lg mb-4" style={{ color: feature.subTitleColor }}>
+                    {feature.subTitle}
+                  </h4>
+                  <p className="text-sm text-center leading-relaxed" style={{ color: feature.descriptionColor }}>
+                    {feature.description}
+                  </p>
+                  {feature.isButton && feature.buttonText && (
+                    <button
+                      className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+                      style={{ backgroundColor: feature.buttonColor }}
+                    >
+                      {feature.buttonText}
+                    </button>
+                  )}
+                </div>
+              </>
+            ) : feature.iconImage ? (
+              <div className="w-full p-6 flex flex-col items-center">
+                <img
+                  src={`https://api.smartcorpweb.com${feature.iconImage}`}
+                  alt="Icon"
+                  className="w-16 h-16 object-contain mb-4"
+                />
+                <h3 className="text-2xl font-bold mb-2" style={{ color: feature.titleColor }}>
+                  {feature.title}
+                </h3>
+                <h4 className="text-lg mb-4" style={{ color: feature.subTitleColor }}>
+                  {feature.subTitle}
+                </h4>
+                <p className="text-sm text-center leading-relaxed" style={{ color: feature.descriptionColor }}>
+                  {feature.description}
+                </p>
+                {feature.isButton && feature.buttonText && (
+                  <button
+                    className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+                    style={{ backgroundColor: feature.buttonColor }}
+                  >
+                    {feature.buttonText}
+                  </button>
+                )}
+              </div>
+            ) : (
+              <div className="w-full h-full flex items-center justify-center text-muted-foreground">
+                No Image or Icon
+              </div>
+            )}
+          </Card>
+        ))
+      ) : (
+        <p className="text-center col-span-full text-muted-foreground">
+          No features to preview.
+        </p>
+      )}
+    </div>
+  </DialogContent>
+</Dialog>
 
-      <Card>
-        <CardHeader>
-          <CardTitle>Features ({filteredFeatures.length})</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Title</TableHead>
-                <TableHead>Subtitle</TableHead>
-                <TableHead>Description</TableHead>
-                <TableHead>Button</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead>Created</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredFeatures.map((feature) => (
-                <TableRow key={feature.id}>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-4 rounded border"
-                        style={{ backgroundColor: feature.titleColor }}
-                        title={`Color: ${feature.titleColor}`}
-                      />
-                      <span className="font-medium">{feature.title}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-4 rounded border"
-                        style={{ backgroundColor: feature.subTitleColor }}
-                        title={`Color: ${feature.subTitleColor}`}
-                      />
-                      <span className="text-sm">{feature.subTitle}</span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    <div className="flex items-center gap-2">
-                      <div
-                        className="w-4 h-4 rounded border"
-                        style={{ backgroundColor: feature.descriptionColor }}
-                        title={`Color: ${feature.descriptionColor}`}
-                      />
-                      <span className="text-sm text-muted-foreground max-w-[200px] truncate">
-                        {feature.description}
-                      </span>
-                    </div>
-                  </TableCell>
-                  <TableCell>
-                    {feature.isButton ? (
+            {/* Add Feature Button */}
+            <Link href="/admin-kra/features/create">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Feature
+              </Button>
+            </Link>
+          </div>
+        </div>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Filters</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <div className="flex gap-4 items-center">
+              <div className="flex-1 max-w-sm">
+                <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+                  <Input
+                    placeholder="Search features..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
+              </div>
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[180px]">
+                  <SelectValue placeholder="Filter by status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Status</SelectItem>
+                  <SelectItem value="active">Active</SelectItem>
+                  <SelectItem value="inactive">Inactive</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card>
+          <CardHeader>
+            <CardTitle>Features ({filteredFeatures.length})</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Title</TableHead>
+                  <TableHead>Subtitle</TableHead>
+                  <TableHead>Description</TableHead>
+                  <TableHead>Button</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Created</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {filteredFeatures.map((feature) => (
+                  <TableRow key={feature.id}>
+                    <TableCell>
                       <div className="flex items-center gap-2">
                         <div
                           className="w-4 h-4 rounded border"
-                          style={{ backgroundColor: feature.buttonColor }}
-                          title={`Color: ${feature.buttonColor}`}
+                          style={{ backgroundColor: feature.titleColor }}
+                          title={`Color: ${feature.titleColor}`}
                         />
-                        <span className="text-sm">{feature.buttonText}</span>
+                        <span className="font-medium">{feature.title}</span>
                       </div>
-                    ) : (
-                      <span className="text-muted-foreground text-sm">No button</span>
-                    )}
-                  </TableCell>
-                  <TableCell>
-                    <Badge variant={feature.isActive ? "default" : "secondary"}>
-                      {feature.isActive ? (
-                        <>
-                          <Eye className="w-3 h-3 mr-1" />
-                          Active
-                        </>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded border"
+                          style={{ backgroundColor: feature.subTitleColor }}
+                          title={`Color: ${feature.subTitleColor}`}
+                        />
+                        <span className="text-sm">{feature.subTitle}</span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <div className="flex items-center gap-2">
+                        <div
+                          className="w-4 h-4 rounded border"
+                          style={{ backgroundColor: feature.descriptionColor }}
+                          title={`Color: ${feature.descriptionColor}`}
+                        />
+                        <span className="text-sm text-muted-foreground max-w-[200px] truncate">
+                          {feature.description}
+                        </span>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      {feature.isButton ? (
+                        <div className="flex items-center gap-2">
+                          <div
+                            className="w-4 h-4 rounded border"
+                            style={{ backgroundColor: feature.buttonColor }}
+                            title={`Color: ${feature.buttonColor}`}
+                          />
+                          <span className="text-sm">{feature.buttonText}</span>
+                        </div>
                       ) : (
-                        <>
-                          <EyeOff className="w-3 h-3 mr-1" />
-                          Inactive
-                        </>
+                        <span className="text-muted-foreground text-sm">No button</span>
                       )}
-                    </Badge>
-                  </TableCell>
-                  <TableCell className="text-sm text-muted-foreground">
-                    {new Date(feature.createdAt).toLocaleDateString()}
-                  </TableCell>
-                  <TableCell className="text-right">
-                    <div className="flex items-center justify-end gap-2">
-                      <Link href={`/admin-kra/features/edit/${feature.id}`}>
-                        <Button variant="outline" size="sm">
-                          <Edit className="w-4 h-4" />
+                    </TableCell>
+                    <TableCell>
+                      <Badge variant={feature.isActive ? "default" : "secondary"}>
+                        {feature.isActive ? (
+                          <>
+                            <Eye className="w-3 h-3 mr-1" />
+                            Active
+                          </>
+                        ) : (
+                          <>
+                            <EyeOff className="w-3 h-3 mr-1" />
+                            Inactive
+                          </>
+                        )}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-sm text-muted-foreground">
+                      {new Date(feature.createdAt).toLocaleDateString()}
+                    </TableCell>
+                    <TableCell className="text-right">
+                      <div className="flex items-center justify-end gap-2">
+                        <Link href={`/admin-kra/features/edit/${feature.id}`}>
+                          <Button variant="outline" size="sm">
+                            <Edit className="w-4 h-4" />
+                          </Button>
+                        </Link>
+                        <Button
+                          variant="outline"
+                          size="sm"
+                          onClick={() => handleDelete(feature.id)}
+                          className="text-destructive hover:text-destructive"
+                        >
+                          <Trash2 className="w-4 h-4" />
                         </Button>
-                      </Link>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => handleDelete(feature.id)}
-                        className="text-destructive hover:text-destructive"
-                      >
-                        <Trash2 className="w-4 h-4" />
-                      </Button>
-                    </div>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+                      </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-          {filteredFeatures.length === 0 && (
-            <div className="text-center py-8">
-              <Palette className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-              <h3 className="text-lg font-medium text-foreground mb-2">No features found</h3>
-              <p className="text-muted-foreground mb-4">
-                {searchTerm || statusFilter !== "all"
-                  ? "Try adjusting your search or filters"
-                  : "Create your first feature to get started"}
-              </p>
-              {!searchTerm && statusFilter === "all" && (
-                <Link href="/admin-kra/features/create">
-                  <Button>
-                    <Plus className="w-4 h-4 mr-2" />
-                    Add Feature
-                  </Button>
-                </Link>
-              )}
-            </div>
-          )}
-        </CardContent>
-      </Card>
-      
-    </div>
+            {filteredFeatures.length === 0 && (
+              <div className="text-center py-8">
+                <Palette className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-medium text-foreground mb-2">No features found</h3>
+                <p className="text-muted-foreground mb-4">
+                  {searchTerm || statusFilter !== "all"
+                    ? "Try adjusting your search or filters"
+                    : "Create your first feature to get started"}
+                </p>
+                {!searchTerm && statusFilter === "all" && (
+                  <Link href="/admin-kra/features/create">
+                    <Button>
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Feature
+                    </Button>
+                  </Link>
+                )}
+              </div>
+            )}
+          </CardContent>
+        </Card>
+      </div>
     </DashboardLayout>
   )
 }

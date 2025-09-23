@@ -95,7 +95,7 @@ export default function NotificationForm({
   UserId: Number(formData.UserId),
   ValidFrom: formData.ValidFrom?.toISOString(),
   ValidTo: formData.ValidTo?.toISOString(),
-    TransBy: user?.OrgCode
+    TransBy: user?.OrgCode.toString()
 }
 
 
@@ -119,7 +119,7 @@ export default function NotificationForm({
       description: `Notification ${isEdit ? "updated" : "created"} successfully`,
     })
 
-    router.push("/admin-updates")
+    router.push("/admin-noti")
   } catch (error) {
     console.error("Error saving notification:", error)
     toast({
@@ -137,11 +137,7 @@ export default function NotificationForm({
         <h1 className="text-3xl font-bold text-foreground">
           {isEdit ? "Edit Notification" : "Create New Notification"}
         </h1>
-        <p className="text-muted-foreground">
-          {isEdit
-            ? "Update the notification details"
-            : "Create a new notification to send to organizations"}
-        </p>
+      
       </div>
 
       <div className="space-y-6 p-4 border rounded-lg">
@@ -294,7 +290,7 @@ export default function NotificationForm({
       <div className="flex justify-end space-x-2">
         <Button
           variant="outline"
-          onClick={() => router.push("/admin-updates")}
+          onClick={() => router.push("/admin-noti")}
           disabled={loading}
         >
           Cancel

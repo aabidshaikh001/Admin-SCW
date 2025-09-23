@@ -14,7 +14,7 @@ import { Textarea } from "@/components/ui/textarea"
 import { useAuth } from "@/contexts/auth-context"
 import { Eye, EyeOff, User, Building, Mail, Phone, Calendar, FileText } from "lucide-react"
 import { useRouter } from "next/navigation"
-import { toast } from "sonner"
+import {toast} from "react-toastify"
 
 const registerSchema = z.object({
   EmployeeCode: z.string().min(1, "Employee code is required"),

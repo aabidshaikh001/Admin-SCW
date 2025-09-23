@@ -16,7 +16,7 @@ import { Badge } from "@/components/ui/badge"
 import { Separator } from "@/components/ui/separator"
 import { useAuth } from "@/contexts/auth-context"
 import { User, Building, Mail, Phone, Calendar, FileText, Camera, Save, Edit3, Shield, Clock } from "lucide-react"
-import { toast } from "sonner"
+import {toast} from "react-toastify"
 
 const profileSchema = z.object({
   userName: z.string().min(2, "Name must be at least 2 characters"),

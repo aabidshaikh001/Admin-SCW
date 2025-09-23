@@ -1,14 +1,14 @@
 "use client"
 
 import { motion } from "framer-motion"
+import { useEffect, useState } from "react"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { DashboardStats } from "@/components/dashboard-stats"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
-import { Globe, Shield, Database, Users, BarChart3, Plus } from "lucide-react"
-
+import { Globe, Shield, Database, Users, BarChart3, Plus,FileText, TrendingUp, DollarSign } from "lucide-react"
+  
 const recentActivities = [
   {
     id: 1,
@@ -67,6 +67,79 @@ const upcomingTasks = [
   },
 ]
 
+export function DashboardStats() {
+  const [stats, setStats] = useState<any[]>([])
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch("https://api.smartcorpweb.com/api/orgs/dashboard/stats")
+        const json = await res.json()
+
+        if (json.success) {
+          const d = json.data
+          setStats([
+            
+            {
+              title: "Notifications",
+              value: d.UpdatesLastWeek,
+              icon: TrendingUp,
+              color: "text-purple-600",
+            },
+            {
+              title: "Tickets",
+              value: d.QueriesLastWeek,
+              icon: FileText,
+              color: "text-green-600",
+              
+            },
+            {
+              title: "Organisations",
+              value: d.TotalOrgs,
+              icon: BarChart3,
+              color: "text-blue-600",
+            },
+            {
+              title: "Users",
+              value: d.TotalUsers,
+              icon: Users,
+              color: "text-orange-600",
+            },
+          ])
+        }
+      } catch (error) {
+        console.error("Failed to fetch stats:", error)
+      }
+    }
+
+    fetchStats()
+  }, [])
+  return (
+    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {stats.map((stat, index) => (
+        <motion.div
+          key={stat.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.3 }}
+        >
+          <Card className="bg-card border-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-card-foreground">{stat.title}</CardTitle>
+              <stat.icon className={`h-4 w-4 ${stat.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-card-foreground">{stat.value}</div>
+              <p className="text-xs text-muted-foreground">
+                {/* <span className="text-green-600">{stat.change}</span> from last month */}
+              </p>
+            </CardContent>
+          </Card>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
 export default function DashboardPage() {
   return (
     <DashboardLayout>
@@ -80,6 +153,39 @@ export default function DashboardPage() {
         {/* Stats Cards */}
         <DashboardStats />
 
+        {/* Quick Actions */}
+        <motion.div
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.6, duration: 0.5 }}
+        >
+          <Card className="bg-card border-border">
+            <CardHeader>
+              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
+              <CardDescription>Frequently used website management actions</CardDescription>
+            </CardHeader>
+            <CardContent>
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Plus className="h-6 w-6" />
+                  <span className="text-sm">New Website</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Users className="h-6 w-6" />
+                  <span className="text-sm">Manage Users</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <BarChart3 className="h-6 w-6" />
+                  <span className="text-sm">View Analytics</span>
+                </Button>
+                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
+                  <Shield className="h-6 w-6" />
+                  <span className="text-sm">Security Scan</span>
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </motion.div>
         {/* Main Content Grid */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
           {/* Recent Activities */}
@@ -169,39 +275,6 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-        {/* Quick Actions */}
-        <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ delay: 0.6, duration: 0.5 }}
-        >
-          <Card className="bg-card border-border">
-            <CardHeader>
-              <CardTitle className="text-card-foreground">Quick Actions</CardTitle>
-              <CardDescription>Frequently used website management actions</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Plus className="h-6 w-6" />
-                  <span className="text-sm">New Website</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Users className="h-6 w-6" />
-                  <span className="text-sm">Manage Users</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <BarChart3 className="h-6 w-6" />
-                  <span className="text-sm">View Analytics</span>
-                </Button>
-                <Button variant="outline" className="h-20 flex-col gap-2 bg-transparent">
-                  <Shield className="h-6 w-6" />
-                  <span className="text-sm">Security Scan</span>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </motion.div>
       </div>
     </DashboardLayout>
   )

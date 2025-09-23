@@ -10,11 +10,14 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Search, Plus, Edit, Trash2 } from "lucide-react"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog"
+
 import { useAuth } from "@/contexts/auth-context"
 
 interface KeyPointer {
   Id: number
   OrgCode: number
+  SectionName: string
   Text: string
   TextColor: string
   Counter: number
@@ -31,6 +34,7 @@ export default function KeyPointersPage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState<string>("all")
+  const [sectionFilter, setSectionFilter] = useState<string>("all")
 
   useEffect(() => {
     fetchKeyPointers()
@@ -46,7 +50,6 @@ export default function KeyPointersPage() {
       })
       if (response.ok) {
         const data = await response.json()
-        // Make sure image URLs are absolute
         const updatedData = data.map((kp: KeyPointer) => ({
           ...kp,
           Image: kp.Image ? `https://api.smartcorpweb.com${kp.Image}` : null,
@@ -76,42 +79,85 @@ export default function KeyPointersPage() {
   }
 
   const filteredKeyPointers = keyPointers.filter((kp) => {
-    const matchesSearch = kp.Text.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesSearch =
+      kp.Text.toLowerCase().includes(searchTerm.toLowerCase()) ||
+      kp.SectionName.toLowerCase().includes(searchTerm.toLowerCase())
     const matchesStatus =
       statusFilter === "all" ||
       (statusFilter === "active" && kp.IsActive) ||
       (statusFilter === "inactive" && !kp.IsActive)
-    return matchesSearch && matchesStatus
+    const matchesSection = sectionFilter === "all" || kp.SectionName === sectionFilter
+    return matchesSearch && matchesStatus && matchesSection
   })
+
+  const uniqueSections = Array.from(new Set(keyPointers.map((kp) => kp.SectionName)))
 
   if (loading) return <div>Loading...</div>
 
   return (
     <DashboardLayout>
       <div className="space-y-6">
+        {/* Header */}
         <div className="flex justify-between items-center">
           <div>
             <h1 className="text-3xl font-bold">Key Pointers</h1>
             <p className="text-muted-foreground">Manage your key result area pointers</p>
           </div>
-          <Link href="/admin-kra/keypointers/create">
-            <Button>
-              <Plus className="h-4 w-4 mr-2" />
-              Add Key Pointer
-            </Button>
-          </Link>
+          <div className="flex gap-2">
+            <Dialog>
+              <DialogTrigger asChild>
+                <Button variant="outline">View All</Button>
+              </DialogTrigger>
+              <DialogContent className="max-w-3xl">
+                <DialogHeader>
+                  <DialogTitle>All Key Pointers</DialogTitle>
+                </DialogHeader>
+                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 mt-4">
+                  {keyPointers.map((kp) => (
+                    <div
+                      key={kp.Id}
+                      className="relative h-32 flex flex-col items-center justify-center rounded-lg text-white p-4 bg-gray-800"
+                    >
+                      {kp.Image && (
+                        <img
+                          src={kp.Image}
+                          alt={kp.Text}
+                          className="w-10 h-10 mb-2 object-contain"
+                        />
+                      )}
+                      <span className="text-2xl font-bold" style={{ color: kp.CounterColor }}>
+                        {kp.Counter}+
+                      </span>
+                      <span className="text-lg font-medium " style={{ color: kp.TextColor }}>
+                        {kp.Text}
+                      </span>
+                      <span className="text-xs text-gray-300 mt-1">{kp.SectionName}</span>
+                    </div>
+                  ))}
+                </div>
+              </DialogContent>
+            </Dialog>
+
+            <Link href="/admin-kra/keypointers/create">
+              <Button>
+                <Plus className="h-4 w-4 mr-2" />
+                Add Key Pointer
+              </Button>
+            </Link>
+          </div>
         </div>
 
+        {/* Filters */}
         <Card>
           <CardHeader>
             <CardTitle>Filters</CardTitle>
           </CardHeader>
           <CardContent>
-            <div className="flex gap-4">
-              <div className="flex-1 relative">
+            <div className="flex gap-4 flex-wrap">
+              <div className="flex-1 relative min-w-[200px]">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
                 <Input
-                  placeholder="Search key pointers..."
+                  placeholder="Search by text or section..."
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
                   className="pl-10"
@@ -127,10 +173,24 @@ export default function KeyPointersPage() {
                   <SelectItem value="inactive">Inactive</SelectItem>
                 </SelectContent>
               </Select>
+              <Select value={sectionFilter} onValueChange={setSectionFilter}>
+                <SelectTrigger className="w-48">
+                  <SelectValue placeholder="Filter by section" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Sections</SelectItem>
+                  {uniqueSections.map((sec) => (
+                    <SelectItem key={sec} value={sec}>
+                      {sec}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
             </div>
           </CardContent>
         </Card>
 
+        {/* Table */}
         <Card>
           <CardHeader>
             <CardTitle>Key Pointers ({filteredKeyPointers.length})</CardTitle>
@@ -139,6 +199,7 @@ export default function KeyPointersPage() {
             <Table>
               <TableHeader>
                 <TableRow>
+                  <TableHead>Section</TableHead>
                   <TableHead>Text</TableHead>
                   <TableHead>Counter</TableHead>
                   <TableHead>Colors</TableHead>
@@ -151,6 +212,7 @@ export default function KeyPointersPage() {
               <TableBody>
                 {filteredKeyPointers.map((kp) => (
                   <TableRow key={kp.Id}>
+                    <TableCell>{kp.SectionName}</TableCell>
                     <TableCell>
                       <div className="font-medium" style={{ color: kp.TextColor }}>
                         {kp.Text}
@@ -208,9 +270,9 @@ export default function KeyPointersPage() {
                 ))}
                 {filteredKeyPointers.length === 0 && (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8">
+                    <TableCell colSpan={8} className="text-center py-8">
                       <div className="text-muted-foreground">
-                        {searchTerm || statusFilter !== "all"
+                        {searchTerm || statusFilter !== "all" || sectionFilter !== "all"
                           ? "No key pointers match your filters"
                           : "No key pointers found"}
                       </div>

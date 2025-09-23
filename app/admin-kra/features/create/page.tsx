@@ -13,13 +13,31 @@ import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
+interface FeatureFormData {
+  title: string
+  titleColor: string
+  subTitle: string
+  subTitleColor: string
+  description: string
+  descriptionColor: string
+  isButton: boolean
+  buttonText?: string
+  buttonColor?: string
+  buttonURL?: string
+  bgImageType?: string
+  bgColor?: string
+  bgImage?: string
+  iconImage?: string
+  Img?: string
+  isActive: boolean
+}
 
 export default function CreateFeaturePage() {
   const router = useRouter()
   const { user } = useAuth()
   const orgCode = user?.OrgCode
 
-  const [formData, setFormData] = useState({
+  const [formData, setFormData] = useState<FeatureFormData>({
     title: "",
     titleColor: "#000000",
     subTitle: "",
@@ -30,75 +48,88 @@ export default function CreateFeaturePage() {
     buttonText: "",
     buttonColor: "#007bff",
     buttonURL: "",
+    bgImageType: "icon", // Default to icon
+    bgColor: "#ffffff",  // Default background color
+    bgImage: "",
+    iconImage: "",
+    Img: "",
     isActive: true,
   })
 
-  const [imageFile, setImageFile] = useState<File | null>(null)
-  const [previewUrl, setPreviewUrl] = useState<string>("")
+
+  const [bgImageFile, setBgImageFile] = useState<File | null>(null)
+  const [iconImageFile, setIconImageFile] = useState<File | null>(null)
+  const [bgPreviewUrl, setBgPreviewUrl] = useState<string>("")
+  const [iconPreviewUrl, setIconPreviewUrl] = useState<string>("")
   const [loading, setLoading] = useState(false)
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  // Background image
+  const handleBgFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0]
     if (file) {
-      setImageFile(file)
-      setPreviewUrl(URL.createObjectURL(file)) // instant preview
+      setBgImageFile(file)
+      setBgPreviewUrl(URL.createObjectURL(file))
     } else {
-      setImageFile(null)
-      setPreviewUrl("")
+      setBgImageFile(null)
+      setBgPreviewUrl("")
+    }
+  }
+
+  // Icon image
+  const handleIconFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0]
+    if (file) {
+      setIconImageFile(file)
+      setIconPreviewUrl(URL.createObjectURL(file))
+    } else {
+      setIconImageFile(null)
+      setIconPreviewUrl("")
     }
   }
 
   const handleSubmit = async (e: React.FormEvent) => {
-  e.preventDefault()
-  if (!orgCode) return
+    e.preventDefault()
+    if (!orgCode) return
 
-  try {
-    setLoading(true)
-    const fd = new FormData()
-    fd.append("OrgCode", orgCode.toString())
-    Object.entries(formData).forEach(([key, value]) => {
-      fd.append(key, value.toString())
-    })
-    if (imageFile) fd.append("Img", imageFile)
+    try {
+      setLoading(true)
+      const fd = new FormData()
+      Object.entries(formData).forEach(([key, value]) => {
+  if (key === "isButton" || key === "isActive") {
+    fd.append(key, value ? "1" : "0"); // convert boolean to SQL-friendly
+  } else {
+    fd.append(key, value.toString());
+  }
+});
 
-    const response = await fetch("https://api.smartcorpweb.com/api/feature", {
-      method: "POST",
-      body: fd,
-    })
+      fd.append("OrgCode", orgCode.toString())
+      Object.entries(formData).forEach(([key, value]) => fd.append(key, value.toString()))
+      if (bgImageFile) fd.append("bgImage", bgImageFile)
+      if (iconImageFile) fd.append("iconImage", iconImageFile)
 
-    if (response.ok) {
-      const data = await response.json()
-      const imagePath = data.Img || data.path
-
-      if (imagePath) {
-        setPreviewUrl(`https://api.smartcorpweb.com${imagePath}`) // ✅ backend preview
-      }
-
-      toast({
-        title: "Success",
-        description: "Feature created successfully",
+      const response = await fetch("https://api.smartcorpweb.com/api/feature", {
+        method: "POST",
+        body: fd,
       })
 
-      // optional: wait 1s before navigating so user sees uploaded preview
-      setTimeout(() => {
-        router.push("/admin-kra/features")
-      }, 1000)
-    } else {
-      throw new Error("Failed to create feature")
+      if (response.ok) {
+        toast({
+          title: "Success",
+          description: "Feature created successfully",
+        })
+        setTimeout(() => router.push("/admin-kra/features"), 1000)
+      } else {
+        throw new Error("Failed to create feature")
+      }
+    } catch (error) {
+      console.error("Error creating feature:", error)
+      toast({ title: "Error", description: "Failed to create feature", variant: "destructive" })
+    } finally {
+      setLoading(false)
     }
-  } catch (error) {
-    console.error("Error creating feature:", error)
-    toast({
-      title: "Error",
-      description: "Failed to create feature",
-      variant: "destructive",
-    })
-  } finally {
-    setLoading(false)
   }
-}
 
- return (
+  return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -109,8 +140,8 @@ export default function CreateFeaturePage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Add Feature</h1>
-            <p className="text-muted-foreground">Add the KRA feature details and styling</p>
+            <h1 className="text-3xl font-bold text-foreground">Edit Feature</h1>
+            <p className="text-muted-foreground">Edit the KRA feature details and styling</p>
           </div>
         </div>
 
@@ -212,18 +243,55 @@ export default function CreateFeaturePage() {
                   </div>
                 </div>
 
-                {/* image upload */}
-                <div>
-                  <Label htmlFor="image">Upload Image</Label>
-                  <Input id="image" type="file" accept="image/*" onChange={handleFileChange} />
-                  {previewUrl && (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="w-full h-32 object-cover rounded mt-2"
-                    />
-                  )}
+                {/* Background type and color */}
+                <div className="grid grid-cols-2 gap-4">
+                  <div>
+                    <Label htmlFor="bgImageType">Background Type</Label>
+                    <select
+                      id="bgImageType"
+                      value={formData.bgImageType}
+                      onChange={(e) => setFormData({ ...formData, bgImageType: e.target.value })}
+                      className="w-full border rounded p-2"
+                    >
+                      <option value="icon">Icon</option>
+                      <option value="image">Image</option>
+                    </select>
+                  </div>
+                  <div>
+                    <Label htmlFor="bgColor">Background Color</Label>
+                    <div className="flex gap-2">
+                      <Input
+                        id="bgColor"
+                        type="color"
+                        value={formData.bgColor}
+                        onChange={(e) => setFormData({ ...formData, bgColor: e.target.value })}
+                        className="w-16 h-10 p-1"
+                      />
+                      <Input
+                        value={formData.bgColor}
+                        onChange={(e) => setFormData({ ...formData, bgColor: e.target.value })}
+                        placeholder="#ffffff"
+                      />
+                    </div>
+                  </div>
                 </div>
+
+                {/* Conditional image uploads based on bgImageType */}
+                {formData.bgImageType === "image" && (
+                  <div>
+                    <Label htmlFor="bgImage">Background Image</Label>
+                    <Input id="bgImage" type="file" accept="image/*" onChange={handleBgFileChange} />
+                    {bgPreviewUrl && <img src={bgPreviewUrl} alt="BG Preview" className="w-full h-32 object-cover rounded mt-2" />}
+                  </div>
+                )}
+
+                {formData.bgImageType === "icon" && (
+                  <div>
+                    <Label htmlFor="iconImage">Icon Image</Label>
+                    <Input id="iconImage" type="file" accept="image/*" onChange={handleIconFileChange} />
+                    {iconPreviewUrl && <img src={iconPreviewUrl} alt="Icon Preview" className="w-16 h-16 object-cover rounded mt-2" />}
+                  </div>
+                )}
 
                 {/* button options */}
                 <div className="space-y-4">
@@ -290,7 +358,7 @@ export default function CreateFeaturePage() {
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
                     <Save className="w-4 h-4 mr-2" />
-                    {loading ? "Adding..." : "Add Feature"}
+                    {loading ? "Updating..." : "Update Feature"}
                   </Button>
                   <Link href="/admin-kra/features">
                     <Button variant="outline" type="button">
@@ -301,7 +369,7 @@ export default function CreateFeaturePage() {
               </form>
             </CardContent>
           </Card>
-
+          
           <Card>
             <CardHeader>
               <CardTitle className="flex items-center gap-2">
@@ -309,44 +377,75 @@ export default function CreateFeaturePage() {
                 Live Preview
               </CardTitle>
             </CardHeader>
-            <CardContent>
-              <div className="border rounded-lg p-6 bg-background">
-                {previewUrl && (
-                  <img
-                    src={previewUrl}
-                    alt="Feature"
-                    className="w-full h-32 object-cover rounded mb-4"
-                  />
-                )}
-                <h3
-                  className="text-xl font-bold mb-2"
-                  style={{ color: formData.titleColor }}
-                >
-                  {formData.title || "Feature Title"}
-                </h3>
-                <h4
-                  className="text-lg mb-3"
-                  style={{ color: formData.subTitleColor }}
-                >
-                  {formData.subTitle || "Feature Subtitle"}
-                </h4>
-                <p
-                  className="text-sm mb-4"
-                  style={{ color: formData.descriptionColor }}
-                >
-                  {formData.description || "Feature description will appear here..."}
-                </p>
-                {formData.isButton && formData.buttonText && (
-                  <button
-                    className="px-4 py-2 rounded text-white text-sm font-medium"
-                    style={{ backgroundColor: formData.buttonColor }}
-                  >
-                    {formData.buttonText}
-                  </button>
-                )}
-              </div>
-            </CardContent>
-          </Card>
+        <CardContent>
+  <div className="border rounded-lg overflow-hidden min-h-[300px] flex flex-col">
+    {formData.bgImageType === "image" && bgPreviewUrl && (
+      <>
+        {/* Top: Background Image */}
+        <div
+          className="w-full h-48 bg-cover bg-center"
+          style={{ backgroundImage: `url(${bgPreviewUrl})` }}
+        />
+
+        {/* Bottom: Content */}
+        <div className="w-full p-6 flex flex-col items-center" style={{ backgroundColor: formData.bgColor }}>
+          <h3 className="text-2xl font-bold mb-2" style={{ color: formData.titleColor }}>
+            {formData.title || "Feature Title"}
+          </h3>
+          <h4 className="text-lg mb-4" style={{ color: formData.subTitleColor }}>
+            {formData.subTitle || "Feature Subtitle"}
+          </h4>
+          <p className="text-sm text-center leading-relaxed" style={{ color: formData.descriptionColor }}>
+            {formData.description || "Feature description will appear here..."}
+          </p>
+          {formData.isButton && formData.buttonText && (
+            <button
+              className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+              style={{ backgroundColor: formData.buttonColor }}
+            >
+              {formData.buttonText}
+            </button>
+          )}
+        </div>
+      </>
+    )}
+
+    {formData.bgImageType === "icon" && iconPreviewUrl && (
+      <div
+        className="w-full p-6 flex flex-col items-center"
+        style={{ backgroundColor: formData.bgColor }}
+      >
+        {/* Icon at the top */}
+        <img
+          src={iconPreviewUrl}
+          alt="Icon"
+          className="w-16 h-16 object-contain mb-4"
+        />
+
+        {/* Content */}
+        <h3 className="text-2xl font-bold mb-2" style={{ color: formData.titleColor }}>
+          {formData.title || "Feature Title"}
+        </h3>
+        <h4 className="text-lg mb-4" style={{ color: formData.subTitleColor }}>
+          {formData.subTitle || "Feature Subtitle"}
+        </h4>
+        <p className="text-sm text-center leading-relaxed" style={{ color: formData.descriptionColor }}>
+          {formData.description || "Feature description will appear here..."}
+        </p>
+        {formData.isButton && formData.buttonText && (
+          <button
+            className="px-4 py-2 rounded text-white text-sm font-medium mt-6"
+            style={{ backgroundColor: formData.buttonColor }}
+          >
+            {formData.buttonText}
+          </button>
+        )}
+      </div>
+    )}
+  </div>
+</CardContent>
+
+         </Card>
         </div>
       </div>
     </DashboardLayout>

@@ -9,10 +9,10 @@ import { Card, CardContent, } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { useToast } from "@/hooks/use-toast"
 import { orgLicenseApi } from "@/lib/api"
 import {DashboardLayout} from "@/components/dashboard-layout"
 import Link from "next/link"
+import {toast} from "react-toastify"
 
 interface License {
   LicenseID: number
@@ -32,8 +32,7 @@ export default function OrganizationLicensePage() {
   const [loading, setLoading] = useState(true)
   const [searchTerm, setSearchTerm] = useState("")
   const [statusFilter, setStatusFilter] = useState("all")
-  const { toast } = useToast()
-
+ 
   useEffect(() => {
     fetchLicenses()
   }, [])
@@ -48,11 +47,7 @@ export default function OrganizationLicensePage() {
       const data = await orgLicenseApi.getAll()
       setLicenses(data)
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to fetch licenses",
-        variant: "destructive",
-      })
+     
     } finally {
       setLoading(false)
     }
@@ -82,17 +77,10 @@ export default function OrganizationLicensePage() {
 
     try {
       await orgLicenseApi.delete(id.toString())
-      toast({
-        title: "Success",
-        description: "License deleted successfully",
-      })
+      toast.success("License deleted successfully")
       fetchLicenses()
     } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to delete license",
-        variant: "destructive",
-      })
+      toast.error(error?.message || "Failed to delete license")
     }
   }
 
@@ -129,6 +117,12 @@ export default function OrganizationLicensePage() {
         
       </SelectContent>
     </Select>
+     {/* ✅ Add License Button */}
+            <Link href="/org/license/add">
+              <Button>
+                <Plus className="w-4 h-4 mr-2" /> Add License
+              </Button>
+            </Link>
     
   </div>
   

@@ -12,6 +12,14 @@ import { Trash2, Edit, Plus, Search, Star } from "lucide-react"
 import { useRouter } from "next/navigation"
 import { useToast } from "@/hooks/use-toast"
 import { useAuth } from "@/contexts/auth-context"
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog"
+
 import { DashboardLayout } from "@/components/dashboard-layout"
 
 interface Testimonial {
@@ -144,16 +152,69 @@ export default function TestimonialsPage() {
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex justify-between items-center">
-          <div>
-            <h1 className="text-3xl font-bold">Testimonials</h1>
-            <p className="text-muted-foreground">Manage customer testimonials and reviews</p>
-          </div>
-          <Button onClick={() => router.push("/admin-kra/testimonials/create")}>
-            <Plus className="mr-2 h-4 w-4" />
-            Add Testimonial
-          </Button>
+      <div className="flex justify-between items-center">
+  <div>
+    <h1 className="text-3xl font-bold">Testimonials</h1>
+    <p className="text-muted-foreground">Manage customer testimonials and reviews</p>
+  </div>
+  <div className="flex gap-2">
+    {/* Preview All Button */}
+    <Dialog>
+      <DialogTrigger asChild>
+        <Button variant="outline">
+          Preview All
+        </Button>
+      </DialogTrigger>
+      <DialogContent className="max-w-4xl">
+        <DialogHeader>
+          <DialogTitle>All Testimonials</DialogTitle>
+        </DialogHeader>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4 max-h-[70vh] overflow-y-auto">
+          {testimonials.map((t) => (
+            <Card key={t.id} className="p-4">
+              <div className="flex items-center gap-3">
+                <Avatar className="h-12 w-12">
+                  <AvatarImage
+                    src={
+                      t.image_url
+                        ? `https://api.smartcorpweb.com${t.image_url}`
+                        : "/placeholder.svg"
+                    }
+                    alt={t.name}
+                  />
+                  <AvatarFallback>
+                    {t.name
+                      .split(" ")
+                      .map((n) => n[0])
+                      .join("")
+                      .toUpperCase()}
+                  </AvatarFallback>
+                </Avatar>
+                <div>
+                  <p className="font-semibold">{t.name}</p>
+                  <p className="text-sm text-muted-foreground">{t.role}</p>
+                </div>
+              </div>
+              <p className="mt-2 text-sm">{t.content}</p>
+              <div className="mt-2 flex items-center gap-1">
+                {renderStars(t.rating)}
+                <span className="ml-1 text-xs text-muted-foreground">
+                  ({t.rating})
+                </span>
+              </div>
+            </Card>
+          ))}
         </div>
+      </DialogContent>
+    </Dialog>
+
+    {/* Add Testimonial Button */}
+    <Button onClick={() => router.push("/admin-kra/testimonials/create")}>
+      <Plus className="mr-2 h-4 w-4" />
+      Add Testimonial
+    </Button>
+  </div>
+</div>
 
         <Card>
           <CardHeader>

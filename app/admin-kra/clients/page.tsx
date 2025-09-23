@@ -12,6 +12,8 @@ import Link from "next/link"
 import { useAuth } from "@/contexts/auth-context"
 import { toast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogClose } from "@/components/ui/dialog"
+
 
 interface Feature {
   id: number
@@ -126,12 +128,84 @@ export default function FeaturesPage() {
           <h1 className="text-3xl font-bold text-foreground">Clients Management</h1>
           <p className="text-muted-foreground">Manage your KRA Clients and their display settings</p>
         </div>
+           {/* Left: Dialog Preview */}
+        <div className="flex items-center gap-2">
+          <Dialog>
+            <DialogTrigger asChild>
+              <Button variant="outline" className="flex items-center gap-2">
+                <Eye className="w-4 h-4" />
+                Live Preview
+              </Button>
+            </DialogTrigger>
+           <DialogContent className="w-[700px] max-w-[95%]">
+  <DialogHeader>
+    <DialogTitle>Clients Preview</DialogTitle>
+  </DialogHeader>
+
+  {features.length > 0 ? (
+    <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mt-4">
+      {features.map((feature) => (
+        <Card
+  key={feature.id}
+  className="transition-transform hover:scale-[1.03] hover:shadow-lg duration-200 h-[200px]"
+>
+  <CardContent className="p-2 flex flex-col items-center justify-between">
+    <div className="w-full h-[80px] overflow-hidden rounded-md">
+      <img
+        src={`https://api.smartcorpweb.com${feature.Img}`}
+        alt={feature.title}
+        className="w-full h-full object-cover transition-transform duration-500 hover:scale-105"
+      />
+    </div>
+    <div className="text-center mt-2">
+      <h3
+        className="text-sm font-semibold truncate"
+        style={{ color: feature.titleColor }}
+      >
+        {feature.title}
+      </h3>
+      <p
+        className="text-xs truncate"
+        style={{ color: feature.subTitleColor }}
+      >
+        {feature.subTitle}
+      </p>
+      <p
+        className="text-xs text-muted-foreground truncate"
+        style={{ color: feature.descriptionColor }}
+      >
+        {feature.description}
+      </p>
+    </div>
+    {feature.isButton && feature.buttonText && (
+      <Link href={feature.buttonURL || "#"} target="_blank">
+        <Button
+          className="mt-1 px-2 py-1 text-xs rounded-sm"
+          style={{ backgroundColor: feature.buttonColor }}
+        >
+          {feature.buttonText}
+        </Button>
+      </Link>
+    )}
+  </CardContent>
+</Card>
+
+      ))}
+    </div>
+  ) : (
+    <p className="text-center text-muted-foreground mt-4">No projects available</p>
+  )}
+
+ 
+</DialogContent>          </Dialog>
+
         <Link href="/admin-kra/clients/create">
           <Button>
             <Plus className="w-4 h-4 mr-2" />
             Add Client
           </Button>
         </Link>
+        </div>
       </div>
 
       <Card>

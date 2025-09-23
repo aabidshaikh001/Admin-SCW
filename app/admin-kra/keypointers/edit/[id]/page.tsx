@@ -17,6 +17,7 @@ import { toast } from "@/hooks/use-toast"
 interface KeyPointer {
   Id: number
   OrgCode: number
+  SectionName: string
   Text: string
   TextColor: string
   Counter: number
@@ -33,6 +34,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
   const [loading, setLoading] = useState(false)
   const [initialLoading, setInitialLoading] = useState(true)
   const [formData, setFormData] = useState({
+    SectionName: "", // ✅ Added
     Text: "",
     TextColor: "#000000",
     Counter: 0,
@@ -58,7 +60,9 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
       if (response.ok) {
         const data: KeyPointer = await response.json()
         setFormData({
+          SectionName: data.SectionName,
           Text: data.Text,
+
           TextColor: data.TextColor,
           Counter: data.Counter,
           CounterColor: data.CounterColor,
@@ -143,7 +147,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
     )
   }
 
-  return (
+ return (
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
@@ -154,8 +158,8 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Edit Key Pointer</h1>
-            <p className="text-muted-foreground">Update key result area pointer details</p>
+            <h1 className="text-3xl font-bold">Update Key Pointer</h1>
+            <p className="text-muted-foreground">Update the key result area pointer</p>
           </div>
         </div>
 
@@ -166,6 +170,22 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
             </CardHeader>
             <CardContent className="space-y-6">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+
+                {/* ✅ Section Name */}
+               {/* Section Name */}
+<div className="space-y-2">
+  <Label htmlFor="sectionName">Section Name *</Label>
+  <Input
+    id="sectionName"
+    value={formData.SectionName}
+    onChange={(e) => handleChange("SectionName", e.target.value)}
+    placeholder="Enter section name"
+    required
+    maxLength={50}
+  />
+</div>
+
+                {/* Text */}
                 <div className="space-y-2">
                   <Label htmlFor="text">Text *</Label>
                   <Input
@@ -178,6 +198,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                   />
                 </div>
 
+                {/* Text Color */}
                 <div className="space-y-2">
                   <Label htmlFor="textColor">Text Color</Label>
                   <div className="flex gap-2">
@@ -197,6 +218,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                   </div>
                 </div>
 
+                {/* Counter */}
                 <div className="space-y-2">
                   <Label htmlFor="counter">Counter *</Label>
                   <Input
@@ -210,6 +232,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                   />
                 </div>
 
+                {/* Counter Color */}
                 <div className="space-y-2">
                   <Label htmlFor="counterColor">Counter Color</Label>
                   <div className="flex gap-2">
@@ -232,7 +255,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                 {/* Image Upload */}
                 <div className="space-y-2 md:col-span-2">
                   <Label htmlFor="image">Upload Image</Label>
-                  <Input id="image" type="file" accept="image/*" onChange={(e) => handleFileChange(e)} />
+                  <Input id="image" type="file" accept="image/*" onChange={handleFileChange} />
                   {previewUrl && (
                     <img
                       src={previewUrl}
@@ -242,6 +265,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                   )}
                 </div>
 
+                {/* Active */}
                 <div className="flex items-center space-x-2">
                   <Switch
                     id="isActive"
@@ -249,26 +273,6 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
                     onCheckedChange={(checked) => handleChange("IsActive", checked)}
                   />
                   <Label htmlFor="isActive">Active</Label>
-                </div>
-              </div>
-
-              {/* Preview */}
-              <div className="border rounded-lg p-4 bg-gray-50">
-                <Label className="text-sm font-medium mb-2 block">Preview</Label>
-                <div className="flex items-center gap-4">
-                  <div className="font-medium" style={{ color: formData.TextColor }}>
-                    {formData.Text || "Sample Text"}
-                  </div>
-                  <div className="font-bold text-2xl" style={{ color: formData.CounterColor }}>
-                    {formData.Counter}
-                  </div>
-                  {previewUrl && (
-                    <img
-                      src={previewUrl}
-                      alt="Preview"
-                      className="w-8 h-8 rounded object-cover"
-                    />
-                  )}
                 </div>
               </div>
 
