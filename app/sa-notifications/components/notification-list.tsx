@@ -308,7 +308,7 @@ export default function NotificationList() {
                 {!searchTerm && (
                   <Button onClick={() => router.push("/sa-notifications/add")}>
                     <Plus className="mr-2 h-4 w-4" />
-                    Create Notification
+                 Save
                   </Button>
                 )}
               </motion.div>

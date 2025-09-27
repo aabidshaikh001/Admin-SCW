@@ -262,15 +262,8 @@ const handleSubmit = async (e: React.FormEvent) => {
     <DashboardLayout>
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin-products/products">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Products
-          </Button>
-        </Link>
-        <div>
-          <h1 className="text-3xl font-bold text-foreground">Create Product</h1>
-          <p className="text-muted-foreground mt-2">Add a new product to your catalog</p>
+                <div>
+          <h1 className="text-2xl font-bold text-foreground">Create Product</h1>
         </div>
       </div>
 

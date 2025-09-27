@@ -108,12 +108,10 @@ const handleSubmit = async () => {
   return (
     <div className="space-y-6">
       <div>
-        <h1 className="text-3xl font-bold text-foreground">
-          {isEdit ? "Edit Notification" : "Create New Notification"}
+        <h1 className="text-2xl font-bold text-foreground">
+          {isEdit ? "System Updates(Update)" : "System Updates(New)"}
         </h1>
-        <p className="text-muted-foreground">
-          {isEdit ? "Update the notification details" : "Create a new notification to send to organizations"}
-        </p>
+     
       </div>
 
       <div className="space-y-6 p-4 border rounded-lg">
@@ -247,7 +245,7 @@ const handleSubmit = async () => {
           Cancel
         </Button>
         <Button onClick={handleSubmit} disabled={loading}>
-          {loading ? "Saving..." : isEdit ? "Update" : "Create"} Notification
+          {loading ? "Saving..." : isEdit ? "Save" : "Save"} 
         </Button>
       </div>
     </div>

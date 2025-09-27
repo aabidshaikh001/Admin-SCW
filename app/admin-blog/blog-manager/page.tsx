@@ -184,7 +184,7 @@ export default function BlogsPage() {
 >
   {/* Left: Title */}
   <div className="flex-1">
-    <h1 className="text-3xl font-bold text-foreground">Blog</h1>
+    <h1 className="text-2xl font-bold text-foreground">Blog</h1>
   </div>
 
   {/* Right: Search + Filters + New Button */}
@@ -319,14 +319,14 @@ export default function BlogsPage() {
                             <Button variant="outline" size="sm" onClick={() => router.push(`/admin-blog/blog-manager/edit/${blog.id}`)}>
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDeleteBlog(blog.id!)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>

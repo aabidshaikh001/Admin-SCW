@@ -12,9 +12,13 @@ interface User {
   EmployeeCode?: string
   OrgCode: number
   UserName: string
+  AdminEmail?: string
+  email?: string
   UserEmail: string
+  name?: string
   UserDOB?: string
   UserPhoto?: string
+  profilePhoto?: string
   UserType: string   // "SA" | "Admin" | "User"
   LoginId?: string
   Mobile?: string

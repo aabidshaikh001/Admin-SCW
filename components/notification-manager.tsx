@@ -380,21 +380,21 @@ export default function NotificationManager() {
         className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
       >
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Manage Notifications</h1>
-          <p className="text-muted-foreground">Create and manage system notifications for all organizations</p>
+          <h1 className="text-2xl font-bold text-foreground">Manage Notifications</h1>
+         
         </div>
 
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <Button className="bg-primary hover:bg-primary/90">
               <Plus className="mr-2 h-4 w-4" />
-              Create Notification
+           System Notification
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>Create New Notification</DialogTitle>
-              <DialogDescription>Create a new notification to send to organizations</DialogDescription>
+              <DialogTitle>System Notification(New)</DialogTitle>
+           
             </DialogHeader>
             <NotificationForm />
           </DialogContent>
@@ -499,14 +499,14 @@ export default function NotificationManager() {
                       <Button variant="outline" size="sm" onClick={() => openEditModal(notification)}>
                         <Edit className="h-4 w-4" />
                       </Button>
-                      <Button
+                      {/* <Button
                         variant="outline"
                         size="sm"
                         onClick={() => handleDelete(notification.NotiId)}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="h-4 w-4" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </CardContent>
                 </Card>
@@ -526,7 +526,7 @@ export default function NotificationManager() {
           {!searchTerm && (
             <Button onClick={() => setIsCreateModalOpen(true)}>
               <Plus className="mr-2 h-4 w-4" />
-              Create Notification
+           Save
             </Button>
           )}
         </motion.div>

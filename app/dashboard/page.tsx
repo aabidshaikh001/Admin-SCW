@@ -10,6 +10,8 @@ import { Badge } from "@/components/ui/badge"
 import { Globe, Shield, Database, Users, BarChart3, Plus } from "lucide-react"
 import { useState, useEffect } from "react"
 import { useAuth } from "@/contexts/auth-context"
+import Link from "next/link"
+
 type StatsResponse = {
   success: boolean
   data: {
@@ -43,24 +45,28 @@ export function DashboardStats() {
           value: stats.subscribers,
           icon: Users,
           color: "text-blue-600",
+          link: "/admin-nl/subscribers"
         },
         {
           title: "Enquiries",
           value: stats.enquiries,
           icon: FileText,
           color: "text-green-600",
+          link: "/admin-cms/enquiries"
         },
         {
           title: "Users",
           value: stats.users,
           icon: TrendingUp,
           color: "text-purple-600",
+          link: "/user-management"
         },
         {
           title: "Applicants",
           value: stats.jobs,
           icon: DollarSign,
           color: "text-orange-600",
+          link: "/admin-careers/job-applications"
         },
       ]
     : []
@@ -74,6 +80,7 @@ export function DashboardStats() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1, duration: 0.3 }}
         >
+          <Link href={card.link}>
           <Card className="bg-card border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-card-foreground">
@@ -87,6 +94,7 @@ export function DashboardStats() {
               </div>
             </CardContent>
           </Card>
+          </Link>
         </motion.div>
       ))}
     </div>

@@ -142,15 +142,10 @@ export default function EditFeaturePage({ params }: { params: { id: string } }) 
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin-kra/features">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Features
-            </Button>
-          </Link>
+         
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Edit Feature</h1>
-            <p className="text-muted-foreground">Edit the KRA feature details and styling</p>
+            <h1 className="text-2xl font-bold text-foreground">Features Management(Update)</h1>
+           
           </div>
         </div>
 
@@ -367,7 +362,7 @@ export default function EditFeaturePage({ params }: { params: { id: string } }) 
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
                     <Save className="w-4 h-4 mr-2" />
-                    {loading ? "Updating..." : "Update Feature"}
+                    {loading ? "Saving..." : "Save"}
                   </Button>
                   <Link href="/admin-kra/features">
                     <Button variant="outline" type="button">

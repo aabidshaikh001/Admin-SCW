@@ -154,15 +154,10 @@ form.append("Status", formData.status.toString());
     <DashboardLayout>
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin-products/categories">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Categories
-          </Button>
-        </Link>
+      
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Edit Category</h1>
-          <p className="text-muted-foreground mt-2">Update category details</p>
+          <h1 className="text-2xl font-bold text-foreground">Category(Update)</h1>
+     
         </div>
       </div>
 

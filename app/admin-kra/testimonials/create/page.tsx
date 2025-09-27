@@ -140,8 +140,8 @@ export default function CreateTestimonialPage() {
             Back
           </Button>
           <div>
-            <h1 className="text-3xl font-bold">Create Testimonial</h1>
-            <p className="text-muted-foreground">Add a new customer testimonial</p>
+            <h1 className="text-2xl font-bold">Testimonials(New)</h1>
+           
           </div>
         </div>
 
@@ -232,7 +232,7 @@ export default function CreateTestimonialPage() {
                       Cancel
                     </Button>
                     <Button type="submit" disabled={loading}>
-                      {loading ? "Creating..." : "Create Testimonial"}
+                      {loading ? "Saving..." : "Save"}
                     </Button>
                   </div>
                 </form>

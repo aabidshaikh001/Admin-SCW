@@ -115,29 +115,10 @@ export default function BreadcrumbsPage() {
         {/* Header */}
         <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold">Breadcrumb Management</h1>
-            <p className="text-muted-foreground">Manage page headers and breadcrumb sections</p>
+            <h1 className="text-2xl font-bold">Breadcrumb Management</h1>
+         
           </div>
-          <Link href="/admin-cms/breadcrumbs/create">
-            <Button className="flex items-center gap-2">
-              <Plus className="h-4 w-4" />
-              Add
-            </Button>
-          </Link>
-        </div>
-
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filters
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
+           <div className="relative">
                   <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground h-4 w-4" />
                   <Input
                     placeholder="Search by page name, title, or description..."
@@ -146,39 +127,16 @@ export default function BreadcrumbsPage() {
                     className="pl-10"
                   />
                 </div>
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={bgTypeFilter} onValueChange={setBgTypeFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <SelectValue placeholder="Filter by background" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Backgrounds</SelectItem>
-                  <SelectItem value="color">Color</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
-                  <SelectItem value="video">Video</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Results Summary */}
-        <div className="flex items-center justify-between">
-          <p className="text-sm text-muted-foreground">
-            Showing {filteredBreadcrumbs.length} of {breadcrumbs.length} breadcrumbs
-          </p>
+          <Link href="/admin-cms/breadcrumbs/create">
+            <Button className="flex items-center gap-2">
+              <Plus className="h-4 w-4" />
+             New
+            </Button>
+          </Link>
         </div>
 
+       
+     
         {/* Breadcrumbs Table */}
         <Card>
           <CardContent className="p-0">
@@ -254,14 +212,14 @@ export default function BreadcrumbsPage() {
                               <Edit className="h-4 w-4" />
                             </Button>
                           </Link>
-                          <Button
+                          {/* <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(breadcrumb.id)}
                             className="text-destructive hover:text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                         </div>
                       </TableCell>
                     </TableRow>

@@ -141,25 +141,10 @@ export default function SectionPartsPage() {
     <div className="container mx-auto py-8 space-y-6">
       <div className="flex justify-between items-center">
         <div>
-          <h1 className="text-3xl font-bold">Section Parts Management</h1>
-          <p className="text-muted-foreground">Manage website section components</p>
+          <h1 className="text-2xl font-bold">Section Parts Management</h1>
+     
         </div>
-        <Link href="/admin-cms/section-parts/create">
-          <Button>
-            <Plus className="w-4 h-4 mr-2" />
-            Add Section Part
-          </Button>
-        </Link>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>Filters</CardTitle>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col md:flex-row gap-4">
-            <div className="flex-1">
-              <div className="relative">
+          <div className="relative">
                 <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
                 <Input
                   placeholder="Search by section name, title, or description..."
@@ -168,36 +153,17 @@ export default function SectionPartsPage() {
                   className="pl-10"
                 />
               </div>
-            </div>
-            <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filter by status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
-                <SelectItem value="active">Active</SelectItem>
-                <SelectItem value="inactive">Inactive</SelectItem>
-              </SelectContent>
-            </Select>
-            <Select value={bgTypeFilter} onValueChange={setBgTypeFilter}>
-              <SelectTrigger className="w-full md:w-48">
-                <SelectValue placeholder="Filter by background" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Backgrounds</SelectItem>
-                <SelectItem value="color">Color</SelectItem>
-                <SelectItem value="image">Image</SelectItem>
-                <SelectItem value="video">Video</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-        </CardContent>
-      </Card>
+        <Link href="/admin-cms/section-parts/create">
+          <Button>
+            <Plus className="w-4 h-4 mr-2" />
+         New
+          </Button>
+        </Link>
+      </div>
 
+     
       <Card>
-        <CardHeader>
-          <CardTitle>Section Parts ({filteredParts.length})</CardTitle>
-        </CardHeader>
+       
         <CardContent>
           <div className="overflow-x-auto">
             <Table>
@@ -291,9 +257,9 @@ export default function SectionPartsPage() {
                             <Edit className="w-4 h-4" />
                           </Button>
                         </Link>
-                        <Button variant="outline" size="sm" onClick={() => handleDelete(part.id)}>
+                        {/* <Button variant="outline" size="sm" onClick={() => handleDelete(part.id)}>
                           <Trash2 className="w-4 h-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>

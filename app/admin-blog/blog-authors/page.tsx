@@ -139,7 +139,7 @@ export default function AuthorsPage() {
 >
   {/* Left side: Title */}
   <div className="flex items-center gap-4 w-full sm:w-auto">
-    <h1 className="text-3xl font-bold text-foreground">Authors</h1>
+    <h1 className="text-2xl font-bold text-foreground">Authors</h1>
 
     {/* Search bar in header */}
     <div className="relative w-full sm:w-64">
@@ -246,14 +246,14 @@ export default function AuthorsPage() {
                                 <Edit className="w-4 h-4" />
                               </Button>
                             </Link>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(member.Id)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>

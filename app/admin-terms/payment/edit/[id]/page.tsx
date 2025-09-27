@@ -161,24 +161,17 @@ export default function EditTOSPage({ params }: { params: { id: string } }) {
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/admin-terms/payment">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+          
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Edit Payment Terms</h1>
-            <p className="text-muted-foreground">Update Payment Terms item details</p>
+            <h1 className="text-2xl font-bold text-foreground">Payment Terms(Update)</h1>
+            
           </div>
         </motion.div>
 
         {/* Form */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card>
-            <CardHeader>
-              <CardTitle>Payment Terms Details</CardTitle>
-            </CardHeader>
+         
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
@@ -224,12 +217,12 @@ export default function EditTOSPage({ params }: { params: { id: string } }) {
                     {loading ? (
                       <>
                         <div className="w-4 h-4 mr-2 animate-spin rounded-full border-2 border-background border-t-foreground" />
-                        Updating...
+                        Saving...
                       </>
                     ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
-                        Update TOS
+                        Save
                       </>
                     )}
                   </Button>

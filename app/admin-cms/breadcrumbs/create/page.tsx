@@ -172,8 +172,8 @@ const getPreviewVideoSrc = () => {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Create New Breadcrumb</h1>
-            <p className="text-muted-foreground">Add a new page header and breadcrumb section</p>
+            <h1 className="text-2xl font-bold">Breadcrumb Management(New)</h1>
+     
           </div>
         </div>
 
@@ -633,11 +633,11 @@ const getPreviewVideoSrc = () => {
               <div className="flex gap-4">
                 <Button type="submit" disabled={loading} className="flex-1">
                   {loading ? (
-                    <>Creating...</>
+                    <>Saving...</>
                   ) : (
                     <>
                       <Save className="h-4 w-4 mr-2" />
-                      Create Breadcrumb
+                      Save
                     </>
                   )}
                 </Button>

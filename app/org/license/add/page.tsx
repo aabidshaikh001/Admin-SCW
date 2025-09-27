@@ -85,7 +85,7 @@ export default function AddLicensePage() {
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
           <div>
-            <h1 className="text-3xl font-bold text-foreground">License (Add)</h1>
+            <h1 className="text-2xl font-bold text-foreground">License Management (Add)</h1>
           </div>
         </motion.div>
 
@@ -187,7 +187,7 @@ export default function AddLicensePage() {
                     ) : (
                       <Save className="w-4 h-4 mr-2" />
                     )}
-                    Create License
+                    Save
                   </Button>
                   <Link href="/org/license">
                     <Button type="button" variant="outline">

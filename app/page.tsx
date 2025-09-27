@@ -15,6 +15,8 @@ export default function HomePage() {
         router.push("/sa-dashboard")
       } else if (user.UserType === "Admin") {
         router.push("/dashboard")
+      } else if (user.UserType === "User") {
+        router.push("/user-dashboard")
       } else {
         router.push("/user-dashboard")
       }

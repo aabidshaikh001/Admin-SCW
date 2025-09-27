@@ -8,6 +8,8 @@ import { Button } from "@/components/ui/button"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Globe, Shield, Database, Users, BarChart3, Plus,FileText, TrendingUp, DollarSign } from "lucide-react"
+import Link from "next/link"
+
   
 const recentActivities = [
   {
@@ -16,6 +18,7 @@ const recentActivities = [
     description: "E-commerce site went live successfully",
     time: "2 minutes ago",
     type: "website",
+
   },
   {
     id: 2,
@@ -85,12 +88,14 @@ export function DashboardStats() {
               value: d.UpdatesLastWeek,
               icon: TrendingUp,
               color: "text-purple-600",
+              link: "/sa-notifications"
             },
             {
               title: "Tickets",
               value: d.QueriesLastWeek,
               icon: FileText,
               color: "text-green-600",
+              link: "/sa-tickets"
               
             },
             {
@@ -98,12 +103,14 @@ export function DashboardStats() {
               value: d.TotalOrgs,
               icon: BarChart3,
               color: "text-blue-600",
+              link: "/org/info"
             },
             {
               title: "Users",
               value: d.TotalUsers,
               icon: Users,
               color: "text-orange-600",
+              link: "/all-user-modules"
             },
           ])
         }
@@ -122,7 +129,9 @@ export function DashboardStats() {
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: index * 0.1, duration: 0.3 }}
+     
         >
+          <Link href={stat.link}>
           <Card className="bg-card border-border">
             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
               <CardTitle className="text-sm font-medium text-card-foreground">{stat.title}</CardTitle>
@@ -135,7 +144,9 @@ export function DashboardStats() {
               </p>
             </CardContent>
           </Card>
+          </Link>
         </motion.div>
+
       ))}
     </div>
   )

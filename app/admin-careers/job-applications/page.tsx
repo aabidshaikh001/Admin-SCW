@@ -118,25 +118,10 @@ export default function JobApplicationsPage() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Job Applications</h1>
-            <p className="text-muted-foreground">Manage job applications and candidates</p>
+            <h1 className="text-2xl font-bold text-foreground">Job Applications</h1>
+           
           </div>
-          <Link href="/admin-careers/job-applications/create">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Application
-            </Button>
-          </Link>
-        </motion.div>
-
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
+           <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Search applications..."
@@ -145,29 +130,18 @@ export default function JobApplicationsPage() {
                   className="pl-10"
                 />
               </div>
-              <Select value={jobFilter} onValueChange={setJobFilter}>
-                <SelectTrigger className="w-full sm:w-[200px]">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by job" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Jobs</SelectItem>
-                  {jobTitles.map((job) => (
-                    <SelectItem key={job} value={job}>
-                      {job}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+          <Link href="/admin-careers/job-applications/create">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+            New
+            </Button>
+          </Link>
+        </motion.div>
 
+       
         {/* Applications Table */}
         <Card>
-          <CardHeader>
-            <CardTitle>Applications ({filteredApplications.length})</CardTitle>
-          </CardHeader>
+          
           <CardContent>
             {loading ? (
               <div className="space-y-3">
@@ -267,14 +241,14 @@ export default function JobApplicationsPage() {
                                 <Edit className="w-4 h-4" />
                               </Button>
                             </Link>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(application.id)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </motion.tr>

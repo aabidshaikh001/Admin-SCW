@@ -97,7 +97,7 @@ export default function CreateEnquiryPage() {
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Create New Enquiry</h1>
+            <h1 className="text-2xl font-bold text-foreground">Create New Enquiry</h1>
             <p className="text-muted-foreground">Add a new customer enquiry to the system</p>
           </div>
         </motion.div>

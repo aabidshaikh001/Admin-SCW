@@ -100,15 +100,10 @@ export default function CreateKeyPointerPage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin-kra/keypointers">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+         
           <div>
-            <h1 className="text-3xl font-bold">Create Key Pointer</h1>
-            <p className="text-muted-foreground">Add a new key result area pointer</p>
+            <h1 className="text-2xl font-bold">Key Pointers(New)</h1>
+         
           </div>
         </div>
 
@@ -228,7 +223,7 @@ export default function CreateKeyPointerPage() {
               <div className="flex gap-4 pt-4">
                 <Button type="submit" disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
-                  {loading ? "Creating..." : "Create Key Pointer"}
+                  {loading ? "Saving..." : "Save"}
                 </Button>
                 <Link href="/admin-kra/keypointers">
                   <Button type="button" variant="outline">

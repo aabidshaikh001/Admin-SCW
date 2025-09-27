@@ -349,8 +349,8 @@ const renderPreview = () => {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Edit Slider</h1>
-          <p className="text-muted-foreground">Update slider content and settings</p>
+          <h1 className="text-2xl font-bold">Sliders Management(Update)</h1>
+       
         </div>
       </div>
 

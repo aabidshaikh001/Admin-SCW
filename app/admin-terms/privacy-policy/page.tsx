@@ -136,26 +136,13 @@ export default function PrivacyPolicyPage() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
               <Shield className="w-8 h-8" />
               Privacy Policy Management
             </h1>
-            <p className="text-muted-foreground">Manage privacy policy content and sections</p>
+            
           </div>
-          <Link href="/admin-terms/privacy-policy/create">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Privacy Policy Item
-            </Button>
-          </Link>
-        </motion.div>
-
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Privacy Policy Items</CardTitle>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
+          <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Search privacy policy items..."
@@ -164,19 +151,16 @@ export default function PrivacyPolicyPage() {
                   className="pl-10"
                 />
               </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Status</SelectItem>
-                  <SelectItem value="Active">Active</SelectItem>
-                  <SelectItem value="Inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardHeader>
+          <Link href="/admin-terms/privacy-policy/create">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+             New
+            </Button>
+          </Link>
+        </motion.div>
+
+        {/* Filters */}
+        <Card>
           <CardContent>
             {loading ? (
               <div className="space-y-3">
@@ -246,7 +230,7 @@ export default function PrivacyPolicyPage() {
                                 <Edit className="w-4 h-4" />
                               </Button>
                             </Link>
-                            <Button
+                            {/* <Button
                               variant="ghost"
                               size="sm"
                               onClick={() => handleDelete(policy.id)}
@@ -254,7 +238,7 @@ export default function PrivacyPolicyPage() {
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </motion.tr>

@@ -341,10 +341,17 @@ export default function SlidersPage() {
       <div className="container mx-auto p-6 space-y-6">
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Sliders Management</h1>
-            <p className="text-muted-foreground">Manage your website sliders and carousel content</p>
-          </div>
-
+            <h1 className="text-2xl font-bold">Sliders Management</h1>
+            </div>
+ <div className="relative">
+                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
+                  <Input
+                    placeholder="Search sliders..."
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                    className="pl-10"
+                  />
+                </div>
           {/* Buttons group */}
           <div className="flex items-center gap-3">
             {/* 👈 View All Dialog */}
@@ -454,58 +461,15 @@ export default function SlidersPage() {
             <Link href="/admin-cms/sliders/create">
               <Button>
                 <Plus className="w-4 h-4 mr-2" />
-                Add New Slider
+            New
               </Button>
             </Link>
           </div>
         </div>
 
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 w-4 h-4" />
-                  <Input
-                    placeholder="Search sliders..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={bgTypeFilter} onValueChange={setBgTypeFilter}>
-                <SelectTrigger className="w-full md:w-48">
-                  <SelectValue placeholder="Filter by background" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Backgrounds</SelectItem>
-                  <SelectItem value="color">Color</SelectItem>
-                  <SelectItem value="image">Image</SelectItem>
-                  <SelectItem value="video">Video</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Sliders ({filteredSliders.length})</CardTitle>
-          </CardHeader>
+         
           <CardContent>
             <div className="overflow-x-auto">
               <Table>
@@ -593,14 +557,14 @@ export default function SlidersPage() {
                               <Edit className="w-4 h-4" />
                             </Button>
                           </Link>
-                          <Button
+                          {/* <Button
                             variant="outline"
                             size="sm"
                             onClick={() => handleDelete(slider.id)}
                             className="text-red-600 hover:text-red-700"
                           >
                             <Trash2 className="w-4 h-4" />
-                          </Button>
+                          </Button> */}
                         </div>
                       </TableCell>
                     </TableRow>

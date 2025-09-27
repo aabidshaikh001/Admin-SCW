@@ -157,7 +157,7 @@ export function CareersPageManager() {
         className="flex items-center justify-between"
       >
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Careers Page Manager</h1>
+          <h1 className="text-2xl font-bold text-foreground">Careers Page Manager</h1>
           <p className="text-muted-foreground">Manage your careers page content and job listings</p>
         </div>
         <div className="flex items-center gap-4">

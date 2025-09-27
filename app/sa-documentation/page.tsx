@@ -198,7 +198,7 @@ export default function ManualsPage() {
           animate={{ opacity: 1, y: 0 }}
           className="flex flex-col sm:flex-row justify-between items-center gap-4"
         >
-          <h1 className="text-3xl font-bold text-foreground">Manual Management</h1>
+          <h1 className="text-2xl font-bold text-foreground">Help Documents</h1>
           <div className="flex flex-1 sm:flex-none items-center gap-4">
             <div className="relative flex-1 sm:w-64">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
@@ -216,7 +216,7 @@ export default function ManualsPage() {
                 <DialogTrigger asChild>
                   <Button>
                     <Plus className="w-4 h-4 mr-2" />
-                    Add Manual
+                   Help Documents(Add)
                   </Button>
                 </DialogTrigger>
                 <DialogContent className="sm:max-w-md">
@@ -407,7 +407,7 @@ export default function ManualsPage() {
         <Dialog open={isEditDialogOpen} onOpenChange={setIsEditDialogOpen}>
           <DialogContent className="sm:max-w-md">
             <DialogHeader>
-              <DialogTitle>Edit Manual Files</DialogTitle>
+              <DialogTitle>Help Documents(Update)</DialogTitle>
             </DialogHeader>
             {editingManual && (
               <form onSubmit={handleEditManual} className="space-y-4">

@@ -204,13 +204,10 @@ if (imageFile) {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center space-x-4">
-          <Button variant="outline" onClick={() => router.back()}>
-            <ArrowLeft className="mr-2 h-4 w-4" />
-            Back
-          </Button>
+         
           <div>
-            <h1 className="text-3xl font-bold">Edit Testimonial</h1>
-            <p className="text-muted-foreground">Update testimonial information</p>
+            <h1 className="text-2xl font-bold">Testimonials(Update)</h1>
+           
           </div>
         </div>
 
@@ -315,7 +312,7 @@ if (imageFile) {
                       Cancel
                     </Button>
                     <Button type="submit" disabled={loading}>
-                      {loading ? "Updating..." : "Update Testimonial"}
+                      {loading ? "Saving..." : "Save"}
                     </Button>
                   </div>
                 </form>

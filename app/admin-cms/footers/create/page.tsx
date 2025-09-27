@@ -87,8 +87,8 @@ export default function CreateFooterPage() {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-balance">Create Footer Item</h1>
-          <p className="text-muted-foreground">Add a new footer section or link</p>
+          <h1 className="text-2xl font-bold text-balance">Footer Management(New)</h1>
+      
         </div>
       </div>
 

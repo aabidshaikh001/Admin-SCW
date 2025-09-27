@@ -191,12 +191,8 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/user-management">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+          
+      
           <div className="flex items-center gap-4">
             <Avatar className="h-12 w-12">
               <AvatarImage src={user.UserPhoto ? `https://api.smartcorpweb.com${user.UserPhoto}` : undefined} />
@@ -208,8 +204,8 @@ export default function EditUserPage({ params }: { params: { id: string } }) {
               </AvatarFallback>
             </Avatar>
             <div>
-              <h1 className="text-3xl font-bold text-foreground">Edit User</h1>
-              <p className="text-muted-foreground">Update user information and settings</p>
+              <h1 className="text-2xl font-bold text-foreground">User(Update)</h1>
+           
             </div>
           </div>
         </motion.div>

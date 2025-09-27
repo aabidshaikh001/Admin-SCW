@@ -135,7 +135,7 @@ export default function CategoriesPage() {
 >
   {/* Left side: Title + Search */}
   <div className="flex items-center gap-4 w-full sm:w-auto">
-    <h1 className="text-3xl font-bold text-foreground">Categories</h1>
+    <h1 className="text-2xl font-bold text-foreground">Categories</h1>
 
     {/* Search bar in header */}
     <div className="relative w-full sm:w-64">
@@ -237,14 +237,14 @@ export default function CategoriesPage() {
                                 <Edit className="w-4 h-4" />
                               </Button>
                             </Link>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(category.Id)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>

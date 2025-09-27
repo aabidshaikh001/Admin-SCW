@@ -263,7 +263,7 @@ export default function AddOrganizationPage() {
           className="flex items-center space-x-4"
         >
           <div>
-            <h1 className="text-2xl font-bold text-foreground">Organization (New)</h1>
+            <h1 className="text-2xl font-bold text-foreground">Organization Management (New)</h1>
           </div>
         </motion.div>
 

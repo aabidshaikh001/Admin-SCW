@@ -192,14 +192,9 @@ export default function EditApplicationPage({ params }: { params: { id: string }
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/admin-careers/job-applications">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Applications
-            </Button>
-          </Link>
+        
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Edit Application</h1>
+            <h1 className="text-2xl font-bold text-foreground">Edit Application</h1>
             <p className="text-muted-foreground">Update application details</p>
           </div>
         </motion.div>

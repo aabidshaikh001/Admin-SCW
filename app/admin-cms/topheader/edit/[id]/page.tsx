@@ -156,8 +156,8 @@ export default function EditHeaderPage({ params }: { params: { id: string } }) {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Edit Header</h1>
-          <p className="text-muted-foreground">Update the header details and styling</p>
+          <h1 className="text-2xl font-bold text-foreground">Header Management(Update)</h1>
+       
         </div>
       </div>
 

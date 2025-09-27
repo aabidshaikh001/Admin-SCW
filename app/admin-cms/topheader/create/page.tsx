@@ -105,8 +105,8 @@ export default function CreateHeaderPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Add Header</h1>
-          <p className="text-muted-foreground">Create a new top section header with styling</p>
+          <h1 className="text-2xl font-bold text-foreground">Header Management(New)</h1>
+     
         </div>
       </div>
 

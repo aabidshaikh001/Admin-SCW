@@ -157,7 +157,7 @@ export default function SuperUserModulesPage() {
         <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
           <div>
             <h1 className="text-2xl font-bold tracking-tight">User Module Access</h1>
-            <p className="text-muted-foreground">View all users and their module permissions</p>
+           
           </div>
 
           <div className="flex gap-2">
@@ -185,12 +185,7 @@ export default function SuperUserModulesPage() {
         </div>
 
         <Card>
-          <CardHeader>
-            <CardTitle>Module Access Overview</CardTitle>
-            <CardDescription>
-              All users and their assigned modules across organizations
-            </CardDescription>
-          </CardHeader>
+          
           <CardContent>
             <div className="rounded-md border">
               <Table>

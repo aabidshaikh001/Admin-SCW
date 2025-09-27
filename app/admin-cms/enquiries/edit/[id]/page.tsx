@@ -200,7 +200,7 @@ export default function EditEnquiryPage({ params }: { params: { id: string } }) 
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Edit Enquiry #{enquiry.Id}</h1>
+            <h1 className="text-2xl font-bold text-foreground">Edit Enquiry #{enquiry.Id}</h1>
             <p className="text-muted-foreground">Update enquiry details and status</p>
           </div>
         </motion.div>

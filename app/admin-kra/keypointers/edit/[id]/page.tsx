@@ -151,15 +151,10 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin-kra/keypointers">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+          
           <div>
-            <h1 className="text-3xl font-bold">Update Key Pointer</h1>
-            <p className="text-muted-foreground">Update the key result area pointer</p>
+            <h1 className="text-2xl font-bold">Key Pointers(Update)</h1>
+          
           </div>
         </div>
 
@@ -279,7 +274,7 @@ export default function EditKeyPointerPage({ params }: { params: { id: string } 
               <div className="flex gap-4 pt-4">
                 <Button type="submit" disabled={loading}>
                   <Save className="h-4 w-4 mr-2" />
-                  {loading ? "Updating..." : "Update Key Pointer"}
+                  {loading ? "Saving..." : "Save"}
                 </Button>
                 <Link href="/admin-kra/keypointers">
                   <Button type="button" variant="outline">

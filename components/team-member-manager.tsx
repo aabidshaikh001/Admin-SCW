@@ -277,18 +277,18 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
       <div className="flex flex-col sm:flex-row gap-4 items-start sm:items-center justify-between">
         <div>
           <h2 className="text-2xl font-bold text-foreground">Team Members</h2>
-          <p className="text-muted-foreground">Manage your organization's team members</p>
+      
         </div>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
           <DialogTrigger asChild>
             <Button onClick={() => resetForm()}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Team Member
+             New
             </Button>
           </DialogTrigger>
           <DialogContent className="max-w-2xl">
             <DialogHeader>
-              <DialogTitle>{editingMember ? "Edit Team Member" : "Create New Team Member"}</DialogTitle>
+              <DialogTitle>{editingMember ? "Team Members(Update)" : "Team Members(New)"}</DialogTitle>
             </DialogHeader>
             <form onSubmit={handleSubmit} className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -402,7 +402,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                   Cancel
                 </Button>
                 <Button type="submit" disabled={uploadingImage}>
-                  {editingMember ? "Update" : "Create"} Team Member
+                  {editingMember ? "Save" : "Save"} 
                 </Button>
               </div>
             </form>
@@ -492,9 +492,9 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
                     <Button size="sm" variant="outline" onClick={() => handleEdit(member)}>
                       <Edit className="h-4 w-4" />
                     </Button>
-                    <Button size="sm" variant="outline" onClick={() => handleDelete(member.Id!)}>
+                    {/* <Button size="sm" variant="outline" onClick={() => handleDelete(member.Id!)}>
                       <Trash2 className="h-4 w-4" />
-                    </Button>
+                    </Button> */}
                   </div>
                 </CardContent>
               </Card>
@@ -513,7 +513,7 @@ const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
           {!searchTerm && (
             <Button onClick={() => setIsCreateModalOpen(true)}>
               <Plus className="h-4 w-4 mr-2" />
-              Add Team Member
+             New
             </Button>
           )}
         </div>

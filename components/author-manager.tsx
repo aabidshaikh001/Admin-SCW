@@ -386,14 +386,14 @@ export function AuthorManager() {
                       <Button size="sm" variant="outline" onClick={() => handleEdit(member)}>
                         <Edit className="w-3 h-3" />
                       </Button>
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDelete(member.Id)}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="w-3 h-3" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </CardContent>

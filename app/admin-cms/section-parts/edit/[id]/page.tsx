@@ -320,8 +320,8 @@ export default function EditSectionPartPage({ params }: { params: { id: string }
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Edit Section Part</h1>
-            <p className="text-muted-foreground">Update section component details</p>
+            <h1 className="text-2xl font-bold">Section Parts Management(Update)</h1>
+         
           </div>
         </div>
 

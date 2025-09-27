@@ -140,22 +140,10 @@ export default function SubCategoriesPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Sub Categories</h1>
-          <p className="text-muted-foreground mt-2">Manage product sub-categories</p>
+          <h1 className="text-2xl font-bold text-foreground">Sub Categories</h1>
+      
         </div>
-        <Link href="/admin-products/subcategories/create">
-          <Button className="flex items-center gap-2">
-            <Plus className="w-4 h-4" />
-            Add Sub Category
-          </Button>
-        </Link>
-      </div>
-
-      <Card>
-        <CardHeader>
-          <CardTitle>All Sub Categories</CardTitle>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
+   <div className="relative flex-1 max-w-sm">
               <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
               <Input
                 placeholder="Search sub-categories..."
@@ -164,23 +152,16 @@ export default function SubCategoriesPage() {
                 className="pl-10"
               />
             </div>
-            <Select value={selectedCategory} onValueChange={setSelectedCategory}>
-              <SelectTrigger className="w-48">
-                <Filter className="w-4 h-4 mr-2" />
-                <SelectValue placeholder="Filter by category" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Categories</SelectItem>
-                {categories.map((category) => (
-                  <SelectItem key={category.Id} value={category.Id.toString()}>
-                    {category.CatName}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-            <Badge variant="secondary">{filteredSubCategories.length} sub-categories</Badge>
-          </div>
-        </CardHeader>
+
+        <Link href="/admin-products/subcategories/create">
+          <Button className="flex items-center gap-2">
+            <Plus className="w-4 h-4" />
+           New
+          </Button>
+        </Link>
+      </div>
+
+      <Card>
         <CardContent>
           <div className="rounded-md border">
             <Table>
@@ -256,10 +237,10 @@ export default function SubCategoriesPage() {
                                 Edit
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setDeleteId(subCategory.Id)} className="text-destructive">
+                            {/* <DropdownMenuItem onClick={() => setDeleteId(subCategory.Id)} className="text-destructive">
                               <Trash2 className="w-4 h-4 mr-2" />
                               Delete
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

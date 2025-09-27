@@ -170,15 +170,10 @@ if (feature.Img) {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin-kra/industries">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Industriess
-            </Button>
-          </Link>
+          
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Edit Industries</h1>
-            <p className="text-muted-foreground">Update the KRA Industries details and styling</p>
+            <h1 className="text-2xl font-bold text-foreground">Industries Management(Update)</h1>
+          
           </div>
         </div>
 
@@ -358,7 +353,7 @@ if (feature.Img) {
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
                     <Save className="w-4 h-4 mr-2" />
-                    {loading ? "Updating..." : "Update Industries"}
+                    {loading ? "Saving..." : "Save"}
                   </Button>
                   <Link href="/admin-kra/industries">
                     <Button variant="outline" type="button">

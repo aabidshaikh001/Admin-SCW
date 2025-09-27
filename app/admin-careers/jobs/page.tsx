@@ -143,25 +143,10 @@ export default function JobsPage() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Job Management</h1>
-            <p className="text-muted-foreground">Manage job descriptions and postings</p>
+            <h1 className="text-2xl font-bold text-foreground">Job Management</h1>
+          
           </div>
-          <Link href="/admin-careers/jobs/create">
-            <Button>
-              <Plus className="w-4 h-4 mr-2" />
-              Create Job
-            </Button>
-          </Link>
-        </motion.div>
-
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex flex-col sm:flex-row gap-4">
-              <div className="relative flex-1">
+           <div className="relative flex-1">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
                 <Input
                   placeholder="Search jobs..."
@@ -170,43 +155,20 @@ export default function JobsPage() {
                   className="pl-10"
                 />
               </div>
-              <Select value={departmentFilter} onValueChange={setDepartmentFilter}>
-                <SelectTrigger className="w-full sm:w-[200px]">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Department" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Departments</SelectItem>
-                  {departments.map((dept) => (
-                    <SelectItem key={dept} value={dept}>
-                      {dept}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-              <Select value={typeFilter} onValueChange={setTypeFilter}>
-                <SelectTrigger className="w-full sm:w-[180px]">
-                  <Filter className="w-4 h-4 mr-2" />
-                  <SelectValue placeholder="Job Type" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="All">All Types</SelectItem>
-                  {jobTypes.map((type) => (
-                    <SelectItem key={type} value={type}>
-                      {type}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
+          <Link href="/admin-careers/jobs/create">
+            <Button>
+              <Plus className="w-4 h-4 mr-2" />
+             Add
+            </Button>
+          </Link>
+        </motion.div>
+
+        {/* Filters */}
+     
 
         {/* Jobs Table */}
         <Card>
-          <CardHeader>
-            <CardTitle>Jobs ({filteredJobs.length})</CardTitle>
-          </CardHeader>
+         
           <CardContent>
             {loading ? (
               <div className="space-y-3">
@@ -231,7 +193,7 @@ export default function JobsPage() {
                 <Link href="/admin-careers/jobs/create">
                   <Button>
                     <Plus className="w-4 h-4 mr-2" />
-                    Create Job
+                    Add Job
                   </Button>
                 </Link>
               </div>
@@ -283,14 +245,14 @@ export default function JobsPage() {
                                 <Edit className="w-4 h-4" />
                               </Button>
                             </Link>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDelete(job.id)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </motion.tr>

@@ -31,8 +31,8 @@ export function LoginForm() {
   const onSubmit = async (data: LoginFormData) => {
     const success = await login(data.LoginId, data.LoginPwd)
     if (success) {
-      toast.success("Login successful!")
-      router.push("/dashboard")
+      // toast.success("Login successful!")
+     
     } else {
       toast.error("Invalid credentials. Please try again.")
     }

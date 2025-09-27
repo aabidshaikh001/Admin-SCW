@@ -24,6 +24,7 @@ interface License {
   Status: string
   TransDate: string
   IsDeleted: boolean
+  OrgName: string
 }
 
 export default function OrganizationLicensePage() {
@@ -120,7 +121,7 @@ export default function OrganizationLicensePage() {
      {/* ✅ Add License Button */}
             <Link href="/org/license/add">
               <Button>
-                <Plus className="w-4 h-4 mr-2" /> Add License
+                <Plus className="w-4 h-4 mr-2" /> New
               </Button>
             </Link>
     
@@ -144,6 +145,7 @@ export default function OrganizationLicensePage() {
                       <TableRow>
                         <TableHead>License Name</TableHead>
                         <TableHead>Org Code</TableHead>
+                        <TableHead>Org Name</TableHead>
                         <TableHead>Max Users</TableHead>
                         <TableHead>Max Visitors</TableHead>
                         <TableHead>Status</TableHead>
@@ -161,7 +163,9 @@ export default function OrganizationLicensePage() {
                           className="hover:bg-muted/50"
                         >
                           <TableCell className="font-medium">{license.LicenseName}</TableCell>
+                        
                           <TableCell>{license.OrgCode}</TableCell>
+                            <TableCell>{license.OrgName}</TableCell>
                           <TableCell>{license.MaxUsers.toLocaleString()}</TableCell>
                           <TableCell>{license.MaxVisitors.toLocaleString()}</TableCell>
                           <TableCell>

@@ -327,14 +327,14 @@ export function CategoryManager() {
                       <Button size="sm" variant="outline" onClick={() => handleEdit(category)}>
                         <Edit className="w-3 h-3" />
                       </Button>
-                      <Button
+                      {/* <Button
                         size="sm"
                         variant="outline"
                         onClick={() => handleDelete(category.Id)}
                         className="text-destructive hover:text-destructive"
                       >
                         <Trash2 className="w-3 h-3" />
-                      </Button>
+                      </Button> */}
                     </div>
                   </div>
                 </CardContent>

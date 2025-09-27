@@ -114,7 +114,7 @@ export function HomePageManager() {
     <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Home Page Manager</h1>
+          <h1 className="text-2xl font-bold text-foreground">Home Page Manager</h1>
           <p className="text-muted-foreground">Manage your website's home page sections and content</p>
         </div>
         <Button onClick={handleCreateSection} className="bg-primary hover:bg-primary/90">
@@ -187,9 +187,9 @@ export function HomePageManager() {
                             <Button variant="outline" size="sm" onClick={() => handleEditSection(section)}>
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button variant="outline" size="sm" onClick={() => handleDeleteSection(section.id!)}>
+                            {/* <Button variant="outline" size="sm" onClick={() => handleDeleteSection(section.id!)}>
                               <Trash2 className="h-4 w-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </CardContent>
                       </Card>

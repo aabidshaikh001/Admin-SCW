@@ -182,7 +182,7 @@ export default function BlogsPage() {
           className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4"
         >
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Blog Management</h1>
+            <h1 className="text-2xl font-bold text-foreground">Blog Management</h1>
             <p className="text-muted-foreground">Manage your blog posts, authors, and categories</p>
           </div>
           <Button onClick={() => router.push("/blogs/create")} className="bg-primary hover:bg-primary/90">
@@ -316,14 +316,14 @@ export default function BlogsPage() {
                             <Button variant="outline" size="sm" onClick={() => router.push(`/blogs/edit/${blog.id}`)}>
                               <Edit className="w-4 h-4" />
                             </Button>
-                            <Button
+                            {/* <Button
                               variant="outline"
                               size="sm"
                               onClick={() => handleDeleteBlog(blog.id!)}
                               className="text-destructive hover:text-destructive"
                             >
                               <Trash2 className="w-4 h-4" />
-                            </Button>
+                            </Button> */}
                           </div>
                         </TableCell>
                       </TableRow>

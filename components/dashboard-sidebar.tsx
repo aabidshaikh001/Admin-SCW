@@ -115,7 +115,7 @@ useEffect(() => {
 
 
     const userModulesItems: SidebarItem[] = userModules
-  .filter(mod => ["CMSCRM", "CMSHR", "CMSNL", "CMSBlog"].includes(mod.ModuleCode))
+  .filter(mod => ["CMSCRM", "CMSHR", "CMSNL", "CMSBlog","CMSKRA","CMSProducts","CMSTerms","CMS"].includes(mod.ModuleCode))
   .map((mod) => {
     switch (mod.ModuleCode) {
       case "CMSCRM":
@@ -149,6 +149,60 @@ useEffect(() => {
             { icon: BarChart3, label: "Categories", href: "/admin-blog/blog-categories" },
           ]
         };
+        case "CMSKRA":
+        return {
+          icon: Layers,
+          label: "KRA",
+          children: [
+            { icon: FileCog, label: "Key Pointers", href: "/admin-kra/keypointers" },
+            { icon: FileCog, label: "Features", href: "/admin-kra/features" },
+            { icon: FileCog, label: "Clients", href: "/admin-kra/clients" },
+            { icon: FileCog, label: "Industries", href: "/admin-kra/industries" },
+            { icon: FileCog, label: "Testimonials", href: "/admin-kra/testimonials" },
+            { icon: FileCog, label: "Services", href: "/admin-kra/services" },
+            { icon: FileCog, label: "Projects", href: "/admin-kra/projects" },
+            { icon: FileCog, label: "Team", href: "/admin-kra/team" },
+          ]
+        };
+      case "CMS":
+        return {
+          icon: Layers,
+          label: "CMS",
+          children: [
+            { icon: FileCog, label: "Top Header", href: "/admin-cms/topheader" },
+            { icon: FileCog, label: "Menu Bar", href: "/admin-cms/menubar" },
+            { icon: FileCog, label: "Footer", href: "/admin-cms/footers" },
+            { icon: FileCog, label: "Page BreadCrumb", href: "/admin-cms/breadcrumbs" },
+            { icon: FileCog, label: "Sections", href: "/admin-cms/section-parts" },
+            { icon: FileCog, label: "Slider", href: "/admin-cms/sliders" },
+          ],
+        };
+         case "CMSProducts":
+        return {
+          icon: BarChart3,
+          label: "Products",
+          children: [
+            { icon: BarChart3, label: "Categories", href: "/admin-products/categories" },
+            { icon: BarChart3, label: "Sub Categories", href: "/admin-products/subcategories" },
+            { icon: BarChart3, label: "Products", href: "/admin-products/products" },
+          ]
+        };
+        case "CMSTerms":
+        return {     
+      icon: Layers,
+          label: "Terms",
+          children: [
+            { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
+            { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
+            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-of-service" },
+            { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
+            { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
+            { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },
+          ]
+        };
+     
+     
+      
       default:
         // This should never happen due to the filter above
         return { icon: FileCog, label: "Unknown", href: "#" };
@@ -156,7 +210,7 @@ useEffect(() => {
   });
 
   const adminModulesItems: SidebarItem[] = orgModules
-  .filter(mod => ["CMSCRM", "CMSHR", "CMSNL", "CMSBlog","CMSProducts"].includes(mod.ModuleCode))
+  .filter(mod => ["CMSCRM", "CMSHR", "CMSNL", "CMSBlog","CMSProducts","CMSNoti","CMSTasks","CMSTerms","CMSUser&Module","CMSKRA","CMS","CMSEnquiry"].includes(mod.ModuleCode))
   .map((mod) => {
     switch (mod.ModuleCode) {
       case "CMSCRM":
@@ -200,6 +254,65 @@ useEffect(() => {
             { icon: BarChart3, label: "Products", href: "/admin-products/products" },
           ]
         };
+        case "CMSNoti":
+          return  { icon: Bell, label: "Notifications", href: "/admin-noti" };
+          case "CMSTasks":
+            return  { icon: FileCog, label: "Tasks", href: "/admin-task/tasks" };
+           
+      case "CMSTerms":
+        return {     
+      icon: Layers,
+          label: "Terms",
+          children: [
+            { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
+            { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
+            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-of-service" },
+            { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
+            { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
+            { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },
+          ]
+        };
+      case "CMSUser&Module":
+        return { 
+              icon: User, label: "User & Module Mgt.", 
+            children: [
+             { icon: User, label: "User Management", href: "/user-management" },
+            { icon: User, label: "User Modules", href: "/user-modules" }]
+        
+        };
+      case "CMSKRA":
+        return {
+          icon: Layers,
+          label: "KRA",
+          children: [
+            { icon: FileCog, label: "Key Pointers", href: "/admin-kra/keypointers" },
+            { icon: FileCog, label: "Features", href: "/admin-kra/features" },
+            { icon: FileCog, label: "Clients", href: "/admin-kra/clients" },
+            { icon: FileCog, label: "Industries", href: "/admin-kra/industries" },
+            { icon: FileCog, label: "Testimonials", href: "/admin-kra/testimonials" },
+            { icon: FileCog, label: "Services", href: "/admin-kra/services" },
+            { icon: FileCog, label: "Projects", href: "/admin-kra/projects" },
+            { icon: FileCog, label: "Team", href: "/admin-kra/team" },
+          ]
+        };
+      case "CMS":
+        return {
+          icon: Layers,
+          label: "CMS",
+          children: [
+            { icon: FileCog, label: "Top Header", href: "/admin-cms/topheader" },
+            { icon: FileCog, label: "Menu Bar", href: "/admin-cms/menubar" },
+            { icon: FileCog, label: "Footer", href: "/admin-cms/footers" },
+            { icon: FileCog, label: "Page BreadCrumb", href: "/admin-cms/breadcrumbs" },
+            { icon: FileCog, label: "Sections", href: "/admin-cms/section-parts" },
+            { icon: FileCog, label: "Slider", href: "/admin-cms/sliders" },
+          ],
+        };
+     
+
+      
+    
+
       default:
         // This should never happen due to the filter above
         return { icon: FileCog, label: "Unknown", href: "#" };
@@ -238,58 +351,59 @@ useEffect(() => {
             { icon: FileQuestion, label: "Tickets", href: "/sa-tickets" }
           ]
         },
-        { icon: BarChart4, label: "Reports", href: "/reports" },
+        // { icon: BarChart4, label: "Reports", href: "/reports" },
         { icon: Settings, label: "Settings", href: "/sa-settings" },
       )
     } else if (user?.UserType === "Admin") {
       items.push(
         { icon: LayoutDashboard, label: "Dashboard", href: "/dashboard" },
-        { icon: Bell, label: "Notifications", href: "/admin-noti" },
+       
+        // {icon:FileCog, label:"Task", href:"/admin-task/tasks" },
         ...adminModulesItems,
-        { icon: User, label: "User & Module Mgt.", 
-            children: [
-             { icon: User, label: "User Management", href: "/user-management" },
-            { icon: User, label: "User Modules", href: "/user-modules" }]
-        },
+        // { icon: User, label: "User & Module Mgt.", 
+        //     children: [
+        //      { icon: User, label: "User Management", href: "/user-management" },
+        //     { icon: User, label: "User Modules", href: "/user-modules" }]
+        // },
 
-        {
-          icon: Layers,
-          label: "KRA",
-          children: [
-            { icon: FileCog, label: "Key Pointers", href: "/admin-kra/keypointers" },
-            { icon: FileCog, label: "Features", href: "/admin-kra/features" },
-            { icon: FileCog, label: "Clients", href: "/admin-kra/clients" },
-            { icon: FileCog, label: "Industries", href: "/admin-kra/industries" },
-            { icon: FileCog, label: "Testimonials", href: "/admin-kra/testimonials" },
-            { icon: FileCog, label: "Services", href: "/admin-kra/services" },
-            { icon: FileCog, label: "Projects", href: "/admin-kra/projects" },
-            { icon: FileCog, label: "Team", href: "/admin-kra/team" },
-          ]
-        },
-        {
-          icon: Layers,
-          label: "CMS",
-          children: [
-            { icon: FileCog, label: "Top Header", href: "/admin-cms/topheader" },
-            { icon: FileCog, label: "Menu Bar", href: "/admin-cms/menubar" },
-            { icon: FileCog, label: "Footer", href: "/admin-cms/footers" },
-            { icon: FileCog, label: "Page BreadCrumb", href: "/admin-cms/breadcrumbs" },
-            { icon: FileCog, label: "Sections", href: "/admin-cms/section-parts" },
-            { icon: FileCog, label: "Slider", href: "/admin-cms/sliders" },          
-          ],
-        },
-        {
-          icon: Layers,
-          label: "Terms",
-          children: [
-            { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
-            { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
-            { icon: FileCog, label: "T&C", href: "/admin-terms/terms-of-service" },
-            { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
-            { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
-            { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },
-          ]
-        },
+        // {
+        //   icon: Layers,
+        //   label: "KRA",
+        //   children: [
+        //     { icon: FileCog, label: "Key Pointers", href: "/admin-kra/keypointers" },
+        //     { icon: FileCog, label: "Features", href: "/admin-kra/features" },
+        //     { icon: FileCog, label: "Clients", href: "/admin-kra/clients" },
+        //     { icon: FileCog, label: "Industries", href: "/admin-kra/industries" },
+        //     { icon: FileCog, label: "Testimonials", href: "/admin-kra/testimonials" },
+        //     { icon: FileCog, label: "Services", href: "/admin-kra/services" },
+        //     { icon: FileCog, label: "Projects", href: "/admin-kra/projects" },
+        //     { icon: FileCog, label: "Team", href: "/admin-kra/team" },
+        //   ]
+        // },
+        // {
+        //   icon: Layers,
+        //   label: "CMS",
+        //   children: [
+        //     { icon: FileCog, label: "Top Header", href: "/admin-cms/topheader" },
+        //     { icon: FileCog, label: "Menu Bar", href: "/admin-cms/menubar" },
+        //     { icon: FileCog, label: "Footer", href: "/admin-cms/footers" },
+        //     { icon: FileCog, label: "Page BreadCrumb", href: "/admin-cms/breadcrumbs" },
+        //     { icon: FileCog, label: "Sections", href: "/admin-cms/section-parts" },
+        //     { icon: FileCog, label: "Slider", href: "/admin-cms/sliders" },          
+        //   ],
+        // },
+        // {
+        //   icon: Layers,
+        //   label: "Terms",
+        //   children: [
+        //     { icon: FileCog, label: "FAQs", href: "/admin-terms/faqs" },
+        //     { icon: FileCog, label: "Privacy Policy", href: "/admin-terms/privacy-policy" },
+        //     { icon: FileCog, label: "T&C", href: "/admin-terms/terms-of-service" },
+        //     { icon: FileCog, label: "Return & Refund", href: "/admin-terms/return-and-refund" },
+        //     { icon: FileCog, label: "Shipping", href: "/admin-terms/shipping" },
+        //     { icon: FileCog, label: "Payment", href: "/admin-terms/payment" },
+        //   ]
+        // },
         {
           icon: FileQuestion,
           label: "Help",
@@ -311,16 +425,18 @@ useEffect(() => {
 ].filter((item): item is SidebarItem => !!item)
 
         },
-        { icon: Settings, label: "Settings", href: "/settings" },
+        // { icon: Settings, label: "Settings", href: "/settings" },
         { icon: BarChart4, label: "Reports", href: "/admin-reports" },
       )
     } else if (user?.UserType === "User") {
       items.push(
         { icon: LayoutDashboard, label: "Dashboard", href: "/user-dashboard" },
+            { icon: Bell, label: "Notifications", href: "/user-notifications" },
+        {icon:FileCog, label:"Task", href:"/user-task" },
         ...userModulesItems,
-        { icon: Bell, label: "Notifications", href: "/user-notifications" },
-        { icon: FileQuestion, label: "Help", href: "/user-help" },
-        { icon: BarChart4, label: "Reports", href: "/user-reports" },
+  
+        // { icon: FileQuestion, label: "Help", href: "/user-help" },
+        // { icon: BarChart4, label: "Reports", href: "/user-reports" },
         {
           icon: FileQuestion,
           label: "Help",
@@ -337,7 +453,7 @@ useEffect(() => {
             },
           ].filter((item): item is SidebarItem => item !== false)
         },
-        { icon: Settings, label: "Settings", href: "/user-settings" },
+        // { icon: Settings, label: "Settings", href: "/user-settings" },
       )
     }
 
@@ -490,7 +606,7 @@ useEffect(() => {
 
       {/* User Section */}
       <div className="p-4 border-t border-sidebar-border space-y-2">
-        {user?.UserType === "Admin" && (
+        {/* {user?.UserType === "Admin" && (
           <Link href="/admin-profile">
             <Button
               variant="ghost"
@@ -503,9 +619,9 @@ useEffect(() => {
               {!isCollapsed && <span>Profile</span>}
             </Button>
           </Link>
-        )}
+        )} */}
 
-        {user?.UserType === "User" && (
+        {/* {user?.UserType === "User" && (
           <Link href="/profile">
             <Button
               variant="ghost"
@@ -518,7 +634,7 @@ useEffect(() => {
               {!isCollapsed && <span>Profile</span>}
             </Button>
           </Link>
-        )}
+        )} */}
 
         {/* SuperAdmin (SA) won't see profile */}
 

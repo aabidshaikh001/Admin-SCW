@@ -117,9 +117,18 @@ export default function CategoriesPage() {
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center justify-between mb-8">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Categories</h1>
-          <p className="text-muted-foreground mt-2">Manage product categories</p>
+          <h1 className="text-2xl font-bold text-foreground">Categories</h1>
+     
         </div>
+        <div className="relative flex-1 max-w-sm">
+              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
+              <Input
+                placeholder="Search categories..."
+                value={searchTerm}
+                onChange={(e) => setSearchTerm(e.target.value)}
+                className="pl-10"
+              />
+            </div>
         <Link href="/admin-products/categories/create">
           <Button className="flex items-center gap-2">
             <Plus className="w-4 h-4" />
@@ -129,21 +138,8 @@ export default function CategoriesPage() {
       </div>
 
       <Card>
-        <CardHeader>
-          <CardTitle>All Categories</CardTitle>
-          <div className="flex items-center gap-4">
-            <div className="relative flex-1 max-w-sm">
-              <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />
-              <Input
-                placeholder="Search categories..."
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
-              />
-            </div>
-            <Badge variant="secondary">{filteredCategories.length} categories</Badge>
-          </div>
-        </CardHeader>
+     
+   
         <CardContent>
           <div className="rounded-md border">
             <Table>
@@ -213,10 +209,10 @@ export default function CategoriesPage() {
                                 Edit
                               </Link>
                             </DropdownMenuItem>
-                            <DropdownMenuItem onClick={() => setDeleteId(category.Id)} className="text-destructive">
+                            {/* <DropdownMenuItem onClick={() => setDeleteId(category.Id)} className="text-destructive">
                               <Trash2 className="w-4 h-4 mr-2" />
                               Delete
-                            </DropdownMenuItem>
+                            </DropdownMenuItem> */}
                           </DropdownMenuContent>
                         </DropdownMenu>
                       </TableCell>

@@ -181,7 +181,7 @@ const subData: SubCategory = subJson.data[0] // <-- first item from data array
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Edit Sub Category</h1>
+          <h1 className="text-2xl font-bold text-foreground">Edit Sub Category</h1>
           <p className="text-muted-foreground mt-2">Update sub-category details</p>
         </div>
       </div>

@@ -266,8 +266,8 @@ export default function CreateSliderPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Create Slider</h1>
-          <p className="text-muted-foreground">Create slider content and settings</p>
+          <h1 className="text-2xl font-bold">Sliders Management(New)</h1>
+      
         </div>
       </div>
 

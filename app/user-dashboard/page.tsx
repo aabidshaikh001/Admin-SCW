@@ -2,12 +2,105 @@
 
 import { motion } from "framer-motion"
 import { DashboardLayout } from "@/components/dashboard-layout"
-import { DashboardStats } from "@/components/dashboard-stats"
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
+import {  FileText, TrendingUp, DollarSign } from "lucide-react"
 import { Progress } from "@/components/ui/progress"
 import { Badge } from "@/components/ui/badge"
 import { Globe, Shield, Database, Users, BarChart3, Plus } from "lucide-react"
+import { useState, useEffect } from "react"
+import { useAuth } from "@/contexts/auth-context"
+import Link from "next/link"
+type StatsResponse = {
+  success: boolean
+  data: {
+    totalTasks: number
+    completedTasks: number
+    pendingTasks: number
+    updatesCount: number
+  }
+}
+export function DashboardStats() {
+    const { user } = useAuth()
+   const [stats, setStats] = useState<StatsResponse["data"] | null>(null)
+  const OrgCode = user?.OrgCode || 2000 // later you can take this from auth/session
+  const UserId = user?.UserId || 1 // later you can take this from auth/session
+
+  useEffect(() => {
+    async function fetchStats() {
+      try {
+        const res = await fetch(`https://api.smartcorpweb.com/api/user-stats/${OrgCode}/${UserId}`)
+        const json: StatsResponse = await res.json()
+        if (json.success) setStats(json.data)
+      } catch (error) {
+        console.error("Error fetching stats:", error)
+      }
+    }
+    fetchStats()
+  }, [OrgCode])
+    
+  const cards = stats
+    ? [
+        {
+          title: "Total Tasks",
+          value: stats.totalTasks,
+          icon: FileText,
+          color: "text-blue-600",
+          link: "/user-task"
+        },
+        {
+          title: "Completed Tasks",
+          value: stats.completedTasks,
+          icon: TrendingUp,
+          color: "text-green-600",
+            link: "/user-task"
+        },
+        {
+          title: "Pending Tasks",
+          value: stats.pendingTasks,
+          icon: DollarSign,
+          color: "text-orange-600",
+            link: "/user-task"
+        },
+        {
+          title: "Notifications",
+          value: stats.updatesCount,
+          icon: Users,
+          color: "text-purple-600",
+          link: "/user-notifications"
+        },
+      ]
+    : []
+  return (
+     <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {cards.map((card, index) => (
+        <motion.div
+          key={card.title}
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: index * 0.1, duration: 0.3 }}
+        >
+          <Link href={card.link}>
+          <Card className="bg-card border-border">
+            <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
+              <CardTitle className="text-sm font-medium text-card-foreground">
+                {card.title}
+              </CardTitle>
+              <card.icon className={`h-4 w-4 ${card.color}`} />
+            </CardHeader>
+            <CardContent>
+              <div className="text-2xl font-bold text-card-foreground">
+                {card.value}
+              </div>
+            </CardContent>
+          </Card>
+          </Link>
+        </motion.div>
+      ))}
+    </div>
+  )
+}
+
 
 const recentActivities = [
   {
@@ -73,13 +166,14 @@ export default function DashboardPage() {
       <div className="space-y-6">
         {/* Welcome Section */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.5 }}>
-          <h1 className="text-3xl font-bold text-foreground">Website Management Dashboard</h1>
-          <p className="text-muted-foreground">Monitor and manage all your websites from one central location.</p>
+          <h1 className="text-2xl font-bold text-foreground">Dashboard</h1>
+          {/* <p className="text-muted-foreground">Monitor and manage all your websites from one central location.</p> */}
         </motion.div>
 
         {/* Stats Cards */}
         <DashboardStats />
-          {/* Quick Actions */}
+
+         {/* Quick Actions */}
         <motion.div
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
@@ -202,7 +296,7 @@ export default function DashboardPage() {
           </motion.div>
         </div>
 
-      
+       
       </div>
     </DashboardLayout>
   )

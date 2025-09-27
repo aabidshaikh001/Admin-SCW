@@ -348,15 +348,10 @@ return (
     <DashboardLayout>
     <div className="container mx-auto px-4 py-8">
       <div className="flex items-center gap-4 mb-8">
-        <Link href="/admin-products/products">
-          <Button variant="outline" size="sm">
-            <ArrowLeft className="w-4 h-4 mr-2" />
-            Back to Products
-          </Button>
-        </Link>
+        
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Edit Product</h1>
-          <p className="text-muted-foreground mt-2">update product to your catalog</p>
+          <h1 className="text-2xl font-bold text-foreground">Product(Update)</h1>
+       
         </div>
       </div>
 

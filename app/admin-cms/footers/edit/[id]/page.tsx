@@ -131,8 +131,8 @@ export default function EditFooterPage({ params }: EditFooterPageProps) {
           </Link>
         </Button>
         <div>
-          <h1 className="text-3xl font-bold text-balance">Edit Footer Item</h1>
-          <p className="text-muted-foreground">Update footer section or link</p>
+          <h1 className="text-2xl font-bold text-balance">Footer Management (Update)</h1>
+        
         </div>
       </div>
 

@@ -98,7 +98,7 @@ export function AboutPageManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold text-foreground">About Page Manager</h1>
+          <h1 className="text-2xl font-bold text-foreground">About Page Manager</h1>
           <p className="text-muted-foreground">Manage your about page sections and content</p>
         </div>
         <Button onClick={handleCreate} className="bg-primary hover:bg-primary/90">
@@ -164,14 +164,14 @@ export function AboutPageManager() {
                               <Button variant="outline" size="sm" onClick={() => handleEdit(section)}>
                                 <Edit className="w-4 h-4" />
                               </Button>
-                              <Button
+                              {/* <Button
                                 variant="outline"
                                 size="sm"
                                 onClick={() => handleDelete(section.Id!)}
                                 className="text-destructive hover:text-destructive"
                               >
                                 <Trash2 className="w-4 h-4" />
-                              </Button>
+                              </Button> */}
                             </div>
                           </div>
                         </CardHeader>

@@ -1,289 +1,229 @@
 "use client"
 
-import type React from "react"
-
 import { useState, useEffect } from "react"
+import { Checkbox } from "@/components/ui/checkbox"
 import { Button } from "@/components/ui/button"
-import { Input } from "@/components/ui/input"
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { Label } from "@/components/ui/label"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card"
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select"
-import { ArrowLeft, UserPlus, Search, Users, Shield } from "lucide-react"
+import { toast } from "react-toastify"
 import Link from "next/link"
-import { useRouter } from "next/navigation"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import { useAuth } from "@/contexts/auth-context"
-import { toast } from "react-toastify"
 
 interface User {
   UserId: number
   UserName: string
   UserEmail: string
-  EmployeeCode: string
   OrgCode: number
-  Status: string
 }
 
 interface Module {
   ModuleId: number
+  ModuleName: string
+  ModuleCode: string
+  isAssignable: boolean
+}
+
+interface AssignedModule {
+  ModuleId: number
   ModuleCode: string
   ModuleName: string
   Status: string
-  OrgCode: number
+  UserId: number
 }
 
-interface Organization {
-  OrgCode: number
-  OrgName: string
-}
-
-export default function AssignModulePage() {
+export default function AssignUserModulesPage() {
   const { user } = useAuth()
-  const router = useRouter()
   const [users, setUsers] = useState<User[]>([])
   const [modules, setModules] = useState<Module[]>([])
-  const [organizations, setOrganizations] = useState<Organization[]>([])
-  const [loading, setLoading] = useState(true)
-  const [submitting, setSubmitting] = useState(false)
+  const [selectedUserId, setSelectedUserId] = useState<number | null>(null)
+  const [assignedModules, setAssignedModules] = useState<number[]>([])
+  const [loading, setLoading] = useState(false)
 
-  const [formData, setFormData] = useState({
-    UserId: "",
-    OrgCode: user?.OrgCode?.toString() || "",
-    ModuleCode: "",
-    Status: "Active",
-  })
+  // Fetch users and modules
+ useEffect(() => {
+  if (user?.OrgCode) {
+    fetchUsers()
+    fetchModules()
+  }
+}, [user])
 
-  const [searchUsers, setSearchUsers] = useState("")
-  const [searchModules, setSearchModules] = useState("")
-
+  // Fetch assigned modules when user changes
   useEffect(() => {
-    fetchData()
-  }, [formData.OrgCode])
+    if (selectedUserId) fetchAssignedModules(selectedUserId)
+    else setAssignedModules([])
+  }, [selectedUserId])
 
-  const fetchData = async () => {
+ const fetchUsers = async () => {
+  if (!user?.OrgCode) return
+  try {
+    setLoading(true)
+    const res = await fetch(`https://api.smartcorpweb.com/api/users/org/${user.OrgCode}`)
+    const data: User[] = await res.json() // <-- directly use the array
+    setUsers(data)
+  } catch (err) {
+    console.error(err)
+    toast.error("Failed to load users")
+  } finally {
+    setLoading(false)
+  }
+}
+
+const fetchModules = async () => {
+  try {
+    setLoading(true)
+    const res = await fetch("https://api.smartcorpweb.com/api/assignmodules/org-modules/org/" + user?.OrgCode)
+    const data: { success: boolean; data: (Module & { isAssignable: boolean })[] } = await res.json()
+    if (data.success) {
+      // Only keep modules that are assignable
+   setModules(data.data) // keep all modules
+
+  
+    } else {
+      toast.error("Failed to load modules")
+    }
+  } catch (err) {
+    console.error(err)
+    toast.error("Failed to load modules")
+  } finally {
+    setLoading(false)
+  }
+}
+
+
+  const fetchAssignedModules = async (userId: number) => {
     try {
-      // Fetch users and modules for the organization
-      const [usersRes, modulesRes] = await Promise.all([
-        fetch(`https://api.smartcorpweb.com/api/users/org/${formData.OrgCode}`),
-        fetch(`https://api.smartcorpweb.com/api/assignmodules/org-modules/org/${formData.OrgCode}`),
-      ])
-
-      const usersData = await usersRes.json()
-      const modulesData = await modulesRes.json()
-
-      if (Array.isArray(usersData)) {
-        setUsers(usersData)
-      } else if (usersData.success && Array.isArray(usersData.data)) {
-        setUsers(usersData.data)
+      setLoading(true)
+      const res = await fetch(`https://api.smartcorpweb.com/api/user-modules/user/${userId}`)
+      const data: { success: boolean; data: AssignedModule[] } = await res.json()
+      if (data.success) {
+        const moduleIds = data.data.map((m) => m.ModuleId)
+        setAssignedModules(moduleIds)
+      } else {
+        setAssignedModules([])
       }
-
-      if (modulesData.success && Array.isArray(modulesData.data)) {
-        setModules(modulesData.data)
-      }
-    } catch (error) {
-      console.error("Error fetching data:", error)
-      toast.error("Failed to load data")
+    } catch (err) {
+      console.error(err)
+      toast.error("Failed to fetch assigned modules")
+      setAssignedModules([])
     } finally {
       setLoading(false)
     }
   }
 
-  const handleSubmit = async (e: React.FormEvent) => {
-    e.preventDefault()
-    setSubmitting(true)
-
-    try {
-      const response = await fetch("https://api.smartcorpweb.com/api/user-modules/assign", {
+  const toggleModule = async (moduleId: number) => {
+  if (!selectedUserId) return toast.error("Select a user first")
+  const isAssigned = assignedModules.includes(moduleId)
+  try {
+    setLoading(true)
+    if (isAssigned) {
+      // Unassign module
+      const res = await fetch(`https://api.smartcorpweb.com/api/user-modules/${moduleId}`, {
+        method: "DELETE",
+        headers: { "Content-Type": "application/json" },
+      })
+      const data = await res.json()
+      if (data.success) {
+        setAssignedModules((prev) => prev.filter((id) => id !== moduleId))
+        toast.success("Module unassigned successfully") // ✅ success toast
+      } else {
+        toast.error(data.message || "Failed to unassign module")
+      }
+    } else {
+      // Assign module
+      const module = modules.find((m) => m.ModuleId === moduleId)
+      const res = await fetch("https://api.smartcorpweb.com/api/user-modules/assign", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
-          ...formData,
-          OrgCode: Number.parseInt(formData.OrgCode),
+          UserId: selectedUserId,
+          ModuleId: moduleId,
+          OrgCode: user?.OrgCode,
+          ModuleCode: module?.ModuleCode,
+          Status: "Active",
           TransBy: "Admin",
         }),
       })
-
-      const data = await response.json()
-
+      const data = await res.json()
       if (data.success) {
-        router.push("/user-modules")
-        toast.success("Module assigned successfully")
+        setAssignedModules((prev) => [...prev, moduleId])
+        toast.success("Module assigned successfully") // ✅ success toast
       } else {
         toast.error(data.message || "Failed to assign module")
       }
-    } catch (error) {
-      console.error("Error assigning module:", error)
-      toast.error("Failed to assign module")
-    } finally {
-      setSubmitting(false)
     }
+  } catch (err) {
+    console.error(err)
+    toast.error("Network error. Try again")
+  } finally {
+    setLoading(false)
   }
+}
 
-  const filteredUsers = users.filter(
-    (user) =>
-      user.UserName.toLowerCase().includes(searchUsers.toLowerCase()) ||
-      user.UserEmail.toLowerCase().includes(searchUsers.toLowerCase()),
-  )
-
-  const filteredModules = modules.filter(
-    (module) =>
-      module.ModuleName.toLowerCase().includes(searchModules.toLowerCase()) ||
-      module.ModuleCode.toLowerCase().includes(searchModules.toLowerCase()),
-  )
-
-  const selectedUser = users.find((user) => user.UserId.toString() === formData.UserId)
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-64">Loading...</div>
-  }
-
+if (!user) return <div className="text-center py-10">Loading user info...</div>
   return (
     <DashboardLayout>
       <div className="space-y-6">
-        <div className="flex items-center gap-4">
-         
-          <div>
-            <h1 className="text-2xl font-bold tracking-tight">Assign Module(Add)</h1>
-        
-          </div>
+        <div className="flex items-center justify-between">
+          <h1 className="text-2xl font-bold">Assign Modules to User</h1>
+          <Button variant="outline" asChild>
+            <Link href="/user-modules">Back</Link>
+          </Button>
         </div>
 
-        <div className="grid gap-6 md:grid-cols-2">
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Users className="h-5 w-5" />
-                Select User
-              </CardTitle>
-            
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="space-y-2">
-                <Label htmlFor="user-search">Search Users</Label>
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    id="user-search"
-                    placeholder="Search by name or email..."
-                    value={searchUsers}
-                    onChange={(e) => setSearchUsers(e.target.value)}
-                    className="pl-10"
-                  />
-                </div>
-              </div>
+        <Card>
+          <CardHeader>
+            <CardTitle>Select User</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <Select value={selectedUserId?.toString() || ""} onValueChange={(v) => setSelectedUserId(Number(v))}>
+              <SelectTrigger>
+                <SelectValue placeholder="Select a user" />
+              </SelectTrigger>
+              <SelectContent>
+                {users.map((u) => (
+                  <SelectItem key={u.UserId} value={u.UserId.toString()}>
+                    {u.UserName} ({u.UserEmail})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </CardContent>
+        </Card>
 
-              <div className="space-y-2">
-                <Label htmlFor="userId">User *</Label>
-                <Select
-                  value={formData.UserId}
-                  onValueChange={(value) => setFormData((prev) => ({ ...prev, UserId: value }))}
-                >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a user" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {filteredUsers.map((user) => (
-                      <SelectItem key={user.UserId} value={user.UserId.toString()}>
-                        <div className="flex flex-col">
-                          <span className="font-medium">{user.UserName}</span>
-                          <span className="text-sm text-muted-foreground">{user.UserEmail}</span>
-                        </div>
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-
-              {selectedUser && (
-                <div className="p-3 bg-muted rounded-lg">
-                  <p className="text-sm font-medium">Selected User:</p>
-                  <p className="text-sm">{selectedUser.UserName}</p>
-                  <p className="text-sm text-muted-foreground">{selectedUser.UserEmail}</p>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle className="flex items-center gap-2">
-                <Shield className="h-5 w-5" />
-                Module Assignment
-              </CardTitle>
-              <CardDescription>Configure the module assignment details</CardDescription>
-            </CardHeader>
-            <CardContent>
-              <form onSubmit={handleSubmit} className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="module-search">Search Modules</Label>
-                  <div className="relative">
-                    <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                    <Input
-                      id="module-search"
-                      placeholder="Search modules..."
-                      value={searchModules}
-                      onChange={(e) => setSearchModules(e.target.value)}
-                      className="pl-10"
-                    />
+        <Card>
+          <CardHeader>
+            <CardTitle>Modules</CardTitle>
+          </CardHeader>
+          <CardContent>
+            {loading ? (
+              <div className="text-center py-4">Loading...</div>
+            ) : (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+                {modules.map((m) => (
+                  <div key={m.ModuleId} className="flex items-center space-x-2">
+                  <Checkbox
+  id={`module-${m.ModuleId}`}
+  checked={assignedModules.includes(m.ModuleId)}
+  onCheckedChange={() => toggleModule(m.ModuleId)}
+  disabled={!selectedUserId || loading || !m.isAssignable}
+/>
+<Label
+  htmlFor={`module-${m.ModuleId}`}
+  className={`cursor-pointer ${!m.isAssignable ? "text-gray-400" : ""}`}
+>
+  {m.ModuleName} ({m.ModuleCode})
+</Label>
                   </div>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="moduleCode">Module *</Label>
-                  <Select
-                    value={formData.ModuleCode}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, ModuleCode: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select a module" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      {filteredModules.map((module) => (
-                        <SelectItem key={module.ModuleCode} value={module.ModuleCode}>
-                          <div className="flex flex-col">
-                            <span className="font-medium">{module.ModuleName}</span>
-                            <span className="text-sm text-muted-foreground">{module.ModuleCode}</span>
-                          </div>
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="status">Status</Label>
-                  <Select
-                    value={formData.Status}
-                    onValueChange={(value) => setFormData((prev) => ({ ...prev, Status: value }))}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="Active">Active</SelectItem>
-                      <SelectItem value="Inactive">Inactive</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="flex gap-3 pt-4">
-                  <Button
-                    type="submit"
-                    disabled={submitting || !formData.UserId || !formData.ModuleCode || !formData.OrgCode}
-                  >
-                    <UserPlus className="mr-2 h-4 w-4" />
-                    {submitting ? "Assigning..." : "Assign Module"}
-                  </Button>
-                  <Link href="/user-modules">
-                    <Button type="button" variant="outline">
-                      Cancel
-                    </Button>
-                  </Link>
-                </div>
-              </form>
-            </CardContent>
-          </Card>
-        </div>
+                ))}
+              </div>
+            )}
+            <p className="text-sm text-muted-foreground mt-2">
+              Selected: {assignedModules.length} module(s) {selectedUserId && `for user ${selectedUserId}`}
+            </p>
+          </CardContent>
+        </Card>
       </div>
     </DashboardLayout>
   )

@@ -250,8 +250,8 @@ const [loading, setLoading] = useState(false)
             </Button>
           </Link>
           <div>
-            <h1 className="text-3xl font-bold">Create Section Part</h1>
-            <p className="text-muted-foreground">Create section component details</p>
+            <h1 className="text-2xl font-bold">Section Parts Management(New)</h1>
+        
           </div>
         </div>
 

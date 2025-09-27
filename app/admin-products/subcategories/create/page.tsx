@@ -149,7 +149,7 @@ const handleSubmit = async (e: React.FormEvent) => {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold text-foreground">Create Sub Category</h1>
+          <h1 className="text-2xl font-bold text-foreground">Create Sub Category</h1>
           <p className="text-muted-foreground mt-2">Add a new product sub-category</p>
         </div>
       </div>

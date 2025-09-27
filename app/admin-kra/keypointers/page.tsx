@@ -100,9 +100,18 @@ export default function KeyPointersPage() {
         {/* Header */}
         <div className="flex justify-between items-center">
           <div>
-            <h1 className="text-3xl font-bold">Key Pointers</h1>
-            <p className="text-muted-foreground">Manage your key result area pointers</p>
+            <h1 className="text-2xl font-bold">Key Pointers</h1>
+           
           </div>
+           <div className="flex-1 relative min-w-[200px]">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
+                <Input
+                  placeholder="Search by text or section..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="pl-10"
+                />
+              </div>
           <div className="flex gap-2">
             <Dialog>
               <DialogTrigger asChild>
@@ -141,60 +150,15 @@ export default function KeyPointersPage() {
             <Link href="/admin-kra/keypointers/create">
               <Button>
                 <Plus className="h-4 w-4 mr-2" />
-                Add Key Pointer
+               New
               </Button>
             </Link>
           </div>
         </div>
 
-        {/* Filters */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Filters</CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex gap-4 flex-wrap">
-              <div className="flex-1 relative min-w-[200px]">
-                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-gray-400 h-4 w-4" />
-                <Input
-                  placeholder="Search by text or section..."
-                  value={searchTerm}
-                  onChange={(e) => setSearchTerm(e.target.value)}
-                  className="pl-10"
-                />
-              </div>
-              <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filter by status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Status</SelectItem>
-                  <SelectItem value="active">Active</SelectItem>
-                  <SelectItem value="inactive">Inactive</SelectItem>
-                </SelectContent>
-              </Select>
-              <Select value={sectionFilter} onValueChange={setSectionFilter}>
-                <SelectTrigger className="w-48">
-                  <SelectValue placeholder="Filter by section" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="all">All Sections</SelectItem>
-                  {uniqueSections.map((sec) => (
-                    <SelectItem key={sec} value={sec}>
-                      {sec}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-          </CardContent>
-        </Card>
-
         {/* Table */}
         <Card>
-          <CardHeader>
-            <CardTitle>Key Pointers ({filteredKeyPointers.length})</CardTitle>
-          </CardHeader>
+          
           <CardContent>
             <Table>
               <TableHeader>
@@ -261,9 +225,9 @@ export default function KeyPointersPage() {
                             <Edit className="h-4 w-4" />
                           </Button>
                         </Link>
-                        <Button variant="outline" size="sm" onClick={() => handleDelete(kp.Id)}>
+                        {/* <Button variant="outline" size="sm" onClick={() => handleDelete(kp.Id)}>
                           <Trash2 className="h-4 w-4" />
-                        </Button>
+                        </Button> */}
                       </div>
                     </TableCell>
                   </TableRow>

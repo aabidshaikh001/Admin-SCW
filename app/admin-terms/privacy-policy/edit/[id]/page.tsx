@@ -151,27 +151,20 @@ export default function EditPrivacyPolicyPage({ params }: { params: { id: string
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/admin-terms/privacy-policy">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+        
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-              <Shield className="w-8 h-8" />
-              Edit Privacy Policy Item
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+           
+                Privacy Policy Management(Update)
             </h1>
-            <p className="text-muted-foreground">Update privacy policy section or question</p>
+         
           </div>
         </motion.div>
 
         {/* Form */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} transition={{ delay: 0.1 }}>
           <Card>
-            <CardHeader>
-              <CardTitle>Privacy Policy Details</CardTitle>
-            </CardHeader>
+           
             <CardContent>
               <form onSubmit={handleSubmit} className="space-y-6">
                 <div className="space-y-2">
@@ -216,12 +209,12 @@ export default function EditPrivacyPolicyPage({ params }: { params: { id: string
                     {loading ? (
                       <>
                         <Save className="w-4 h-4 mr-2 animate-spin" />
-                        Updating...
+                        Saving...
                       </>
                     ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
-                        Update Privacy Policy Item
+                       Save
                       </>
                     )}
                   </Button>

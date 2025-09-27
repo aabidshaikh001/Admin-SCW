@@ -105,7 +105,7 @@ export default function OrganizationInfoPage() {
   className="flex flex-col sm:flex-row items-center justify-between gap-4 w-full"
 >
   {/* Title */}
-  <h1 className="text-3xl font-bold text-foreground whitespace-nowrap">
+  <h1 className="text-2xl font-bold text-foreground whitespace-nowrap">
     Organization Management
   </h1>
 
@@ -161,8 +161,9 @@ export default function OrganizationInfoPage() {
                   <Table>
                     <TableHeader>
                       <TableRow>
+                           <TableHead>Code</TableHead>
                         <TableHead>Organization</TableHead>
-                        <TableHead>Code</TableHead>
+                     
                         <TableHead>Type</TableHead>
                         <TableHead>Contact</TableHead>
                         <TableHead>Email</TableHead>
@@ -181,6 +182,7 @@ export default function OrganizationInfoPage() {
                           transition={{ delay: index * 0.05 }}
                           className="hover:bg-muted/50"
                         >
+                             <TableCell className="font-mono">{org.OrgCode}</TableCell>
                           <TableCell>
                             <div className="flex items-center space-x-3">
                               <Avatar className="w-8 h-8">
@@ -199,7 +201,7 @@ export default function OrganizationInfoPage() {
                               </div>
                             </div>
                           </TableCell>
-                          <TableCell className="font-mono">{org.OrgCode}</TableCell>
+                       
                           <TableCell>{org.OrgType}</TableCell>
                           <TableCell>{org.ContactPerson}</TableCell>
                           <TableCell>

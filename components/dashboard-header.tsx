@@ -62,99 +62,93 @@ export function DashboardHeader() {
         <span className="px-3 py-1 text-lg font-medium rounded-full 
           text-white bg-primary/20 
           shadow-[0_0_10px_rgba(59,130,246,0.7)] animate-pulse">
-          {getRoleLabel(user?.UserType)}
+          {getRoleLabel(user?.UserType)}: {user?.name || user?.UserName}
         </span>
       </div>
 
-      {/* Right section */}
-      <div className="flex items-center gap-4 ml-auto text-white">
-        {user?.UserType !== "SA" && (
-          <>
-            {/* Notifications Bell */}
-            <Button
-              variant="ghost"
-              size="sm"
-              className="relative text-white"
-              onClick={handleBellClick}
-            >
-              <Bell className="h-5 w-5" />
-              <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full"></span>
-            </Button>
+    {/* Right section */}
+<div className="flex items-center gap-4 ml-auto text-white">
+  {user?.UserType === "Admin" && (
+    <>
+      {/* Notifications Bell */}
+      <Button
+        variant="ghost"
+        size="sm"
+        className="relative text-white"
+        onClick={handleBellClick}
+      >
+        <Bell className="h-5 w-5" />
+        <span className="absolute -top-1 -right-1 h-3 w-3 bg-destructive rounded-full"></span>
+      </Button>
+    </>
+  )}
 
-            {/* User Menu */}
-            <DropdownMenu>
-              <DropdownMenuTrigger asChild>
-                <Button
-                  variant="ghost"
-                  aria-label="Open user menu"
-                  className="relative h-10 w-10 rounded-full p-0 text-white z-50"
-                >
-                  <Avatar className="h-10 w-10">
-                    <AvatarImage
-                      src={user?.UserPhoto || "/placeholder.svg"}
-                      alt={user?.UserName}
-                    />
-                    <AvatarFallback className="bg-primary text-primary-foreground">
-                      {user?.UserName ? getInitials(user.UserName) : "U"}
-                    </AvatarFallback>
-                  </Avatar>
-                </Button>
-              </DropdownMenuTrigger>
+  {/* User Menu — hide for SA */}
+  {user?.UserType !== "SA" && (
+    <DropdownMenu>
+      <DropdownMenuTrigger asChild>
+        <Button
+          variant="ghost"
+          aria-label="Open user menu"
+          className="relative h-10 w-10 rounded-full p-0 text-white z-50"
+        >
+          <Avatar className="h-10 w-10">
+            <AvatarImage
+              src={
+                user?.profilePhoto
+                  ? `https://api.smartcorpweb.com${user.profilePhoto}`
+                  : "/placeholder.svg"
+              }
+              alt={user?.name || user?.UserName}
+            />
+            <AvatarFallback className="bg-primary text-primary-foreground">
+              {user?.name ? getInitials(user.name) : "U"}
+            </AvatarFallback>
+          </Avatar>
+        </Button>
+      </DropdownMenuTrigger>
 
-              <DropdownMenuContent className="w-56 z-20" align="end" forceMount>
-                <DropdownMenuLabel className="font-normal">
-                  <div className="flex flex-col space-y-1">
-                    <p className="text-sm font-medium leading-none">{user?.UserName}</p>
-                    <p className="text-xs leading-none text-muted-foreground">{user?.UserEmail}</p>
-                  </div>
-                </DropdownMenuLabel>
+      <DropdownMenuContent className="w-56 z-20" align="end" forceMount>
+        <DropdownMenuLabel className="font-normal">
+          <div className="flex flex-col space-y-1">
+            <p className="text-sm font-medium leading-none">{user?.name || user?.UserName}</p>
+            <p className="text-xs leading-none text-muted-foreground">
+              {user?.email || user?.UserEmail}
+            </p>
+          </div>
+        </DropdownMenuLabel>
 
-                <DropdownMenuSeparator />
+        <DropdownMenuSeparator />
 
-                {user?.UserType === "Admin" && (
-                  <>
-                    <Link href="/admin-profile">
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href="/settings">
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </DropdownMenuItem>
-                    </Link>
-                  </>
-                )}
-
-                {user?.UserType === "User" && (
-                  <>
-                    <Link href="/profile">
-                      <DropdownMenuItem>
-                        <User className="mr-2 h-4 w-4" />
-                        <span>Profile</span>
-                      </DropdownMenuItem>
-                    </Link>
-                    <Link href="/user-settings">
-                      <DropdownMenuItem>
-                        <Settings className="mr-2 h-4 w-4" />
-                        <span>Settings</span>
-                      </DropdownMenuItem>
-                    </Link>
-                  </>
-                )}
-
-                <DropdownMenuSeparator />
-                <DropdownMenuItem onClick={logout}>
-                  <LogOut className="mr-2 h-4 w-4" />
-                  <span>Log out</span>
-                </DropdownMenuItem>
-              </DropdownMenuContent>
-            </DropdownMenu>
-          </>
+        {user?.UserType === "Admin" && (
+          <Link href="/admin-profile">
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+          </Link>
         )}
-      </div>
+
+        {user?.UserType === "User" && (
+          <Link href="/profile">
+            <DropdownMenuItem>
+              <User className="mr-2 h-4 w-4" />
+              <span>Profile</span>
+            </DropdownMenuItem>
+          </Link>
+        )}
+
+        <DropdownMenuSeparator />
+        <DropdownMenuItem onClick={logout}>
+          <LogOut className="mr-2 h-4 w-4" />
+          <span>Log out</span>
+        </DropdownMenuItem>
+      </DropdownMenuContent>
+    </DropdownMenu>
+  )}
+</div>
+
+
     </motion.header>
   )
 }

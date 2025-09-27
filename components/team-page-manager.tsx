@@ -344,7 +344,7 @@ export default function TeamPageManager() {
     <div className="space-y-6">
       <div className="flex items-center justify-between">
         <div>
-          <h1 className="text-3xl font-bold">Team Page Manager</h1>
+          <h1 className="text-2xl font-bold">Team Page Manager</h1>
           <p className="text-muted-foreground">Manage your team page sections and content</p>
         </div>
         <Dialog open={isCreateModalOpen} onOpenChange={setIsCreateModalOpen}>
@@ -449,13 +449,13 @@ export default function TeamPageManager() {
                                 <Button variant="ghost" size="sm" onClick={() => handleEdit(section)}>
                                   <Edit className="h-4 w-4" />
                                 </Button>
-                                <Button
+                                {/* <Button
                                   variant="ghost"
                                   size="sm"
                                   onClick={() => section.id && handleDelete(section.id)}
                                 >
                                   <Trash2 className="h-4 w-4" />
-                                </Button>
+                                </Button> */}
                               </div>
                             </div>
                           </div>

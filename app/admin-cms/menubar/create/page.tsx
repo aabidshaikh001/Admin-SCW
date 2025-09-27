@@ -134,8 +134,8 @@ export default function CreateMenuPage() {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Create Menu Item</h1>
-          <p className="text-muted-foreground">Add a new menu item to your navigation</p>
+          <h1 className="text-2xl font-bold">Menu Management(New)</h1>
+         
         </div>
       </div>
 

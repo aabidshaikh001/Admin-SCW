@@ -216,8 +216,8 @@ if (formData.type === "sub") {
           </Button>
         </Link>
         <div>
-          <h1 className="text-3xl font-bold">Update Menu Item</h1>
-          <p className="text-muted-foreground">Add a update menu item to your navigation</p>
+          <h1 className="text-2xl font-bold">Menu Management(Update)</h1>
+       
         </div>
       </div>
 

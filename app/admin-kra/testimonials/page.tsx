@@ -154,8 +154,8 @@ export default function TestimonialsPage() {
       <div className="space-y-6">
       <div className="flex justify-between items-center">
   <div>
-    <h1 className="text-3xl font-bold">Testimonials</h1>
-    <p className="text-muted-foreground">Manage customer testimonials and reviews</p>
+    <h1 className="text-2xl font-bold">Testimonials</h1>
+ 
   </div>
   <div className="flex gap-2">
     {/* Preview All Button */}
@@ -211,7 +211,7 @@ export default function TestimonialsPage() {
     {/* Add Testimonial Button */}
     <Button onClick={() => router.push("/admin-kra/testimonials/create")}>
       <Plus className="mr-2 h-4 w-4" />
-      Add Testimonial
+     New
     </Button>
   </div>
 </div>
@@ -327,9 +327,9 @@ export default function TestimonialsPage() {
                           >
                             <Edit className="h-4 w-4" />
                           </Button>
-                          <Button variant="outline" size="sm" onClick={() => handleDelete(testimonial.id)}>
+                          {/* <Button variant="outline" size="sm" onClick={() => handleDelete(testimonial.id)}>
                             <Trash2 className="h-4 w-4" />
-                          </Button>
+                          </Button> */}
                         </div>
                       </TableCell>
                     </TableRow>

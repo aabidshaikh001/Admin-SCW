@@ -102,15 +102,10 @@ export default function CreateFeaturePage() {
     <DashboardLayout>
       <div className="space-y-6">
         <div className="flex items-center gap-4">
-          <Link href="/admin-kra/services">
-            <Button variant="outline" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Servicess
-            </Button>
-          </Link>
+      
           <div>
-            <h1 className="text-3xl font-bold text-foreground">Add Services</h1>
-            <p className="text-muted-foreground">Add the KRA Services details and styling</p>
+            <h1 className="text-2xl font-bold text-foreground">Services Management(New)</h1>
+          
           </div>
         </div>
 
@@ -290,7 +285,7 @@ export default function CreateFeaturePage() {
                 <div className="flex gap-2 pt-4">
                   <Button type="submit" disabled={loading}>
                     <Save className="w-4 h-4 mr-2" />
-                    {loading ? "Adding..." : "Add Services"}
+                    {loading ? "Saving..." : "Save"}
                   </Button>
                   <Link href="/admin-kra/services">
                     <Button variant="outline" type="button">

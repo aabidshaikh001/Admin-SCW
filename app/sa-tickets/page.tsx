@@ -140,7 +140,7 @@ export default function SATicketsPage() {
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex flex-col sm:flex-row justify-between items-center gap-4">
-  <h1 className="text-3xl font-bold text-foreground">Support Tickets</h1>
+  <h1 className="text-2xl font-bold text-foreground">Support Tickets</h1>
   <div className="flex flex-1 sm:flex-none items-center gap-4">
     <div className="relative flex-1 sm:w-48">
       <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground w-4 h-4" />

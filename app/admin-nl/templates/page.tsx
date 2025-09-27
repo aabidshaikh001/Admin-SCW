@@ -174,7 +174,7 @@ export default function TemplatesPage() {
   className="flex flex-col sm:flex-row justify-between items-center gap-4"
 >
   {/* Left: Title */}
-  <h1 className="text-3xl font-bold text-foreground">Emailer</h1>
+  <h1 className="text-2xl font-bold text-foreground">Emailer</h1>
 
   {/* Middle: Search + Filter */}
   <div className="flex flex-col sm:flex-row gap-4 flex-1 max-w-2xl">

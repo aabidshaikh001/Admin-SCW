@@ -78,18 +78,13 @@ export default function CreatePrivacyPolicyPage() {
       <div className="space-y-6">
         {/* Header */}
         <motion.div initial={{ opacity: 0, y: 20 }} animate={{ opacity: 1, y: 0 }} className="flex items-center gap-4">
-          <Link href="/admin-terms/privacy-policy">
-            <Button variant="ghost" size="sm">
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back
-            </Button>
-          </Link>
+          
           <div>
-            <h1 className="text-3xl font-bold text-foreground flex items-center gap-2">
-              <Shield className="w-8 h-8" />
-              Create Privacy Policy Item
+            <h1 className="text-2xl font-bold text-foreground flex items-center gap-2">
+           
+              Privacy Policy Management(New)
             </h1>
-            <p className="text-muted-foreground">Add a new privacy policy section or question</p>
+          
           </div>
         </motion.div>
 
@@ -143,12 +138,12 @@ export default function CreatePrivacyPolicyPage() {
                     {loading ? (
                       <>
                         <Save className="w-4 h-4 mr-2 animate-spin" />
-                        Creating...
+                        Saving...
                       </>
                     ) : (
                       <>
                         <Save className="w-4 h-4 mr-2" />
-                        Create Privacy Policy Item
+                       Save
                       </>
                     )}
                   </Button>
