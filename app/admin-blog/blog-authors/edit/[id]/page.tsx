@@ -13,6 +13,7 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card"
 import { useToast } from "@/hooks/use-toast"
 import { DashboardLayout } from "@/components/dashboard-layout"
 import Link from "next/link"
+import { useAuth } from "@/contexts/auth-context"
 
 interface TeamMember {
   Id: number
@@ -30,6 +31,7 @@ interface TeamMember {
 }
 
 export default function EditAuthorPage() {
+  const { user } = useAuth()
   const [formData, setFormData] = useState({
     Name: "",
     Role: "",
@@ -92,7 +94,7 @@ export default function EditAuthorPage() {
 
       const memberData = {
         ...formData,
-        OrgCode: 1, // Replace with actual org code from auth
+        OrgCode: user?.OrgCode || 1,
         IsDeleted: false,
       }
 
